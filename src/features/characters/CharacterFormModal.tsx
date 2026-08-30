@@ -99,7 +99,7 @@ export function CharacterFormModal({ open, initial, onClose }: {
             input.onchange = () => { const f = input.files?.[0]; if (f) upload(f); };
             input.click();
           }}>{draft.avatar ? '更换形象' : '上传形象'}</Button>
-          <Button size="sm" variant="ghost" onClick={() => patch({ avatar: generateAvatar(`${draft.name}-${Date.now()}`) })}>
+          <Button size="sm" variant="ghost" onClick={() => patch({ avatar: generateAvatar(`${draft.name}-${Date.now()}`, draft.gender) })}>
             {draft.avatar ? '随机换一个' : '随机生成'}
           </Button>
         </div>
