@@ -1,0 +1,341 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "BahnschriftFallback";
+      src: local("Bahnschrift"), local("DIN Alternate"), local("Arial");
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: sans-serif;
+    }
+    #root * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- track 0: ground (paper + sun bloom + ember counter-bloom) ---- */
+    .dbt-ground {
+      position: absolute;
+      inset: 0;
+      background: #14161a;
+      overflow: hidden;
+    }
+    .dbt-sun-bloom {
+      position: absolute;
+      left: 8%;
+      top: 4%;
+      width: 62%;
+      height: 92%;
+      background: radial-gradient(
+        ellipse at 40% 45%,
+        rgba(201, 172, 103, 0.55) 0%,
+        rgba(79, 64, 28, 0.55) 34%,
+        rgba(108, 87, 38, 0.28) 58%,
+        rgba(20, 22, 26, 0) 78%
+      );
+    }
+    .dbt-ember-bloom {
+      position: absolute;
+      right: -6%;
+      bottom: -8%;
+      width: 46%;
+      height: 56%;
+      background: radial-gradient(
+        ellipse at 60% 60%,
+        rgba(230, 207, 149, 0.18) 0%,
+        rgba(20, 22, 26, 0) 70%
+      );
+    }
+
+    /* ---- track 1: screenshot stage ---- */
+    .dbt-stage {
+      position: absolute;
+      inset: 0;
+    }
+    .dbt-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .dbt-world {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    .dbt-shot {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      display: block;
+    }
+    .dbt-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(20, 22, 26, 0.42) 0%,
+        rgba(20, 22, 26, 0.12) 30%,
+        rgba(20, 22, 26, 0.12) 62%,
+        rgba(20, 22, 26, 0.62) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* gold viewport frame + L corner brackets */
+    .dbt-frame {
+      position: absolute;
+      inset: 88px 96px;
+      border: 1px solid rgba(201, 172, 103, 0.55);
+      transform-origin: 50% 50%;
+    }
+    .dbt-corner {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+    }
+    .dbt-corner-tl { left: -2px; top: -2px; border-left: 2px solid #c9ac67; border-top: 2px solid #c9ac67; transform-origin: left top; }
+    .dbt-corner-tr { right: -2px; top: -2px; border-right: 2px solid #c9ac67; border-top: 2px solid #c9ac67; transform-origin: right top; }
+    .dbt-corner-bl { left: -2px; bottom: -2px; border-left: 2px solid #c9ac67; border-bottom: 2px solid #c9ac67; transform-origin: left bottom; }
+    .dbt-corner-br { right: -2px; bottom: -2px; border-right: 2px solid #c9ac67; border-bottom: 2px solid #c9ac67; transform-origin: right bottom; }
+
+    /* region flash brackets on the screenshot */
+    .dbt-marker {
+      position: absolute;
+      width: 92px;
+      height: 72px;
+      border: 1px solid rgba(230, 207, 149, 0.9);
+      opacity: 0;
+    }
+    .dbt-marker::before,
+    .dbt-marker::after {
+      content: "";
+      position: absolute;
+      background: #e6cf95;
+    }
+    .dbt-marker::before { left: 0; top: 0; width: 16px; height: 2px; }
+    .dbt-marker::after { left: 0; top: 0; width: 2px; height: 16px; }
+    .dbt-marker-hero { left: 17%; top: 22%; }
+    .dbt-marker-stats { left: 63%; top: 18%; }
+    .dbt-marker-health { left: 40%; top: 60%; }
+
+    /* ---- track 2: caption bar (above the bottom 17% keep-out) ---- */
+    .dbt-captionbar {
+      position: absolute;
+      left: 50%;
+      top: 806px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 34px;
+      border-top: 1px solid rgba(250, 250, 233, 0.28);
+      border-bottom: 1px solid rgba(250, 250, 233, 0.28);
+      background: rgba(20, 22, 26, 0.55);
+      white-space: nowrap;
+    }
+    .dbt-caption-title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #c9ac67;
+    }
+    .dbt-caption-line {
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: rgba(250, 250, 233, 0.85);
+    }
+    .dbt-kw { color: rgba(250, 250, 233, 0.45); transition: none; }
+    .dbt-kw-on { color: #e6cf95; }
+    .dbt-sep { color: rgba(250, 250, 233, 0.3); }
+
+    /* side stat rows */
+    .dbt-stats {
+      position: absolute;
+      right: 128px;
+      top: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      align-items: flex-end;
+    }
+    .dbt-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 10px 18px;
+      border-right: 1px solid rgba(201, 172, 103, 0.7);
+      background: rgba(20, 22, 26, 0.6);
+    }
+    .dbt-stat-num {
+      font-family: monospace;
+      font-size: 52px;
+      line-height: 1;
+      color: #e6cf95;
+      letter-spacing: 0.02em;
+      min-width: 96px;
+      text-align: right;
+    }
+    .dbt-stat-label {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: rgba(250, 250, 233, 0.88);
+    }
+    .dbt-stat-unit {
+      font-family: monospace;
+      font-size: 16px;
+      color: rgba(250, 250, 233, 0.5);
+      letter-spacing: 0.12em;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-dashboard" data-width="1920" data-height="1080">
+    <!-- track 0: ground -->
+    <div class="clip dbt-ground" data-start="0" data-duration="9" data-track-index="0">
+      <div class="dbt-sun-bloom"></div>
+      <div class="dbt-ember-bloom"></div>
+    </div>
+
+    <!-- track 1: full-bleed screenshot push shot -->
+    <div class="clip dbt-stage" data-start="0" data-duration="9" data-track-index="1">
+      <div class="dbt-viewport">
+        <div class="dbt-world" data-layout-allow-overflow>
+          <img class="dbt-shot" src="assets/dashboard.png" alt="" />
+          <div class="dbt-scrim"></div>
+          <div class="dbt-marker dbt-marker-hero" data-marker="hero"></div>
+          <div class="dbt-marker dbt-marker-stats" data-marker="stats"></div>
+          <div class="dbt-marker dbt-marker-health" data-marker="health"></div>
+        </div>
+      </div>
+      <div class="dbt-frame">
+        <div class="dbt-corner dbt-corner-tl"></div>
+        <div class="dbt-corner dbt-corner-tr"></div>
+        <div class="dbt-corner dbt-corner-bl"></div>
+        <div class="dbt-corner dbt-corner-br"></div>
+      </div>
+    </div>
+
+    <!-- track 2: caption bar + side stats -->
+    <div class="clip" data-start="0" data-duration="9" data-track-index="2">
+      <div class="dbt-captionbar">
+        <span class="dbt-caption-title">总览</span>
+        <span class="dbt-caption-line">一屏掌握全局</span>
+        <span class="dbt-caption-line"><span class="dbt-kw" data-kw="hero">主角雷达</span><span class="dbt-sep"> / </span><span class="dbt-kw" data-kw="stats">事件统计</span><span class="dbt-sep"> / </span><span class="dbt-kw" data-kw="health">章节健康度</span></span>
+      </div>
+      <div class="dbt-stats">
+        <div class="dbt-stat" data-stat="hero">
+          <span class="dbt-stat-num" data-count="7">0</span>
+          <span class="dbt-stat-label">主角雷达</span>
+        </div>
+        <div class="dbt-stat" data-stat="stats">
+          <span class="dbt-stat-num" data-count="9">0</span>
+          <span class="dbt-stat-label">事件统计</span>
+        </div>
+        <div class="dbt-stat" data-stat="health">
+          <span class="dbt-stat-num" data-count="100">0</span>
+          <span class="dbt-stat-unit">%</span>
+          <span class="dbt-stat-label">章节健康度</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      (function () {
+        var ID = "03-dashboard";
+        var q = function (sel) { return document.querySelector('[data-composition-id="' + ID + '"] ' + sel); };
+        var qa = function (sel) { return Array.prototype.slice.call(document.querySelectorAll('[data-composition-id="' + ID + '"] ' + sel)); };
+
+        var world = q(".dbt-world");
+        var frame = q(".dbt-frame");
+        var corners = qa(".dbt-corner");
+        var captionbar = q(".dbt-captionbar");
+        var markers = {
+          hero: q('.dbt-marker[data-marker="hero"]'),
+          stats: q('.dbt-marker[data-marker="stats"]'),
+          health: q('.dbt-marker[data-marker="health"]')
+        };
+        var kws = {
+          hero: q('.dbt-kw[data-kw="hero"]'),
+          stats: q('.dbt-kw[data-kw="stats"]'),
+          health: q('.dbt-kw[data-kw="health"]')
+        };
+        var statEls = {
+          hero: q('.dbt-stat[data-stat="hero"]'),
+          stats: q('.dbt-stat[data-stat="stats"]'),
+          health: q('.dbt-stat[data-stat="health"]')
+        };
+        var countEls = qa(".dbt-stat-num");
+
+        var tl = gsap.timeline({ paused: true });
+
+        // ---- Scene 1 (0.0–2.5s): full-bleed screenshot fades in, 1.08 -> 1.0 settle;
+        //      gold viewport frame + corners stroke in; caption bar rises above lower edge.
+        tl.fromTo(world, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1.0, duration: 2.5, ease: "power2.out" }, 0);
+        tl.fromTo(frame, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power1.out" }, 0.25);
+        tl.fromTo(corners[0], { scale: 0 }, { scale: 1, duration: 0.7, ease: "power2.out" }, 0.4);
+        tl.fromTo(corners[1], { scale: 0 }, { scale: 1, duration: 0.7, ease: "power2.out" }, 0.5);
+        tl.fromTo(corners[2], { scale: 0 }, { scale: 1, duration: 0.7, ease: "power2.out" }, 0.6);
+        tl.fromTo(corners[3], { scale: 0 }, { scale: 1, duration: 0.7, ease: "power2.out" }, 0.7);
+        tl.fromTo(captionbar, { opacity: 0, xPercent: -50, y: 26 }, { opacity: 1, xPercent: -50, y: 0, duration: 0.9, ease: "power2.out" }, 1.3);
+
+        // ---- Scene 2 (2.5–5.5s): camera push toward the hero-card region (upper-left third);
+        //      viewport frame gathers inward; keyword「主角雷达」dots on, stat row 1 counts up.
+        // focus point (620, 360) at scale 1.34 -> translate = (960 - 620*1.34, 540 - 360*1.34)
+        tl.to(world, { scale: 1.34, x: 129, y: 58, duration: 3.0, ease: "power2.inOut" }, 2.5);
+        tl.to(frame, { scale: 0.955, duration: 3.0, ease: "power2.inOut" }, 2.5);
+        tl.fromTo(statEls.hero, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 2.7);
+        tl.fromTo(markers.hero, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 2.7);
+        tl.fromTo(kws.hero, { color: "rgba(250,250,233,0.45)", opacity: 0.6 }, { color: "#e6cf95", opacity: 1, duration: 0.5, ease: "power1.out" }, 2.8);
+
+        // ---- Scene 3 (5.5–9.0s):「事件统计」then「章节健康度」dot on; each beat flashes
+        //      its region brackets and rolls out a count-up number; final 1.5s is a still hold.
+        tl.fromTo(statEls.stats, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 5.6);
+        tl.fromTo(markers.stats, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 5.6);
+        tl.fromTo(kws.stats, { opacity: 0.45 }, { opacity: 1, duration: 0.4 }, 5.7);
+        tl.fromTo(statEls.health, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 6.9);
+        tl.fromTo(markers.health, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 6.9);
+        tl.fromTo(kws.health, { opacity: 0.45 }, { opacity: 1, duration: 0.4 }, 7.0);
+
+        // marker flash pulses (opacity only, no exit)
+        tl.fromTo(markers.hero, { opacity: 1 }, { opacity: 0.35, duration: 0.22, yoyo: false, repeat: 0 }, 5.65)
+          .to(markers.hero, { opacity: 1, duration: 0.22 }, 5.87);
+        tl.fromTo(markers.stats, { opacity: 1 }, { opacity: 0.35, duration: 0.22 }, 6.95)
+          .to(markers.stats, { opacity: 1, duration: 0.22 }, 7.17);
+        tl.fromTo(markers.health, { opacity: 1 }, { opacity: 0.35, duration: 0.22 }, 7.6)
+          .to(markers.health, { opacity: 1, duration: 0.22 }, 7.82);
+
+        // count-ups (deterministic textContent tween with snap)
+        var counts = [
+          { el: countEls[0], end: 7, start: 2.9, fmt: function (v) { return String(Math.round(v)); } },
+          { el: countEls[1], end: 9, start: 5.8, fmt: function (v) { return String(Math.round(v)); } },
+          { el: countEls[2], end: 100, start: 7.1, fmt: function (v) { return String(Math.round(v)); } }
+        ];
+        counts.forEach(function (c) {
+          var obj = { v: 0 };
+          tl.to(obj, {
+            v: c.end,
+            duration: 1.1,
+            ease: "power1.out",
+            snap: { v: 1 },
+            onUpdate: function () { c.el.textContent = c.fmt(obj.v); }
+          }, c.start);
+          tl.set(c.el, { textContent: String(c.end) }, c.start + 1.15);
+        });
+
+        // final hold: 7.5–9.0s no further motion (semi-still read)
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </div>
+</template>

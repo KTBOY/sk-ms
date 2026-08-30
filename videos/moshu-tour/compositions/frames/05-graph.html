@@ -1,0 +1,307 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-700.ttf") format("truetype");
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    #root {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      position: relative;
+      container-type: size;
+      font-family: "Noto Sans SC", sans-serif;
+      color: #FAFAE9;
+    }
+
+    .f05-graph-bg {
+      position: absolute;
+      inset: 0;
+      background: #14161A;
+    }
+
+    .f05-graph-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .f05-graph-world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      will-change: transform;
+    }
+
+    .f05-graph-shot {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+
+    .f05-graph-dim {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(20, 22, 26, 0.82) 0%, rgba(20, 22, 26, 0.30) 22%, rgba(20, 22, 26, 0.05) 42%, rgba(20, 22, 26, 0.38) 100%),
+        radial-gradient(120% 90% at 50% 55%, rgba(20, 22, 26, 0) 55%, rgba(20, 22, 26, 0.45) 100%);
+    }
+
+    .f05-graph-glow {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201, 172, 103, 0.55) 0%, rgba(201, 172, 103, 0.18) 38%, rgba(201, 172, 103, 0) 70%);
+      will-change: transform, opacity;
+    }
+
+    .f05-graph-glow-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      margin: -7px 0 0 -7px;
+      border-radius: 50%;
+      background: #C9AC67;
+    }
+
+    .f05-graph-ui {
+      position: absolute;
+      inset: 0;
+    }
+
+    .f05-graph-header {
+      position: absolute;
+      top: 78px;
+      left: 96px;
+    }
+
+    .f05-graph-kicker {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 233, 0.62);
+    }
+
+    .f05-graph-title {
+      margin-top: 18px;
+      font-size: 58px;
+      font-weight: 400;
+      line-height: 1.06;
+      letter-spacing: 0.01em;
+      color: #FAFAE9;
+    }
+
+    .f05-graph-rule {
+      margin-top: 26px;
+      width: 320px;
+      height: 1px;
+      background: rgba(250, 250, 233, 0.9);
+      transform-origin: left center;
+    }
+
+    .f05-graph-views {
+      position: absolute;
+      top: 292px;
+      left: 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .f05-graph-view {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      opacity: 0;
+    }
+
+    .f05-graph-view-num {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      color: rgba(250, 250, 233, 0.55);
+    }
+
+    .f05-graph-view-name {
+      font-size: 34px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      color: #FAFAE9;
+    }
+
+    .f05-graph-view.is-active .f05-graph-view-name {
+      color: #C9AC67;
+    }
+
+    .f05-graph-tag {
+      position: absolute;
+      top: 84px;
+      right: 96px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+    }
+
+    .f05-graph-tag::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: #C9AC67;
+      transform: rotate(45deg);
+    }
+
+    .f05-graph-tag-text {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      color: rgba(250, 250, 233, 0.85);
+    }
+
+    .f05-graph-pagenum {
+      position: absolute;
+      top: 868px;
+      right: 96px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: rgba(250, 250, 233, 0.6);
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-graph" data-width="1920" data-height="1080">
+    <div class="clip f05-graph-bg" data-start="0" data-duration="9" data-track-index="0"></div>
+
+    <div class="clip f05-graph-stage" data-start="0" data-duration="9" data-track-index="1">
+      <div class="f05-graph-world" data-layout-allow-overflow>
+        <img class="f05-graph-shot" src="assets/graph.png" alt="" />
+        <div class="f05-graph-dim"></div>
+        <div class="f05-graph-glow" data-glow="main" style="top: 380px; left: 870px;"></div>
+        <div class="f05-graph-glow" data-glow="a" style="top: 250px; left: 620px;"></div>
+        <div class="f05-graph-glow" data-glow="b" style="top: 470px; left: 1120px;"></div>
+        <div class="f05-graph-glow" data-glow="c" style="top: 620px; left: 760px;"></div>
+      </div>
+    </div>
+
+    <div class="clip f05-graph-ui" data-start="0" data-duration="9" data-track-index="2">
+      <div class="f05-graph-header">
+        <div class="f05-graph-kicker">05 / Graph Center</div>
+        <div class="f05-graph-title">图谱中心 · 设定即图谱</div>
+        <div class="f05-graph-rule" data-rule></div>
+      </div>
+
+      <div class="f05-graph-views">
+        <div class="f05-graph-view" data-view="0">
+          <span class="f05-graph-view-num">01</span>
+          <span class="f05-graph-view-name">关系网络</span>
+        </div>
+        <div class="f05-graph-view" data-view="1">
+          <span class="f05-graph-view-num">02</span>
+          <span class="f05-graph-view-name">事件因果</span>
+        </div>
+        <div class="f05-graph-view" data-view="2">
+          <span class="f05-graph-view-num">03</span>
+          <span class="f05-graph-view-name">人物轨迹</span>
+        </div>
+      </div>
+
+      <div class="f05-graph-tag" data-tag="0"><span class="f05-graph-tag-text">关系网络</span></div>
+      <div class="f05-graph-tag" data-tag="1"><span class="f05-graph-tag-text">事件因果</span></div>
+      <div class="f05-graph-tag" data-tag="2"><span class="f05-graph-tag-text">人物轨迹</span></div>
+
+      <div class="f05-graph-pagenum">05 — 09s</div>
+    </div>
+
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+
+        /* ── Ken Burns: the slowest beat of the film — left region → center → right-down, then hold ── */
+        const world = document.querySelector(".f05-graph-world");
+        tl.fromTo(world,
+          { x: 130, y: 62, scale: 1.26 },
+          { x: 0, y: 0, scale: 1.20, duration: 5.0, ease: "sine.inOut" }, 0);
+        tl.to(world,
+          { x: -118, y: -64, scale: 1.17, duration: 2.5, ease: "sine.inOut" }, 5.0);
+        /* 7.5–9.0s: camera still — 尾段持读 */
+
+        /* ── Scene 1 (0.0–2.5s): surface establishes, header reveals ── */
+        const stage = document.querySelector(".f05-graph-stage");
+        tl.fromTo(stage, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power1.out" }, 0);
+
+        const header = document.querySelector(".f05-graph-header");
+        tl.fromTo(header, { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.3);
+        tl.fromTo("[data-rule]", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power2.inOut" }, 0.6);
+
+        /* ── Scene 2 (2.5–5.0s): 关系网络 + gold node glows breathe ── */
+        const view0 = document.querySelector('[data-view="0"]');
+        tl.fromTo(view0, { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 2.5);
+
+        const glows = {
+          main: document.querySelector('[data-glow="main"]'),
+          a: document.querySelector('[data-glow="a"]'),
+          b: document.querySelector('[data-glow="b"]'),
+          c: document.querySelector('[data-glow="c"]')
+        };
+
+        function breathe(el, popAt, pops) {
+          tl.fromTo(el,
+            { opacity: 0, scale: 0.4 },
+            { opacity: 0.95, scale: 1, duration: 0.55, ease: "power2.out" }, popAt);
+          let t = popAt + 0.55;
+          pops.forEach(function (o) {
+            tl.to(el, { opacity: o, duration: 0.75, ease: "sine.inOut" }, t);
+            t += 0.75;
+          });
+        }
+
+        breathe(glows.main, 2.6, [0.55, 0.95, 0.6, 1.0]);
+        breathe(glows.a, 3.3, [0.6, 0.9, 0.55]);
+        breathe(glows.b, 4.0, [0.6, 0.95, 0.55]);
+        breathe(glows.c, 5.4, [0.55, 0.85, 0.5]);
+
+        /* top-right tag 01: 关系网络 */
+        const tag0 = document.querySelector('[data-tag="0"]');
+        tl.fromTo(tag0, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 2.8);
+        tl.to(tag0, { opacity: 0, duration: 0.6, ease: "power1.in" }, 4.4);
+
+        /* ── Scene 3 (5.0–9.0s): 事件因果 → 人物轨迹, tags bloom and fade, camera settles ── */
+        const view1 = document.querySelector('[data-view="1"]');
+        tl.fromTo(view1, { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 5.0);
+        const tag1 = document.querySelector('[data-tag="1"]');
+        tl.fromTo(tag1, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 5.2);
+        tl.to(tag1, { opacity: 0, duration: 0.6, ease: "power1.in" }, 6.4);
+
+        const view2 = document.querySelector('[data-view="2"]');
+        tl.fromTo(view2, { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 6.8);
+        const tag2 = document.querySelector('[data-tag="2"]');
+        tl.fromTo(tag2, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.0);
+        tl.to(tag2, { opacity: 0, duration: 0.6, ease: "power1.in" }, 8.2);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["05-graph"] = tl;
+      })();
+    </script>
+  </div>
+</template>

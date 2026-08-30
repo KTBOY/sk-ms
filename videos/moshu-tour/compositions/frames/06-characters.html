@@ -1,0 +1,260 @@
+<template data-composition-id="06-characters">
+  <style>
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-700.ttf") format("truetype");
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    #root {
+      position: absolute;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      background: #14161a;
+      font-family: "Noto Sans SC", sans-serif;
+    }
+
+    /* full-duration ground clip */
+    .frame-06-characters-ground {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(58% 62% at 30% 34%, rgba(201, 172, 103, 0.16) 0%, rgba(79, 64, 28, 0.10) 42%, rgba(108, 87, 38, 0.05) 66%, rgba(20, 22, 26, 0) 100%),
+        #14161a;
+    }
+
+    /* camera world: wraps screenshot + markers, driven only by GSAP transforms */
+    .frame-06-characters-world {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    .frame-06-characters-shot {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+    .frame-06-characters-shot img {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* gold L corner brackets (in screenshot coordinate space, inside the camera world) */
+    .frame-06-characters-bracket {
+      position: absolute;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .frame-06-characters-bracket i {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border: 0 solid #c9ac67;
+    }
+    .frame-06-characters-bracket i:nth-child(1) { left: 0; top: 0; border-left-width: 2px; border-top-width: 2px; }
+    .frame-06-characters-bracket i:nth-child(2) { right: 0; top: 0; border-right-width: 2px; border-top-width: 2px; }
+    .frame-06-characters-bracket i:nth-child(3) { left: 0; bottom: 0; border-left-width: 2px; border-bottom-width: 2px; }
+    .frame-06-characters-bracket i:nth-child(4) { right: 0; bottom: 0; border-right-width: 2px; border-bottom-width: 2px; }
+    .frame-06-characters-bracket::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(201, 172, 103, 0.28);
+    }
+
+    /* caption rail (fixed, outside the camera) */
+    .frame-06-characters-rail {
+      position: absolute;
+      left: 1608px;
+      top: 132px;
+      width: 272px;
+    }
+    .frame-06-characters-chip {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      padding: 14px 0 12px 18px;
+      border-left: 1px solid rgba(250, 250, 233, 0.35);
+      opacity: 0;
+    }
+    .frame-06-characters-chip .frame-06-characters-chip-idx {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      color: rgba(201, 172, 103, 0.85);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .frame-06-characters-chip .frame-06-characters-chip-txt {
+      font-family: "Noto Sans SC", sans-serif;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 1.15;
+      color: #fafae9;
+      letter-spacing: 0.06em;
+      display: block;
+    }
+    .frame-06-characters-chip.is-active-chip .frame-06-characters-chip-txt {
+      color: #c9ac67;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-characters" data-width="1920" data-height="1080">
+    <div class="clip frame-06-characters-ground" data-start="0" data-duration="8" data-track-index="0"></div>
+
+    <div class="clip frame-06-characters-world" data-start="0" data-duration="8" data-track-index="1" data-layout-allow-overflow>
+      <div class="frame-06-characters-shot">
+        <img src="assets/characters.png" alt="" />
+      </div>
+
+      <!-- Scene 2: radar / profile region — brackets collapse onto the first character card -->
+      <div class="frame-06-characters-bracket" id="frame-06-characters-bkt-radar" style="left: 318px; top: 238px; width: 252px; height: 128px;">
+        <i></i><i></i><i></i><i></i>
+      </div>
+
+      <!-- Scene 3 flash A: 档案 — page header region -->
+      <div class="frame-06-characters-bracket" id="frame-06-characters-bkt-dangan" style="left: 306px; top: 112px; width: 300px; height: 88px;">
+        <i></i><i></i><i></i><i></i>
+      </div>
+
+      <!-- Scene 3 flash B: 关系与别名 — card grid region -->
+      <div class="frame-06-characters-bracket" id="frame-06-characters-bkt-guanxi" style="left: 318px; top: 236px; width: 1280px; height: 272px;">
+        <i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+
+    <div class="clip frame-06-characters-rail" data-start="0" data-duration="8" data-track-index="2">
+      <div class="frame-06-characters-chip" id="frame-06-characters-chip-1" style="top: 0;">
+        <span class="frame-06-characters-chip-idx">01</span>
+        <span class="frame-06-characters-chip-txt">人物设计器</span>
+      </div>
+      <div class="frame-06-characters-chip" id="frame-06-characters-chip-2" style="top: 118px;">
+        <span class="frame-06-characters-chip-idx">02</span>
+        <span class="frame-06-characters-chip-txt">五维雷达</span>
+      </div>
+      <div class="frame-06-characters-chip" id="frame-06-characters-chip-3" style="top: 236px;">
+        <span class="frame-06-characters-chip-idx">03</span>
+        <span class="frame-06-characters-chip-txt">档案</span>
+      </div>
+      <div class="frame-06-characters-chip" id="frame-06-characters-chip-4" style="top: 330px;">
+        <span class="frame-06-characters-chip-idx">04</span>
+        <span class="frame-06-characters-chip-txt">关系与别名</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var world = document.getElementById("root").querySelector(".frame-06-characters-world");
+
+      function aim(px, py, s) {
+        // transform-origin 0 0: place screenshot point (px,py) at content center (960, 470)
+        return { x: 960 - px * s, y: 470 - py * s, scale: s };
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* Scene 1 (0.0–2.0s): screenshot fades in + gentle settle push; chip 1 lands */
+      tl.fromTo(
+        ".frame-06-characters-shot",
+        { opacity: 0, scale: 1.045, xPercent: -0.6, yPercent: -0.4 },
+        { opacity: 1, scale: 1.0, xPercent: 0, yPercent: 0, duration: 1.5, ease: "power2.out" },
+        0
+      );
+      tl.fromTo(
+        "#frame-06-characters-chip-1",
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        0.45
+      );
+
+      /* Scene 2 (2.0–5.0s): push into the radar region; gold brackets collapse; chip 2 */
+      tl.to(world, {
+        ...aim(460, 300, 2.35),
+        duration: 1.5,
+        ease: "power2.inOut",
+      }, 2.0);
+      tl.fromTo(
+        "#frame-06-characters-bkt-radar",
+        { opacity: 0, scale: 1.45 },
+        { opacity: 1, scale: 1.0, duration: 0.9, ease: "power3.out" },
+        2.5
+      );
+      tl.fromTo(
+        "#frame-06-characters-chip-2",
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        2.7
+      );
+      tl.to("#frame-06-characters-chip-1", { opacity: 0.28, duration: 0.5, ease: "power1.out" }, 2.7);
+
+      /* Scene 3 (5.0–8.0s): pull back; 档案 then 关系与别名 with bracket flashes; hold */
+      tl.to(world, {
+        ...aim(960, 430, 1.12),
+        duration: 1.1,
+        ease: "power2.inOut",
+      }, 5.0);
+      tl.to("#frame-06-characters-bkt-radar", { opacity: 0, duration: 0.4, ease: "power1.out" }, 5.0);
+
+      tl.fromTo(
+        "#frame-06-characters-bkt-dangan",
+        { opacity: 0, scale: 1.18 },
+        { opacity: 1, scale: 1.0, duration: 0.45, ease: "power2.out" },
+        5.35
+      );
+      tl.to("#frame-06-characters-bkt-dangan", { opacity: 0, duration: 0.5, ease: "power1.in" }, 5.95);
+      tl.fromTo(
+        "#frame-06-characters-chip-3",
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        5.35
+      );
+
+      tl.fromTo(
+        "#frame-06-characters-bkt-guanxi",
+        { opacity: 0, scale: 1.06 },
+        { opacity: 1, scale: 1.0, duration: 0.5, ease: "power2.out" },
+        6.35
+      );
+      tl.to("#frame-06-characters-bkt-guanxi", { opacity: 0, duration: 0.55, ease: "power1.in" }, 7.0);
+      tl.fromTo(
+        "#frame-06-characters-chip-4",
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        6.45
+      );
+      tl.to("#frame-06-characters-chip-2", { opacity: 0.28, duration: 0.5, ease: "power1.out" }, 5.35);
+
+      /* closing hold (6.6–8.0s): slow breathing drift under the read */
+      tl.to(world, {
+        scale: 1.145,
+        x: "-=14",
+        y: "-=8",
+        duration: 1.4,
+        ease: "sine.inOut",
+      }, 6.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-characters"] = tl;
+    })();
+  </script>
+</template>

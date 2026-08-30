@@ -1,0 +1,191 @@
+{
+  "typography": [
+    {
+      "role": "heading",
+      "fontFamily": "system-ui",
+      "fontSize": "20px",
+      "fontWeight": "600",
+      "lineHeight": "32px",
+      "letterSpacing": "4px",
+      "color": "#FAFAE9",
+      "sampleText": "图谱中心ATLAS"
+    },
+    {
+      "role": "body",
+      "fontFamily": "system-ui",
+      "fontSize": "12.5px",
+      "fontWeight": "400",
+      "lineHeight": "20px",
+      "letterSpacing": "0.5px",
+      "color": "#FAFAE9",
+      "sampleText": "关系网络 · 因果时序 · 人物轨迹 —— 拖拽节点、滚轮或右上角按钮缩放、点击查看详情"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      2,
+      3,
+      4,
+      5,
+      8,
+      11,
+      12,
+      14,
+      16,
+      18,
+      22,
+      28
+    ],
+    "baseUnit": 4
+  },
+  "radius": [],
+  "shadows": [
+    {
+      "value": "rgba(0, 0, 0, 0.6) 0px 20px 60px 0px",
+      "count": 1
+    },
+    {
+      "value": "rgba(201, 172, 103, 0.35) 0px 0px 14px 0px",
+      "count": 1
+    }
+  ],
+  "buttons": [
+    {
+      "label": "墨枢NOVEL ATLAS",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#FAFAE9",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(250, 250, 233)",
+      "boxShadow": "none",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "height": "25px"
+    },
+    {
+      "label": "button",
+      "background": "#C9AC67",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#14161A",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "1px solid rgba(0, 0, 0, 0)",
+      "boxShadow": "rgba(201, 172, 103, 0.35) 0px 0px 14px 0px",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "height": "38px"
+    },
+    {
+      "label": "关系图谱",
+      "background": "#C9AC67",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#14161A",
+      "padding": "5px 14px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(20, 22, 26)",
+      "boxShadow": "none",
+      "fontSize": "12.5px",
+      "fontWeight": "600",
+      "height": "26px"
+    },
+    {
+      "label": "事件图谱",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#FAFAE9",
+      "padding": "5px 14px",
+      "borderRadius": "0px",
+      "border": "0px none rgba(250, 250, 233, 0.45)",
+      "boxShadow": "none",
+      "fontSize": "12.5px",
+      "fontWeight": "400",
+      "height": "26px"
+    }
+  ],
+  "cards": [
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "radial-gradient(130% 80% at 100% 0%, rgba(201, 172, 103, 0.11), rgba(0, 0, 0, 0) 62%), linear-gradient(168deg, rgb(27, 30, 35), rgb(20, 22, 26) 62%)",
+      "backdropFilter": "",
+      "color": "#FAFAE9",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "1px solid rgba(201, 172, 103, 0.2)",
+      "boxShadow": "rgba(0, 0, 0, 0.6) 0px 20px 60px 0px",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "height": "1036px"
+    }
+  ],
+  "nav": {
+    "label": "navigation",
+    "background": "transparent",
+    "backgroundImage": "",
+    "backdropFilter": "",
+    "color": "#FAFAE9",
+    "padding": "16px 24px 12px",
+    "borderRadius": "0px",
+    "border": "",
+    "boxShadow": "none",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "height": "77px"
+  },
+  "chips": [],
+  "statCells": [],
+  "tabs": [
+    {
+      "label": "关系图谱",
+      "background": "#C9AC67",
+      "color": "#14161A",
+      "padding": "5px 14px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(20, 22, 26)",
+      "boxShadow": "none",
+      "fontSize": "12.5px",
+      "fontWeight": "600",
+      "height": "26px"
+    },
+    {
+      "label": "事件图谱",
+      "background": "transparent",
+      "color": "#FAFAE9",
+      "padding": "5px 14px",
+      "borderRadius": "0px",
+      "border": "0px none rgba(250, 250, 233, 0.45)",
+      "boxShadow": "none",
+      "fontSize": "12.5px",
+      "fontWeight": "400",
+      "height": "26px"
+    }
+  ],
+  "backgrounds": [
+    {
+      "value": "radial-gradient(1100px 520px at 88% -12%, rgba(201, 172, 103, 0.09), rgba(0, 0, 0, 0) 62%), radial-gradient(900px 520px at -8% 112%, rgba(201, 172, 103, 0.05), rgba(0, 0, 0, 0) 60%)",
+      "area": 2073600
+    },
+    {
+      "value": "radial-gradient(130% 80% at 100% 0%, rgba(201, 172, 103, 0.11), rgba(0, 0, 0, 0) 62%), linear-gradient(168deg, rgb(27, 30, 35), rgb(20, 22, 26) 62%)",
+      "area": 1943536
+    },
+    {
+      "value": "linear-gradient(90deg, rgb(201, 172, 103), rgba(201, 172, 103, 0.35))",
+      "area": 1943536
+    },
+    {
+      "value": "repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.024) 0px, rgba(255, 255, 255, 0.024) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 5px)",
+      "area": 1943536
+    },
+    {
+      "value": "linear-gradient(rgba(201, 172, 103, 0.05) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(90deg, rgba(201, 172, 103, 0.05) 1px, rgba(0, 0, 0, 0) 1px)",
+      "area": 584022
+    }
+  ],
+  "glass": []
+}

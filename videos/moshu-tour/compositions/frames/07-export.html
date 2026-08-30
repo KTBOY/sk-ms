@@ -1,0 +1,276 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-400.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-700.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-400.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-export" style="position: relative; width: 1920px; height: 1080px; overflow: hidden; container-type: size;" data-width="1920" data-height="1080">
+    <style>
+      #root {
+        font-family: "Noto Sans SC", sans-serif;
+        color: #FAFAE9;
+      }
+      .e7-clip-base {
+        background: #14161A;
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .e7-bloom {
+        position: absolute;
+        width: 60%;
+        height: 90%;
+        left: -8%;
+        top: -12%;
+        background: radial-gradient(closest-side, rgba(201,172,103,0.55) 0%, rgba(79,64,28,0.5) 38%, rgba(108,87,38,0.22) 62%, rgba(20,22,26,0) 100%);
+      }
+      .e7-ember {
+        position: absolute;
+        width: 45%;
+        height: 60%;
+        right: -6%;
+        bottom: 4%;
+        background: radial-gradient(closest-side, rgba(230,207,149,0.20) 0%, rgba(230,207,149,0.10) 45%, rgba(20,22,26,0) 100%);
+      }
+      .e7-shot {
+        position: absolute;
+        inset: 0;
+        container-type: size;
+      }
+      .e7-kicker {
+        position: absolute;
+        left: 4cqw;
+        top: 5.5cqh;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 15px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(250,250,233,0.75);
+      }
+      .e7-title {
+        position: absolute;
+        left: 4cqw;
+        top: 10.5cqh;
+        font-family: "Noto Sans SC", sans-serif;
+        font-weight: 700;
+        font-size: 3.1cqw;
+        line-height: 1.05;
+        letter-spacing: -0.005em;
+        color: #FAFAE9;
+      }
+      .e7-title-accent { color: #C9AC67; }
+      /* left ~60% screenshot */
+      .e7-shotwrap {
+        position: absolute;
+        left: 4cqw;
+        top: 21cqh;
+        width: 56cqw;
+        height: 62cqh;
+        overflow: hidden;
+        border: 1px solid rgba(250,250,233,0.22);
+        background: #14161A;
+      }
+      .e7-shotwrap img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top left;
+      }
+      .e7-shotdim {
+        position: absolute;
+        inset: 0;
+        background: #14161A;
+        opacity: 0;
+      }
+      /* right 40% badge column */
+      .e7-badges {
+        position: absolute;
+        left: 63.5cqw;
+        top: 20cqh;
+        width: 32cqw;
+        height: 62cqh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+      .e7-badge {
+        position: relative;
+        border: 1px solid rgba(250,250,233,0.18);
+        background: rgba(20,22,26,0.55);
+        padding: 1.5cqh 1.4cqw;
+        opacity: 0.22;
+        overflow: hidden;
+      }
+      .e7-b-fill {
+        position: absolute;
+        inset: 0;
+        background: #C9AC67;
+        opacity: 0;
+      }
+      .e7-b-row {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      .e7-b-name {
+        font-weight: 700;
+        font-size: 1.75cqw;
+        letter-spacing: 0.02em;
+        color: #FAFAE9;
+      }
+      .e7-b-ext {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85cqw;
+        letter-spacing: 0.08em;
+        color: rgba(250,250,233,0.6);
+      }
+      .e7-b-sub {
+        position: relative;
+        margin-top: 0.7cqh;
+        font-size: 0.95cqw;
+        letter-spacing: 0.05em;
+        color: rgba(250,250,233,0.55);
+      }
+      .e7-b-index {
+        position: absolute;
+        top: 0.9cqh;
+        right: 1.1cqw;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        color: rgba(250,250,233,0.4);
+      }
+      /* gold-fill finale: ink text on sun for the last badge only */
+      .e7-badge-finale .e7-b-name,
+      .e7-badge-finale .e7-b-sub,
+      .e7-badge-finale .e7-b-ext {
+        color: #14161A;
+      }
+      /* glow sweep bar across the badge stack */
+      .e7-sweep {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 14%;
+        top: 100%;
+        background: linear-gradient(to bottom, rgba(201,172,103,0) 0%, rgba(201,172,103,0.14) 50%, rgba(201,172,103,0) 100%);
+        pointer-events: none;
+      }
+    </style>
+
+    <div class="clip e7-clip-base" data-start="0" data-duration="8" data-track-index="0">
+      <div class="e7-bloom"></div>
+      <div class="e7-ember"></div>
+    </div>
+
+    <div class="clip e7-shot" data-start="0" data-duration="8" data-track-index="1">
+      <div class="e7-kicker">EXPORT / 一次创作，多端交付</div>
+      <div class="e7-title">一次创作，<span class="e7-title-accent">多端交付</span></div>
+
+      <!-- left ~60%: real screenshot -->
+      <div class="e7-shotwrap">
+        <img src="assets/export.png" alt="" />
+        <div class="e7-shotdim" id="e7-dim"></div>
+      </div>
+
+      <!-- right 40%: five format badges -->
+      <div class="e7-badges" id="e7-stack">
+        <div class="e7-badge" id="e7-badge-0">
+          <div class="e7-b-fill"></div>
+          <div class="e7-b-index">01</div>
+          <div class="e7-b-row"><span class="e7-b-name">TXT</span><span class="e7-b-ext">.txt</span></div>
+          <div class="e7-b-sub">纯文本 · 通用</div>
+        </div>
+        <div class="e7-badge" id="e7-badge-1">
+          <div class="e7-b-fill"></div>
+          <div class="e7-b-index">02</div>
+          <div class="e7-b-row"><span class="e7-b-name">Markdown</span><span class="e7-b-ext">.md</span></div>
+          <div class="e7-b-sub">所见即所得</div>
+        </div>
+        <div class="e7-badge" id="e7-badge-2">
+          <div class="e7-b-fill"></div>
+          <div class="e7-b-index">03</div>
+          <div class="e7-b-row"><span class="e7-b-name">DOCX</span><span class="e7-b-ext">.docx</span></div>
+          <div class="e7-b-sub">排版保真</div>
+        </div>
+        <div class="e7-badge" id="e7-badge-3">
+          <div class="e7-b-fill"></div>
+          <div class="e7-b-index">04</div>
+          <div class="e7-b-row"><span class="e7-b-name">EPUB3</span><span class="e7-b-ext">.epub</span></div>
+          <div class="e7-b-sub">电子书出版</div>
+        </div>
+        <div class="e7-badge e7-badge-finale" id="e7-badge-4">
+          <div class="e7-b-fill" id="e7-fill-gold"></div>
+          <div class="e7-b-index">05</div>
+          <div class="e7-b-row"><span class="e7-b-name">JSON 备份</span><span class="e7-b-ext">.json</span></div>
+          <div class="e7-b-sub" id="e7-local-line">数据 100% 本地</div>
+        </div>
+        <div class="e7-sweep" id="e7-sweep"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        window.__timelines = window.__timelines || {};
+        window.__timelines["07-export"] = tl;
+
+        /* Scene 1 (0.0-2.0s): screenshot fades in, camera settles slightly tighter, title lands */
+        tl.fromTo("#root .e7-shotwrap", { opacity: 0, scale: 1.045 }, { opacity: 1, scale: 1.0, duration: 1.4, ease: "power2.out" }, 0.05);
+        tl.fromTo("#root .e7-kicker", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.25);
+        tl.fromTo("#root .e7-title", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" }, 0.7);
+
+        /* Scene 2 (2.0-5.5s): badges light up one by one, ~0.8s apart; screenshot dims to yield */
+        tl.to("#root #e7-dim", { opacity: 0.28, duration: 1.2, ease: "power1.inOut" }, 2.0);
+
+        const badgeStarts = [2.0, 2.8, 3.6, 4.4];
+        badgeStarts.forEach(function (t, i) {
+          const sel = "#root #e7-badge-" + i;
+          /* assemble into slot: short slide + fade (no scatter) */
+          tl.fromTo(sel, { x: 26, opacity: 0.22 }, { x: 0, opacity: 1, duration: 0.55, ease: "power2.out" }, t);
+          /* stroke lights up + micro lift */
+          tl.fromTo(sel, { borderColor: "rgba(250,250,233,0.18)" }, { borderColor: "rgba(201,172,103,0.65)", duration: 0.5, ease: "power1.out" }, t + 0.1);
+          tl.to(sel, { y: -4, duration: 0.4, ease: "power1.out" }, t + 0.12);
+          tl.to(sel, { y: 0, duration: 0.45, ease: "power1.inOut" }, t + 0.55);
+        });
+
+        /* gentle glow sweep across the stack as badges resolve */
+        tl.fromTo("#root #e7-sweep", { yPercent: 114, opacity: 0 }, { yPercent: -16, opacity: 1, duration: 2.6, ease: "sine.inOut" }, 2.0);
+
+        /* Scene 3 (5.5-8.0s): finale badge — gold fill lights up with a pulse, local line lands */
+        tl.fromTo("#root #e7-badge-4", { x: 26, opacity: 0.22 }, { x: 0, opacity: 1, duration: 0.55, ease: "power2.out" }, 5.5);
+        tl.to("#root #e7-fill-gold", { opacity: 0.92, duration: 0.5, ease: "power2.out" }, 5.75);
+        tl.to("#root #e7-badge-4", { y: -4, duration: 0.4, ease: "power1.out" }, 5.85);
+        tl.to("#root #e7-badge-4", { y: 0, duration: 0.45, ease: "power1.inOut" }, 6.3);
+        /* one soft pulse, then settle */
+        tl.fromTo("#root #e7-badge-4", { scale: 1.0 }, { scale: 1.035, duration: 0.32, ease: "power1.out" }, 6.85);
+        tl.to("#root #e7-badge-4", { scale: 1.0, duration: 0.5, ease: "power1.inOut" }, 7.2);
+        tl.fromTo("#root #e7-local-line", { opacity: 0.55, y: 8 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 5.9);
+
+        /* hold-out: near-static float on the stack for the tail read */
+        tl.to("#root #e7-stack", { y: -6, duration: 2.0, ease: "sine.inOut" }, 6.0);
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,292 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Noto Sans SC";
+      src: url("assets/fonts/NotoSansSC-700.ttf") format("truetype");
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-400.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Noto Sans SC", sans-serif;
+    }
+
+    .pain02-bg {
+      position: absolute;
+      inset: 0;
+      background: #14161A;
+    }
+    .pain02-sunbloom {
+      position: absolute;
+      left: 20%;
+      top: 4%;
+      width: 64%;
+      height: 80%;
+      background: radial-gradient(
+        ellipse at 42% 40%,
+        rgba(201, 172, 103, 0.55) 0%,
+        rgba(79, 64, 28, 0.75) 32%,
+        rgba(108, 87, 38, 0.30) 58%,
+        rgba(20, 22, 26, 0) 78%
+      );
+    }
+    .pain02-emberbloom {
+      position: absolute;
+      right: -6%;
+      bottom: -8%;
+      width: 46%;
+      height: 50%;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(230, 207, 149, 0.18) 0%,
+        rgba(230, 207, 149, 0) 70%
+      );
+    }
+
+    /* equation tower — centered within the top 83% */
+    .pain02-tower {
+      position: absolute;
+      left: 20%;
+      top: 90px;
+      width: 60%;
+      height: 730px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pain02-step {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* amber hairline-stroked card wrapping segment 1 */
+    .pain02-card1 {
+      position: absolute;
+      inset: -18px -44px;
+      border: 1px solid #E6CF95;
+      opacity: 0;
+    }
+
+    .pain02-t1 {
+      font-size: 88px;
+      font-weight: 700;
+      color: #FAFAE9;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .pain02-eq {
+      font-size: 96px;
+      font-weight: 400;
+      color: #C9AC67;
+      line-height: 1;
+      opacity: 0;
+      margin: 26px 0;
+    }
+
+    .pain02-t2 {
+      font-size: 88px;
+      font-weight: 700;
+      color: #FAFAE9;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .pain02-t3 {
+      font-size: 168px;
+      font-weight: 700;
+      color: #E6CF95;
+      line-height: 0.96;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    .pain02-pulse {
+      display: inline-block;
+    }
+
+    /* bottom conclusion line — expands from center */
+    .pain02-rule {
+      position: absolute;
+      left: 50%;
+      top: 856px;
+      width: 760px;
+      height: 1px;
+      margin-left: -380px;
+      background: #C9AC67;
+      transform: scaleX(0);
+      transform-origin: center;
+      opacity: 0;
+    }
+
+    .pain02-eyebrow {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 118px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 20px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 233, 0.55);
+      opacity: 0;
+    }
+
+    .pain02-pagenum {
+      position: absolute;
+      right: 77px;
+      top: 118px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: rgba(250, 250, 233, 0.55);
+      opacity: 0.75;
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-pain" data-width="1920" data-height="1080">
+    <div class="clip pain02-bg" data-start="0" data-duration="7" data-track-index="0">
+      <div class="pain02-sunbloom"></div>
+      <div class="pain02-emberbloom"></div>
+    </div>
+
+    <div class="clip" data-start="0" data-duration="7" data-track-index="1">
+      <div class="pain02-eyebrow" id="pain02-eyebrow">02 / PAIN POINT</div>
+
+      <div class="pain02-tower" id="pain02-tower">
+        <div class="pain02-step" id="pain02-step1">
+          <div class="pain02-card1" id="pain02-card1"></div>
+          <div class="pain02-t1" id="pain02-t1">自由文本引用</div>
+        </div>
+
+        <div class="pain02-eq" id="pain02-eq1">=</div>
+
+        <div class="pain02-step" id="pain02-step2">
+          <div class="pain02-t2" id="pain02-t2">AI 拿不到设定</div>
+        </div>
+
+        <div class="pain02-eq" id="pain02-eq2">=</div>
+
+        <div class="pain02-step" id="pain02-step3">
+          <div class="pain02-t3" id="pain02-t3">写崩的<span class="pain02-pulse" id="pain02-pulse">源头</span></div>
+        </div>
+      </div>
+
+      <div class="pain02-rule" id="pain02-rule"></div>
+      <div class="pain02-pagenum">02 — 07</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+
+      // macro: slow push-in on the whole tower running underneath
+      tl.fromTo(
+        "#pain02-tower",
+        { scale: 0.97, y: 10 },
+        { scale: 1, y: 0, duration: 6.4, ease: "power1.out" },
+        0
+      );
+
+      // eyebrow chip fades up
+      tl.fromTo(
+        "#pain02-eyebrow",
+        { opacity: 0, y: -14 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        0.1
+      );
+
+      // ---- Scene 1 (0.0-1.8s): segment 1 drops from above into the mid band,
+      // amber hairline card wraps it
+      tl.fromTo(
+        "#pain02-step1",
+        { y: -110, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: "power3.out" },
+        0.15
+      );
+      tl.fromTo(
+        "#pain02-card1",
+        { opacity: 0, scale: 1.08 },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+        0.85
+      );
+
+      // ---- Scene 2 (1.8-3.6s): gold "=" lights up; segment 2 slides in from left
+      tl.fromTo(
+        "#pain02-eq1",
+        { opacity: 0, scale: 0.4 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.2)" },
+        1.85
+      );
+      tl.fromTo(
+        "#pain02-step2",
+        { x: -160, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        2.1
+      );
+
+      // second "=" follows
+      tl.fromTo(
+        "#pain02-eq2",
+        { opacity: 0, scale: 0.4 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.2)" },
+        3.65
+      );
+
+      // ---- Scene 3 (3.6-7.0s): segment 3 slams into the lower band, larger;
+      // thin gold line draws out from center
+      tl.fromTo(
+        "#pain02-step3",
+        { y: 120, opacity: 0, scale: 1.25 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power4.in" },
+        3.85
+      );
+      tl.fromTo(
+        "#pain02-step3",
+        { scale: 1.06 },
+        { scale: 1, duration: 0.35, ease: "power2.out" },
+        4.45
+      );
+      tl.fromTo(
+        "#pain02-rule",
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 0.9, duration: 0.9, ease: "power2.inOut" },
+        4.6
+      );
+
+      // ---- tail hold, then "源头" pulses once, deterministically
+      tl.fromTo(
+        "#pain02-pulse",
+        { scale: 1 },
+        { scale: 1.07, duration: 0.28, ease: "power2.out" },
+        6.05
+      );
+      tl.to("#pain02-pulse", { scale: 1, duration: 0.45, ease: "power2.inOut" }, 6.33);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-pain"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,35 @@
+[i] NOVEL ATLAS
+[h2] 人物设计器
+[span] CHARACTERS
+[p] 沉淀人物设定与关系网 —— AI 出场全靠它，共
+[span] 新建人物
+[span] 全部定位
+[span] 全部势力
+[span] 青云剑宗
+[div] 别名：霄少、小霄
+[div] 条关系
+[div] 苏映雪
+[div] 别名：映雪
+[div] 条关系
+[div] 玄清子
+[span] 青云剑宗
+[div] 别名：老宗主
+[div] 条关系
+[span] 青云剑宗
+[div] 别名：牛哥
+[div] 条关系
+[div] 云梦瑶
+[span] 大离皇朝
+[div] 别名：梦瑶公主
+[div] 条关系
+[div] 寄居玄天令中的神秘老者。
+[div] 条关系
+[div] 慕长风
+[span] 青云剑宗
+[div] 别名：长风师兄
+[div] 条关系
+[div] 血手屠九
+[span] 幽冥教
+[div] 别名：屠九
+[div] 条关系
+[em] 数据存储于本地 · 墨枢 NovelAtlas v1.0

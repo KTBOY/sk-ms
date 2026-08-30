@@ -1,0 +1,425 @@
+<template>
+  <div
+    id="root"
+    data-composition-id="08-cta"
+    data-start="0"
+    data-duration="8"
+    data-width="1920"
+    data-height="1080"
+  >
+    <style>
+      /* ===== 08-cta — 收束：CTA (kinetic-type-beats, closing CTA) ===== */
+      #root {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        font-family: sans-serif;
+      }
+      #root * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* --- full-bleed ground: paper + sun bloom + ember counter-bloom --- */
+      #cta08-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            58% 62% at 50% 34%,
+            rgba(201, 172, 103, 0.34) 0%,
+            rgba(79, 64, 28, 0.55) 34%,
+            rgba(108, 87, 38, 0.28) 58%,
+            rgba(20, 22, 26, 0) 78%
+          ),
+          radial-gradient(
+            30% 26% at 88% 86%,
+            rgba(230, 207, 149, 0.16) 0%,
+            rgba(20, 22, 26, 0) 70%
+          ),
+          #14161a;
+      }
+
+      /* --- dot-matrix decoration (background role) --- */
+      #cta08-dots {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 60px;
+        height: 760px;
+        background-image: radial-gradient(
+          rgba(201, 172, 103, 0.55) 1.4px,
+          transparent 1.6px
+        );
+        background-size: 64px 64px;
+        background-position: 32px 40px;
+        -webkit-mask-image: radial-gradient(
+          62% 78% at 50% 48%,
+          #000 0%,
+          rgba(0, 0, 0, 0.45) 52%,
+          transparent 82%
+        );
+        mask-image: radial-gradient(
+          62% 78% at 50% 48%,
+          #000 0%,
+          rgba(0, 0, 0, 0.45) 52%,
+          transparent 82%
+        );
+      }
+
+      /* --- content stage --- */
+      #cta08-stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 896px; /* caption keep-out: nothing below 83% */
+        container-type: size;
+      }
+
+      /* --- wordmark block: centered, upper 1/3 --- */
+      #cta08-mark {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 190px;
+        text-align: center;
+      }
+      #cta08-markrow {
+        position: relative;
+        display: inline-block;
+      }
+      .cta08-diamond {
+        position: absolute;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        background: #c9ac67;
+        transform: rotate(45deg);
+      }
+      #cta08-dl {
+        left: -96px;
+        margin-top: -9px;
+      }
+      #cta08-dr {
+        right: -96px;
+        margin-top: -9px;
+      }
+      #cta08-hanzi {
+        font-size: 128px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.06em;
+        color: #fafae9;
+      }
+      /* gold outline echo used for the one-shot stroke pulse */
+      #cta08-hanzi-outline {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        font-size: 128px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.06em;
+        color: transparent;
+        -webkit-text-stroke: 2px #c9ac67;
+      }
+      #cta08-latin {
+        margin-top: 26px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.42em;
+        text-indent: 0.42em;
+        color: rgba(250, 250, 233, 0.78);
+        text-transform: uppercase;
+      }
+      #cta08-markrule {
+        margin: 26px auto 0;
+        width: 520px;
+        height: 1px;
+        background: rgba(250, 250, 233, 0.2);
+      }
+
+      /* --- claim line: display, centered --- */
+      #cta08-claim {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 470px;
+        text-align: center;
+        font-size: 96px;
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -0.005em;
+        color: #fafae9;
+      }
+      #cta08-claim .cta08-w {
+        display: inline-block;
+      }
+      #cta08-claim .cta08-gold {
+        color: #c9ac67;
+      }
+
+      /* --- trust badge row --- */
+      #cta08-badges {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 56px;
+      }
+      .cta08-badge {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .cta08-badge-dot {
+        width: 10px;
+        height: 10px;
+        background: #c9ac67;
+        transform: rotate(45deg);
+      }
+      .cta08-badge-txt {
+        font-size: 26px;
+        font-weight: 400;
+        letter-spacing: 0.14em;
+        color: rgba(250, 250, 233, 0.9);
+        white-space: nowrap;
+      }
+      .cta08-badge-num {
+        font-size: 26px;
+        letter-spacing: 0.04em;
+      }
+      .cta08-badge-sep {
+        width: 1px;
+        height: 34px;
+        background: rgba(250, 250, 233, 0.2);
+      }
+    </style>
+
+    <!-- ground -->
+    <div
+      id="cta08-bg"
+      class="clip"
+      data-start="0"
+      data-duration="8"
+      data-track-index="0"
+    ></div>
+
+    <!-- content -->
+    <div
+      id="cta08-stage"
+      class="clip"
+      data-start="0"
+      data-duration="8"
+      data-track-index="1"
+    >
+      <div id="cta08-dots"></div>
+
+      <!-- Scene 1: wordmark return -->
+      <div id="cta08-mark">
+        <div id="cta08-markrow">
+          <div id="cta08-dl" class="cta08-diamond"></div>
+          <div id="cta08-dr" class="cta08-diamond"></div>
+          <div id="cta08-hanzi">墨枢</div>
+          <div id="cta08-hanzi-outline">墨枢</div>
+        </div>
+        <div id="cta08-latin">Novel&nbsp;Atlas</div>
+        <div id="cta08-markrule"></div>
+      </div>
+
+      <!-- Scene 2: claim line -->
+      <div id="cta08-claim">
+        <span class="cta08-w">让任何模型</span>
+        <span class="cta08-w">写长篇</span>
+        <span class="cta08-w">都</span><span class="cta08-w cta08-gold">不崩人设</span>
+      </div>
+
+      <!-- Scene 3: trust badges -->
+      <div id="cta08-badges">
+        <div class="cta08-badge" id="cta08-b1">
+          <div class="cta08-badge-dot"></div>
+          <div class="cta08-badge-txt">纯前端</div>
+        </div>
+        <div class="cta08-badge-sep" id="cta08-s1"></div>
+        <div class="cta08-badge" id="cta08-b2">
+          <div class="cta08-badge-dot"></div>
+          <div class="cta08-badge-txt">数据 <span class="cta08-badge-num">100%</span> 本地</div>
+        </div>
+        <div class="cta08-badge-sep" id="cta08-s2"></div>
+        <div class="cta08-badge" id="cta08-b3">
+          <div class="cta08-badge-dot"></div>
+          <div class="cta08-badge-txt">图谱一致性</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        /* ---- Scene 1 (0.0-2.0s): dot field fades in; wordmark returns to
+           its Frame 1 position language (centered, upper 1/3); gold
+           diamond nodes light up. ---- */
+        tl.fromTo(
+          "#cta08-dots",
+          { opacity: 0 },
+          { opacity: 0.32, duration: 1.4, ease: "power1.inOut" },
+          0
+        );
+        tl.fromTo(
+          "#cta08-mark",
+          { opacity: 0, y: 34, scale: 0.94 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.0,
+            ease: "power3.out",
+          },
+          0.25
+        );
+        tl.fromTo(
+          "#cta08-hanzi-outline",
+          { opacity: 0 },
+          { opacity: 0, duration: 0.01 },
+          0
+        );
+        /* gold diamond nodes pop on (spring) */
+        tl.fromTo(
+          "#cta08-dl",
+          { opacity: 0, scale: 0, rotation: 45 },
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 45,
+            duration: 0.55,
+            ease: "back.out(2.4)",
+          },
+          1.05
+        );
+        tl.fromTo(
+          "#cta08-dr",
+          { opacity: 0, scale: 0, rotation: 45 },
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 45,
+            duration: 0.55,
+            ease: "back.out(2.4)",
+          },
+          1.2
+        );
+        tl.fromTo(
+          "#cta08-latin",
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+          },
+          1.1
+        );
+        tl.fromTo(
+          "#cta08-markrule",
+          { scaleX: 0, opacity: 0 },
+          {
+            scaleX: 1,
+            opacity: 1,
+            duration: 0.7,
+            ease: "power2.inOut",
+          },
+          1.3
+        );
+
+        /* ---- Scene 2 (2.0-4.5s): claim line floats in as a whole row,
+           "不崩人设" in gold emphasis (per-word staggered fade + blur) ---- */
+        tl.fromTo(
+          "#cta08-claim .cta08-w",
+          { opacity: 0, y: 44, filter: "blur(8px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.85,
+            stagger: 0.22,
+            ease: "power3.out",
+          },
+          2.1
+        );
+        /* gold emphasis settles with a small underline-glow lift on the key word */
+        tl.fromTo(
+          "#cta08-claim .cta08-gold",
+          { scale: 0.96 },
+          { scale: 1, duration: 0.5, ease: "back.out(1.8)" },
+          3.15
+        );
+
+        /* ---- Scene 3 (4.5-8.0s): three trust badges light up in a row,
+           one by one; wordmark gold stroke pulses once; freeze hold 2s. ---- */
+        const badges = ["#cta08-b1", "#cta08-b2", "#cta08-b3"];
+        badges.forEach((sel, i) => {
+          const t = 4.5 + i * 0.55;
+          tl.fromTo(
+            sel,
+            { opacity: 0, y: 22, scale: 0.9 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              ease: "back.out(1.9)",
+            },
+            t
+          );
+        });
+        tl.fromTo("#cta08-s1", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 4.85);
+        tl.fromTo("#cta08-s2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 5.4);
+
+        /* gold stroke pulse on the wordmark — one shot, then frozen */
+        tl.fromTo(
+          "#cta08-hanzi-outline",
+          { opacity: 0, scale: 1 },
+          {
+            opacity: 0.95,
+            scale: 1.035,
+            duration: 0.45,
+            ease: "power2.out",
+          },
+          6.2
+        );
+        tl.to(
+          "#cta08-hanzi-outline",
+          { opacity: 0, scale: 1.07, duration: 0.75, ease: "power2.in" },
+          6.65
+        );
+        /* diamond nodes echo the pulse quietly, then the frame freezes */
+        tl.fromTo(
+          "#cta08-dl",
+          { scale: 1 },
+          { scale: 1.35, duration: 0.35, yoyo: false, ease: "power2.out" },
+          6.2
+        );
+        tl.to("#cta08-dl", { scale: 1, duration: 0.55, ease: "power2.inOut" }, 6.55);
+        tl.fromTo(
+          "#cta08-dr",
+          { scale: 1 },
+          { scale: 1.35, duration: 0.35, ease: "power2.out" },
+          6.3
+        );
+        tl.to("#cta08-dr", { scale: 1, duration: 0.55, ease: "power2.inOut" }, 6.65);
+
+        window.__timelines["08-cta"] = tl;
+      })();
+    </script>
+  </div>
+</template>

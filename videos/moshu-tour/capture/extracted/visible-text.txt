@@ -1,0 +1,47 @@
+[i] NOVEL ATLAS
+[span] 青云剑宗
+[span] 人物关系
+[span] 参与事件
+[span] 图谱健康
+[b] 100
+[span] 总字数
+[b] 994
+[h3] 事件统计
+[span] EVENT LOG
+[span] 按时间 ↓
+[span] 参与人物
+[span] 重要度
+[span] 第三年·春
+[span] 血战幽冥教主
+[span] 幽冥谷
+[span] ★★★★★
+[span] 第二年·秋
+[span] 慕长风叛门
+[span] 青云山
+[span] ★★★★★
+[span] 第二年·秋
+[span] 幽冥谷探秘
+[span] 幽冥谷
+[span] ★★★★
+[span] 第二年·夏
+[span] 宗门大比夺魁
+[span] 青云山
+[span] ★★★★★
+[span] 第二年·春
+[span] 林霄剑冢得青莲剑
+[span] ★★★★
+[h3] 章节进度
+[span] CHAPTERS
+[button] 写作中
+[button] 已完成
+[span] 第三章 剑冢青莲
+[span] 305
+[span] 2026/8/30
+[span] 第二章 落霞夜变
+[span] 289
+[span] 2026/8/30
+[span] 第一章 山门雪
+[span] 400
+[span] 2026/8/30
+[button] 进入写作台 →
+[em] 数据存储于本地 · 墨枢 NovelAtlas v1.0
