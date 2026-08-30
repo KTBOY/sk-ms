@@ -11,6 +11,7 @@ import { Button, Field, Input, Select, Textarea } from '../../components/ui/prim
 import { EntityPickerSingle } from '../../components/ui/EntityPicker';
 import { CharacterAvatar, compressImage } from '../../components/ui/Avatar';
 import { ImageCropModal } from '../../components/ui/ImageCropModal';
+import { generateAvatar } from '../../core/genAvatar';
 import { IconUpload, IconX } from '../../components/icons';
 
 const ROLES: CharacterRole[] = ['主角', '配角', '反派', '路人'];
@@ -98,6 +99,9 @@ export function CharacterFormModal({ open, initial, onClose }: {
             input.onchange = () => { const f = input.files?.[0]; if (f) upload(f); };
             input.click();
           }}>{draft.avatar ? '更换形象' : '上传形象'}</Button>
+          <Button size="sm" variant="ghost" onClick={() => patch({ avatar: generateAvatar(`${draft.name}-${Date.now()}`) })}>
+            {draft.avatar ? '随机换一个' : '随机生成'}
+          </Button>
         </div>
         <div className="charform__main">
           <div className="grid2">

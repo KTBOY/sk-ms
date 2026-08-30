@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "skills": {
+    "general-video": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "7647983e29041ea5d6588dadec8d0e0ab32d96c2181fb384d1a496a3b7697b67"
+    },
+    "hyperframes": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "3d93b129678da8b3e6d55a6cf44679786e7ed937f622aecfae6e08b4d7e99577"
+    },
+    "hyperframes-animation": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "da8be0122570e95dfd1beba95a459a516324e6b3c1bc4158c0587aff54cfe85b"
+    },
+    "hyperframes-audio": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "c0f7619c2a1f8d3c365d01eacc0998b6eade52e1ee9a5fceeef7c508ec9f9642"
+    },
+    "hyperframes-cli": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "422e24e4167b3e1464f432f26a1e73b1ed4e93da115d0d901c4e56c42dafdb0b"
+    },
+    "hyperframes-core": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "5df44a1f1d60661f74118a1741f06dfda2de4175444da0ce9b3f7cc8b0820ea2"
+    },
+    "hyperframes-creative": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "956fdaedc4619bb047b6fa84f2aa7530548dcc506d795a5e70b41f3626a171a4"
+    },
+    "hyperframes-keyframes": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "fc5657f4f5cbbeeab23f951ed739e0fe9e29a9865cdabb80d9e87840628a2a46"
+    },
+    "hyperframes-registry": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "ac8a17b31cb3dcbd025e17be617a531b2be6905cb764d4b1339bca54d7bc8f33"
+    },
+    "media-use": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "c5b802f1768a18b19afe24ae3e487f4f45577443c5c8c275129223d8e7d2dc43"
+    },
+    "product-launch-video": {
+      "source": "C:/Users/14357/AppData/Local/Temp/hyperframes",
+      "sourceType": "local",
+      "computedHash": "a6c5ac4fcc566b033f71dc8a3a956892fd2073e6a31722349d81732c30f81c30"
+    }
+  }
+}
