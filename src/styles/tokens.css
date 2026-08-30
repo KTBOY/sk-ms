@@ -1,0 +1,75 @@
+/* ============================================================
+   墨枢 NovelAtlas · 设计 Tokens（唯一事实源）
+   设计语言：Resonance HUD —— 深色金调游戏 HUD（.agents/skills/resonance-hud）
+   品牌金取样自已上线产品，色相不可改；旧玻璃拟态令牌名全部
+   重定向到 HUD 值，保证残留引用不再泄漏紫色。
+   ============================================================ */
+:root {
+  /* ===== Resonance HUD 核心令牌（不可改色相） ===== */
+  --gold:        #c9ac67;
+  --gold-bright: #e6cf95;
+  --gold-dim:    rgba(201, 172, 103, 0.3);
+
+  --cream:     #fafae9;
+  --cream-dim: rgba(250, 250, 233, 0.45);
+
+  --bg-0: #14161a;
+  --bg-1: #1b1e23;
+  --card: rgba(255, 255, 255, 0.035);
+  --hair: rgba(201, 172, 103, 0.2);
+
+  --hud-ease: cubic-bezier(0.32, 0.72, 0.24, 1);
+  --hud-latin: "Bahnschrift", "DIN Alternate", "Segoe UI", sans-serif;
+
+  /* ===== 旧令牌名 → HUD 值（重定向层，勿删除） ===== */
+  --bg-outer: #0c0d10;
+  --panel-grad: linear-gradient(168deg, var(--bg-1), var(--bg-0) 62%);
+
+  --glass: var(--card);                              /* 卡片填充 */
+  --glass-strong: rgba(201, 172, 103, 0.08);         /* 悬停提亮 */
+  --glass-dark: rgba(20, 22, 26, 0.92);              /* 弹层底 */
+  --glass-line: var(--hair);                         /* 发丝描边 */
+  --glass-line-hi: var(--gold-dim);
+
+  --text-hi: var(--cream);
+  --text-mid: rgba(250, 250, 233, 0.72);
+  --text-dim: var(--cream-dim);
+
+  /* 强调色：唯一色相 = 金。--ok 为运行状态绿色（skill 允许的唯一例外） */
+  --accent: var(--gold);
+  --accent-2: var(--gold-bright);
+  --ok: #6ee7a0;
+  --danger: #ff6b6b;
+
+  /* 实体内容色（数据编码，允许保留；通过 --tag-c / --c / --theme 注入内容表面） */
+  --entity-char: #c9a6ff;
+  --entity-loc: #6fe3d0;
+  --entity-item: #ffd37a;
+  --entity-event: #ff9e7a;
+  --entity-faction: #7fb0ff;
+  --theme: #d9b45c;
+
+  /* 几何：纯直角，零圆角 */
+  --radius-panel: 0px;
+  --radius-card: 0px;
+  --radius-sm: 0px;
+  --radius-pill: 0px;
+
+  /* 阴影：近黑深投影 */
+  --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.45);
+  --shadow-pop: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+  /* 字体 */
+  --font: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+
+  /* 兼容别名（历史引用） */
+  --hud-gold: var(--gold);
+  --hud-gold-bright: var(--gold-bright);
+  --hud-gold-dim: var(--gold-dim);
+  --hud-cream: var(--cream);
+  --hud-cream-dim: var(--cream-dim);
+  --hud-bg-0: var(--bg-0);
+  --hud-bg-1: var(--bg-1);
+  --hud-card: var(--card);
+  --hud-hair: var(--hair);
+}
