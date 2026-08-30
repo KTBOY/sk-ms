@@ -1,0 +1,174 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useProjectStore } from '../../store/projectStore';
+import { useUIStore } from '../../store/uiStore';
+import { Button, Segmented, Tag } from '../../components/ui/primitives';
+import { EntityPickerSingle } from '../../components/ui/EntityPicker';
+import { CharacterAvatar } from '../../components/ui/Avatar';
+import { RelationshipGraph, factionColor } from './RelationshipGraph';
+import { EventGraph, IMPORTANCE_COLORS } from './EventGraph';
+import { TrajectoryChart } from './TrajectoryChart';
+
+type GraphTab = 'relations' | 'events' | 'trajectory';
+
+/** 图谱中心：关系图谱 / 事件图谱 / 人物轨迹 三视图。 */
+export function GraphPage() {
+  const project = useProjectStore((s) => s.project);
+  const openDetail = useUIStore((s) => s.openDetail);
+  const [tab, setTab] = useState<GraphTab>('relations');
+  const [selChar, setSelChar] = useState<string | null>(null);
+  const [selEvent, setSelEvent] = useState<string | null>(null);
+  const [showShared, setShowShared] = useState(false);
+  const [trajChar, setTrajChar] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!project) return;
+    if (!trajChar) {
+      const hero = project.characters.find((c) => c.role === '主角') ?? project.characters[0];
+      if (hero) setTrajChar(hero.id);
+    }
+  }, [project, trajChar]);
+
+  const onPickEvent = useCallback((id: string) => openDetail('event', id), [openDetail]);
+
+  if (!project) return null;
+  const char = selChar ? project.characters.find((c) => c.id === selChar) : undefined;
+  const event = selEvent ? project.events.find((e) => e.id === selEvent) : undefined;
+
+  return (
+    <div className="page">
+      <header className="page__head">
+        <div>
+          <h2>图谱中心<span className="page__en">ATLAS</span></h2>
+          <p className="page__sub">关系网络 · 因果时序 · 人物轨迹 —— 拖拽节点、滚轮或右上角按钮缩放、点击查看详情</p>
+        </div>
+        <Segmented<GraphTab>
+          value={tab}
+          onChange={(v) => { setTab(v); setSelChar(null); setSelEvent(null); }}
+          options={[
+            { value: 'relations', label: '关系图谱' },
+            { value: 'events', label: '事件图谱' },
+            { value: 'trajectory', label: '人物轨迹' },
+          ]}
+        />
+      </header>
+
+      <div className="graph-layout">
+        <div className="graph-main">
+          {tab === 'relations' && (
+            <RelationshipGraph project={project} selectedId={selChar} onSelect={setSelChar} />
+          )}
+          {tab === 'events' && (
+            <EventGraph project={project} selectedId={selEvent} onSelect={setSelEvent} showShared={showShared} />
+          )}
+          {tab === 'trajectory' && (
+            <>
+              <div className="graph-toolbar">
+                <span className="dim">查看人物：</span>
+                <EntityPickerSingle kind="character" value={trajChar} onChange={setTrajChar} placeholder="选择人物" />
+              </div>
+              <TrajectoryChart project={project} characterId={trajChar} onPickEvent={onPickEvent} />
+            </>
+          )}
+          <div className="graph-legend">
+            {tab === 'relations' && (<>
+              <span><i className="dot" style={{ background: '#FFC24B' }} /> 金环 = 主角</span>
+              <span><i className="dot" style={{ background: 'rgba(255,255,255,.3)' }} /> 灰环 = 已故</span>
+              {project.factions.map((f) => (
+                <span key={f.id}><i className="dot" style={{ background: factionColor(project, f.id) }} /> {f.name}</span>
+              ))}
+              <span className="dim">节点大小 = 关系数</span>
+            </>)}
+            {tab === 'events' && (<>
+              <span className="dim">横轴 = 时间序</span>
+              <span><i className="dot" style={{ background: IMPORTANCE_COLORS[4] }} /> 重要度高</span>
+              <span><i className="dot" style={{ background: IMPORTANCE_COLORS[0] }} /> 重要度低</span>
+              <label className="graph-legend__toggle">
+                <input type="checkbox" checked={showShared} onChange={(e) => setShowShared(e.target.checked)} />
+                显示共享人物连线
+              </label>
+            </>)}
+            {tab === 'trajectory' && <span className="dim">按时间序展示该人物的全部事件路径</span>}
+          </div>
+        </div>
+
+        <aside className="graph-side">
+          {tab === 'relations' && (char ? (
+            <div className="graph-detail">
+              <CharacterAvatar character={char} size={72} />
+              <h3>{char.name}</h3>
+              <div className="graph-detail__tags">
+                <Tag color="#C9A6FF">{char.role}</Tag>
+                {project.factions.find((f) => f.id === char.factionId) && (
+                  <Tag color={factionColor(project, char.factionId)}>{project.factions.find((f) => f.id === char.factionId)?.name}</Tag>
+                )}
+              </div>
+              <p className="dim">{char.description}</p>
+              <h4>关系</h4>
+              <ul>
+                {project.relations.filter((r) => r.fromId === char.id || r.toId === char.id).map((r) => {
+                  const otherId = r.fromId === char.id ? r.toId : r.fromId;
+                  const other = project.characters.find((c) => c.id === otherId);
+                  return (
+                    <li key={r.id}>
+                      <button type="button" onClick={() => setSelChar(otherId)}>{other?.name ?? '?'}</button>
+                      <span className="dim">{r.type}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <Button size="sm" onClick={() => openDetail('character', char.id)}>查看完整档案</Button>
+            </div>
+          ) : (
+            <div className="graph-detail graph-detail--empty">
+              <p className="dim">点击图谱节点查看人物详情；拖拽可整理布局。</p>
+            </div>
+          ))}
+          {tab === 'events' && (event ? (
+            <div className="graph-detail">
+              <h3>{event.name}</h3>
+              <div className="graph-detail__tags">
+                {event.timeLabel && <Tag color="rgba(255,255,255,.6)">{event.timeLabel}</Tag>}
+                <Tag color={IMPORTANCE_COLORS[event.importance - 1]}>重要度 {event.importance}</Tag>
+                {event.locationId && (
+                  <Tag color="#6FE3D0">{project.locations.find((l) => l.id === event.locationId)?.name}</Tag>
+                )}
+              </div>
+              <p className="dim">{event.description}</p>
+              <h4>参与人物</h4>
+              <div className="event-chips">
+                {event.participantIds.map((pid) => (
+                  <Tag key={pid} color="#C9A6FF" onClick={() => openDetail('character', pid)}>
+                    {project.characters.find((c) => c.id === pid)?.name ?? '?'}
+                  </Tag>
+                ))}
+              </div>
+              <h4>因果</h4>
+              <div className="event-chips">
+                {event.causeIds.map((id) => (
+                  <Tag key={id} color="#FF9E7A" onClick={() => setSelEvent(id)}>← {project.events.find((e) => e.id === id)?.name}</Tag>
+                ))}
+                {event.effectIds.map((id) => (
+                  <Tag key={id} color="#FF9E7A" onClick={() => setSelEvent(id)}>{project.events.find((e) => e.id === id)?.name} →</Tag>
+                ))}
+                {event.causeIds.length + event.effectIds.length === 0 && <span className="dim">暂无</span>}
+              </div>
+              <Button size="sm" onClick={() => openDetail('event', event.id)}>编辑事件</Button>
+            </div>
+          ) : (
+            <div className="graph-detail graph-detail--empty">
+              <p className="dim">点击事件节点查看因果链与参与人物。</p>
+            </div>
+          ))}
+          {tab === 'trajectory' && (
+            <div className="graph-detail">
+              <p className="dim">
+                轨迹图按时间序连接该人物参与的全部事件，上下交替布点避免重叠。
+                点击节点可跳转事件编辑。
+              </p>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  );
+}
