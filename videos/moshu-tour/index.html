@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <script src="assets/vendor/gsap.min.js"></script>
     <style>
       * {
         margin: 0;
@@ -54,8 +54,8 @@
         data-composition-id="01-hook"
         data-composition-src="compositions/frames/01-hook.html"
         data-start="0"
-        data-duration="7"
-        data-track-index="1"
+        data-duration="7.5"
+        data-track-index="0"
       ></div>
 
       <div
@@ -64,7 +64,7 @@
         data-composition-id="02-pain"
         data-composition-src="compositions/frames/02-pain.html"
         data-start="7"
-        data-duration="7"
+        data-duration="7.5"
         data-track-index="1"
       ></div>
 
@@ -75,7 +75,7 @@
         data-composition-src="compositions/frames/03-dashboard.html"
         data-start="14"
         data-duration="9"
-        data-track-index="1"
+        data-track-index="0"
       ></div>
 
       <div
@@ -84,7 +84,7 @@
         data-composition-id="04-writing"
         data-composition-src="compositions/frames/04-writing.html"
         data-start="23"
-        data-duration="9"
+        data-duration="9.5"
         data-track-index="1"
       ></div>
 
@@ -95,7 +95,7 @@
         data-composition-src="compositions/frames/05-graph.html"
         data-start="32"
         data-duration="9"
-        data-track-index="1"
+        data-track-index="0"
       ></div>
 
       <div
@@ -104,7 +104,7 @@
         data-composition-id="06-characters"
         data-composition-src="compositions/frames/06-characters.html"
         data-start="41"
-        data-duration="8"
+        data-duration="8.5"
         data-track-index="1"
       ></div>
 
@@ -114,8 +114,8 @@
         data-composition-id="07-export"
         data-composition-src="compositions/frames/07-export.html"
         data-start="49"
-        data-duration="8"
-        data-track-index="1"
+        data-duration="8.5"
+        data-track-index="0"
       ></div>
 
       <div
@@ -133,6 +133,20 @@
     <script>
       window.__timelines = window.__timelines || {};
       window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-01-hook", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 7);
+        tl.fromTo("#el-02-pain", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 7);
+        tl.to("#el-02-pain", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 14);
+        tl.fromTo("#el-03-dashboard", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 14);
+        tl.to("#el-04-writing", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 32);
+        tl.fromTo("#el-05-graph", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 32);
+        tl.to("#el-06-characters", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 49);
+        tl.fromTo("#el-07-export", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 49);
+        tl.to("#el-07-export", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 57);
+        tl.fromTo("#el-08-cta", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 57);
+        tl.to({}, { duration: 65 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+      })();
     </script>
   </body>
 </html>
