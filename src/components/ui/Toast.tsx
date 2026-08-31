@@ -27,7 +27,7 @@ export function ConfirmHost() {
   const resolve = useUIStore((s) => s.resolveConfirm);
   if (!req) return null;
   return (
-    <div className="ui-modal-mask" onMouseDown={(e) => { if (e.target === e.currentTarget) resolve(false); }}>
+    <div className="ui-modal-mask ui-modal-mask--confirm" onMouseDown={(e) => { if (e.target === e.currentTarget) resolve(false); }}>
       <div className="ui-modal ui-modal--confirm" style={{ width: 400 }} role="alertdialog" aria-modal>
         <div className="ui-modal__head"><div className="ui-modal__title">{req.title}</div></div>
         <div className="ui-modal__body"><p className="ui-confirm__msg">{req.message}</p></div>

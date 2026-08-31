@@ -220,6 +220,8 @@
   display: flex; align-items: center; justify-content: center;
   animation: fade-in 0.15s ease-out;
 }
+/* 全局确认框：页面弹框已 Portal 到 body（DOM 在 #root 之后），需更高层级保证确认框始终盖在其上 */
+.ui-modal-mask--confirm { z-index: 120; }
 .ui-modal {
   position: relative;
   max-height: 86vh; display: flex; flex-direction: column;
