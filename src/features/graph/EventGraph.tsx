@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import type { Project } from '../../core/types';
+import type { Project, StoryEvent } from '../../core/types';
 import { factionColor } from './RelationshipGraph';
 import { GraphZoomControls } from './GraphZoom';
 
-/** 事件图谱：横轴=时间序的因果网络。实线箭头=前因→后果，虚线=共享参与者。 */
-
-interface EvNode extends d3.SimulationNodeDatum {
-  id: string; name: string; sortIndex: number; importance: number; x0: number;
-}
-interface EvLink extends d3.SimulationLinkDatum<EvNode> { kind: 'cause' | 'shared'; label?: string }
+/** 事件图谱：横轴=时间序、纵轴=因果泳道的确定性分层图。实线箭头=前因→后果；红虚线=时序倒置警示；虚线弧=选中事件的共享参与者。 */
 
 const IMPORTANCE_COLORS = ['#7CE0FF', '#9BE07C', '#FFC24B', '#FF9E7A', '#FF6B6B'];
+
+interface Placed { e: StoryEvent; x: number; y: number; r: number; lane: number }
+interface CausalLink { s: Placed; t: Placed; backward: boolean }
+interface SharedLink { s: Placed; t: Placed; count: number }
 
 export function EventGraph({ project, selectedId, onSelect, showShared, height = 540 }: {
   project: Project;
@@ -23,14 +22,7 @@ export function EventGraph({ project, selectedId, onSelect, showShared, height =
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
-  // 跨重建保留状态：节点位置 / 高亮函数 / 邻接函数 / 当前选中。
-  // 点选只走高亮通道，不重建整图、不重启力模拟 —— 消除卡顿与闪烁。
-  const nodesRef = useRef<EvNode[]>([]);
-  const setDimRef = useRef<(keep: Set<string> | null) => void>(() => {});
-  const relatedRef = useRef<(id: string) => Set<string>>(() => new Set());
-  const selectedRef = useRef(selectedId);
 
-  // 缩放控制：按钮驱动，与滚轮共用同一 zoom 行为
   const zoomBy = useCallback((factor: number) => {
     const el = svgRef.current;
     if (!el || !zoomRef.current) return;
@@ -42,44 +34,12 @@ export function EventGraph({ project, selectedId, onSelect, showShared, height =
     d3.select(el).call(zoomRef.current.transform, d3.zoomIdentity);
   }, []);
 
-  // 主构建：仅在数据 / 共享开关 / 尺寸变化时重建
+  // 确定性布局：无模拟、无随机种子，同一数据永远得到同一张图；选中变化触发重建也很廉价
   useEffect(() => {
     const svgEl = svgRef.current;
     const wrap = wrapRef.current;
     if (!svgEl || !wrap) return;
     const width = wrap.clientWidth || 800;
-
-    const events = [...project.events].sort((a, b) => a.sortIndex - b.sortIndex);
-    const margin = { x: 70, top: 60, bottom: 40 };
-    const x0 = (i: number) => margin.x + (i * (width - margin.x * 2)) / Math.max(1, events.length - 1);
-
-    const prevById = new Map(nodesRef.current.map((n) => [n.id, n]));
-    let resumed = false;
-    const nodes: EvNode[] = events.map((e, i) => {
-      const n: EvNode = { id: e.id, name: e.name, sortIndex: e.sortIndex, importance: e.importance, x0: x0(i) };
-      const prev = prevById.get(e.id);
-      if (prev && prev.x != null && prev.y != null) {
-        n.x = prev.x; n.y = prev.y;
-        resumed = true;
-      }
-      return n;
-    });
-    const byId = new Map(nodes.map((n) => [n.id, n]));
-
-    const links: EvLink[] = [];
-    events.forEach((e) => {
-      e.causeIds.forEach((cid) => {
-        if (byId.has(cid) && cid !== e.id) links.push({ source: cid, target: e.id, kind: 'cause' });
-      });
-    });
-    if (showShared) {
-      for (let i = 0; i < events.length; i++) {
-        for (let j = i + 1; j < events.length; j++) {
-          const shared = events[i].participantIds.filter((p) => events[j].participantIds.includes(p));
-          if (shared.length > 0) links.push({ source: events[i].id, target: events[j].id, kind: 'shared', label: `${shared.length}位共同人物` });
-        }
-      }
-    }
 
     const svg = d3.select(svgEl);
     svg.selectAll('*').remove();
@@ -91,115 +51,187 @@ export function EventGraph({ project, selectedId, onSelect, showShared, height =
     svg.call(zoomBehavior);
     root.attr('transform', d3.zoomTransform(svgEl).toString());
 
-    // 时间轴
-    root.append('line')
-      .attr('x1', margin.x - 30).attr('x2', width - margin.x + 30)
-      .attr('y1', height / 2).attr('y2', height / 2)
-      .attr('stroke', 'rgba(250,250,233,.14)').attr('stroke-dasharray', '2 6');
-    root.append('text').attr('x', margin.x - 30).attr('y', height / 2 - 12)
-      .attr('font-size', 11).attr('fill', 'rgba(250,250,233,.45)').text('时间 →');
+    const events = [...project.events].sort((a, b) => a.sortIndex - b.sortIndex);
+    if (events.length === 0) {
+      root.append('text').attr('x', width / 2).attr('y', height / 2).attr('text-anchor', 'middle')
+        .attr('fill', 'rgba(250,250,233,.45)').attr('font-size', 13)
+        .text('暂无事件 —— 去事件设计器创建，因果链会在这里生长');
+      return;
+    }
+
+    const n = events.length;
+    const marginX = 70;
+    const axisY = height - 26;
+    const topPad = 52;
+    const centerY = (topPad + axisY - 14) / 2;
+    const xAt = (i: number) => marginX + (n === 1 ? (width - marginX * 2) / 2 : (i * (width - marginX * 2)) / (n - 1));
+    const rOf = (e: StoryEvent) => 7 + e.importance * 1.5;
+    const byId = new Map(events.map((e) => [e.id, e]));
+
+    // 泳道分配：贴近前因所在泳道（取均值），位置冲突时就近外扩
+    const laneOf = new Map<string, number>();
+    const laneXs: number[][] = [];
+    events.forEach((e, i) => {
+      const x = xAt(i);
+      const r = rOf(e);
+      const causeLanes = e.causeIds
+        .filter((cid) => cid !== e.id && byId.has(cid) && laneOf.has(cid))
+        .map((cid) => laneOf.get(cid) as number);
+      const pref = causeLanes.length > 0
+        ? Math.round(causeLanes.reduce((a, b) => a + b, 0) / causeLanes.length)
+        : 0;
+      const isFree = (lane: number) => !(laneXs[lane] ?? []).some((ox) => Math.abs(ox - x) < r + 24 + 8);
+      let lane = pref;
+      for (let step = 0; ; step++) {
+        const cands = step === 0 ? [pref] : [pref + step, pref - step];
+        const hit = cands.find((l) => isFree(l));
+        if (hit != null) { lane = hit; break; }
+      }
+      laneOf.set(e.id, lane);
+      (laneXs[lane] ??= []).push(x);
+    });
+    const maxLane = Math.max(...[...laneOf.values()].map((l) => Math.abs(l)), 1);
+    const laneH = Math.min(74, (height / 2 - 72) / maxLane);
+    const placed: Placed[] = events.map((e, i) => {
+      const lane = laneOf.get(e.id) ?? 0;
+      return { e, x: xAt(i), y: centerY + lane * laneH, r: rOf(e), lane };
+    });
+    const placedById = new Map(placed.map((p) => [p.e.id, p]));
+
+    const causalLinks: CausalLink[] = [];
+    placed.forEach((p) => {
+      p.e.causeIds.forEach((cid) => {
+        if (cid === p.e.id) return;
+        const s = placedById.get(cid);
+        if (s) causalLinks.push({ s, t: p, backward: s.x >= p.x });
+      });
+    });
+
+    let sharedLinks: SharedLink[] = [];
+    if (showShared && selectedId) {
+      const sel = placedById.get(selectedId);
+      const selEvent = sel?.e;
+      if (sel && selEvent) {
+        sharedLinks = placed
+          .filter((p) => p.e.id !== selEvent.id)
+          .map((p) => ({ s: sel, t: p, count: selEvent.participantIds.filter((pid) => p.e.participantIds.includes(pid)).length }))
+          .filter((l) => l.count > 0);
+      }
+    }
+
+    // 底部时间轴：逐事件刻度，标签按时序抽取避免拥挤
+    root.append('line').attr('x1', marginX - 34).attr('x2', width - marginX + 34)
+      .attr('y1', axisY).attr('y2', axisY)
+      .attr('stroke', 'rgba(250,250,233,.16)').attr('stroke-dasharray', '2 6');
+    const step = Math.max(1, Math.ceil((n * 58) / Math.max(1, width - marginX * 2)));
+    placed.forEach((p, i) => {
+      root.append('line').attr('x1', p.x).attr('x2', p.x)
+        .attr('y1', axisY - 3).attr('y2', axisY + 3)
+        .attr('stroke', 'rgba(250,250,233,.3)');
+      if (i % step === 0) {
+        const label = p.e.timeLabel && p.e.timeLabel.length <= 8 ? p.e.timeLabel : `第${p.e.sortIndex}事`;
+        root.append('text').attr('x', p.x).attr('y', axisY + 15).attr('text-anchor', 'middle')
+          .attr('font-size', 10).attr('fill', 'rgba(250,250,233,.42)').text(label);
+      }
+    });
 
     const defs = svg.append('defs');
     defs.append('marker').attr('id', 'ev-arrow').attr('viewBox', '0 -5 10 10')
-      .attr('refX', 22).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6)
+      .attr('refX', 9).attr('refY', 0).attr('markerWidth', 7).attr('markerHeight', 7)
       .attr('orient', 'auto')
       .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', 'rgba(255,158,122,.9)');
+    defs.append('marker').attr('id', 'ev-arrow-warn').attr('viewBox', '0 -5 10 10')
+      .attr('refX', 9).attr('refY', 0).attr('markerWidth', 7).attr('markerHeight', 7)
+      .attr('orient', 'auto')
+      .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#FF6B6B');
 
     const linkG = root.append('g');
-    const nodeG = root.append('g');
-
-    const link = linkG.selectAll('path')
-      .data(links).join('path')
+    const causalPaths = linkG.selectAll<SVGPathElement, CausalLink>('path').data(causalLinks).join('path')
       .attr('fill', 'none')
-      .attr('stroke', (d) => (d.kind === 'cause' ? 'rgba(255,158,122,.85)' : 'rgba(250,250,233,.22)'))
-      .attr('stroke-width', (d) => (d.kind === 'cause' ? 2 : 1))
-      .attr('stroke-dasharray', (d) => (d.kind === 'cause' ? null : '5 5'))
-      .attr('marker-end', (d) => (d.kind === 'cause' ? 'url(#ev-arrow)' : null));
+      .attr('stroke', (d) => (d.backward ? '#FF6B6B' : 'rgba(255,158,122,.85)'))
+      .attr('stroke-width', (d) => (d.backward ? 1.5 : 2))
+      .attr('stroke-dasharray', (d) => (d.backward ? '4 4' : null))
+      .attr('marker-end', (d) => (d.backward ? 'url(#ev-arrow-warn)' : 'url(#ev-arrow)'))
+      .attr('d', (d) => {
+        const { s, t } = d;
+        if (!d.backward) {
+          const sx = s.x + s.r; const tx = t.x - t.r - 2;
+          const mx = (sx + tx) / 2;
+          return `M${sx},${s.y} C${mx},${s.y} ${mx},${t.y} ${tx},${t.y}`;
+        }
+        // 时序倒置：下弧绕行，视觉上区别于正常因果
+        const sy = s.y + s.r; const ty = t.y + t.r;
+        const low = Math.max(sy, ty) + 46;
+        return `M${s.x},${sy} C${s.x},${low} ${t.x},${low} ${t.x},${ty}`;
+      });
+    causalPaths.append('title').text((d) =>
+      d.backward ? `时序倒置：「${d.s.e.name}」(第${d.s.e.sortIndex}事) → 「${d.t.e.name}」(第${d.t.e.sortIndex}事)，因在果后，请检查排序`
+        : `${d.s.e.name} → ${d.t.e.name}`);
 
-    const node = nodeG.selectAll('g')
-      .data(nodes).join('g')
-      .attr('class', 'rel-node')
-      .style('cursor', 'pointer') as unknown as d3.Selection<SVGGElement, EvNode, SVGGElement, unknown>;
+    const sharedPaths = linkG.selectAll<SVGPathElement, SharedLink>('path.ev-shared').data(sharedLinks).join('path')
+      .attr('class', 'ev-shared')
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(250,250,233,.3)')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '5 5')
+      .attr('d', (d) => {
+        const { s, t } = d;
+        const sy = s.y - s.r; const ty = t.y - t.r;
+        const my = Math.min(sy, ty) - 40 - Math.abs(t.x - s.x) * 0.06;
+        return `M${s.x},${sy} Q${(s.x + t.x) / 2},${my} ${t.x},${ty}`;
+      });
+    sharedPaths.append('title').text((d) => `与「${d.t.e.name}」共享 ${d.count} 位人物`);
 
+    const nodeG = root.append('g');
+    const node = nodeG.selectAll<SVGGElement, Placed>('g').data(placed).join('g')
+      .style('cursor', 'pointer')
+      .attr('transform', (d) => `translate(${d.x},${d.y})`);
     node.append('circle')
-      .attr('r', (d) => 9 + d.importance * 1.6)
-      .attr('fill', (d) => IMPORTANCE_COLORS[d.importance - 1] ?? IMPORTANCE_COLORS[2])
-      .attr('fill-opacity', 0.88)
-      .attr('stroke', (d) => (d.id === selectedRef.current ? '#e6cf95' : 'rgba(250,250,233,.5)'))
-      .attr('stroke-width', (d) => (d.id === selectedRef.current ? 3 : 1.5));
-
+      .attr('r', (d) => d.r)
+      .attr('fill', (d) => (d.e.importance >= 4 ? '#FFC24B' : 'rgba(250,250,233,.3)'))
+      .attr('fill-opacity', (d) => (d.e.importance >= 4 ? 0.9 : 1))
+      .attr('stroke', (d) => (d.e.id === selectedId ? '#e6cf95' : 'rgba(250,250,233,.5)'))
+      .attr('stroke-width', (d) => (d.e.id === selectedId ? 3 : 1.5));
     node.append('text')
       .attr('text-anchor', 'middle')
-      .attr('dy', (d) => (nodes.indexOf(d) % 2 === 0 ? -(9 + d.importance * 1.6) - 8 : (9 + d.importance * 1.6) + 18))
+      .attr('dy', (d) => (d.lane <= 0 ? -(d.r + 8) : d.r + 16))
       .attr('font-size', 12)
       .attr('fill', '#fafae9')
-      .text((d) => (d.name.length > 8 ? `${d.name.slice(0, 7)}…` : d.name));
-    node.append('title').text((d) => `${d.name} · 第${d.sortIndex}事`);
+      .text((d) => (d.e.name.length > 14 ? `${d.e.name.slice(0, 13)}…` : d.e.name));
+    node.append('title').text((d) => `${d.e.name} · 第${d.e.sortIndex}事${d.e.timeLabel ? ` · ${d.e.timeLabel}` : ''} · 重要度 ${d.e.importance}`);
 
+    // 高亮通道：悬停/选中只调透明度，不重建
     const related = (id: string) => {
       const set = new Set<string>([id]);
-      links.forEach((l) => {
-        const s = l.source as EvNode; const t = l.target as EvNode;
-        if (s.id === id) set.add(t.id);
-        if (t.id === id) set.add(s.id);
+      causalLinks.forEach((l) => {
+        if (l.s.e.id === id) set.add(l.t.e.id);
+        if (l.t.e.id === id) set.add(l.s.e.id);
       });
       return set;
     };
-    relatedRef.current = related;
-
     const setDim = (keep: Set<string> | null) => {
-      node.style('opacity', (d) => (keep && !keep.has(d.id) ? 0.25 : 1));
-      // 选中描边随高亮通道同步更新（点选不再重建整图）
-      node.select('circle')
-        .attr('stroke', (d) => (d.id === selectedRef.current ? '#e6cf95' : 'rgba(250,250,233,.5)'))
-        .attr('stroke-width', (d) => (d.id === selectedRef.current ? 3 : 1.5));
-      link.style('opacity', (d) => {
+      node.style('opacity', (d) => (keep && !keep.has(d.e.id) ? 0.25 : 1));
+      causalPaths.style('opacity', (d) => {
         if (!keep) return 1;
-        const s = d.source as EvNode; const t = d.target as EvNode;
-        return keep.has(s.id) && keep.has(t.id) ? 1 : 0.12;
+        return keep.has(d.s.e.id) && keep.has(d.t.e.id) ? 1 : 0.12;
+      });
+      sharedPaths.style('opacity', (d) => {
+        if (!keep) return 1;
+        return keep.has(d.s.e.id) && keep.has(d.t.e.id) ? 1 : 0.12;
       });
     };
-    setDimRef.current = setDim;
-
-    const simulation = d3.forceSimulation<EvNode>(nodes)
-      .force('x', d3.forceX<EvNode>((d) => d.x0).strength(0.6))
-      .force('y', d3.forceY<EvNode>(height / 2).strength(0.06))
-      .force('charge', d3.forceManyBody().strength(-70))
-      .force('collide', d3.forceCollide<EvNode>().radius((d) => 9 + d.importance * 1.6 + 18))
-      .alpha(resumed ? 0.4 : 1)
-      .on('tick', () => {
-        link.attr('d', (d) => {
-          const s = d.source as EvNode; const t = d.target as EvNode;
-          const mx = (s.x ?? 0) / 2 + (t.x ?? 0) / 2;
-          const my = (s.y ?? 0) / 2 + (t.y ?? 0) / 2 - 26;
-          return `M${s.x ?? 0},${s.y ?? 0} Q${mx},${my} ${t.x ?? 0},${t.y ?? 0}`;
-        });
-        node.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
-      });
 
     node
-      .on('mouseenter', (_event, d) => setDim(related(d.id)))
-      .on('mouseleave', () => setDim(selectedRef.current ? related(selectedRef.current) : null))
+      .on('mouseenter', (_event, d) => setDim(related(d.e.id)))
+      .on('mouseleave', () => setDim(selectedId ? related(selectedId) : null))
       .on('click', (event, d) => {
         event.stopPropagation();
-        onSelect(d.id === selectedRef.current ? null : d.id);
-      })
-      .call(d3.drag<SVGGElement, EvNode>()
-        .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.2).restart(); d.fx = d.x; d.fy = d.y; })
-        .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
-        .on('end', (_event, d) => { if (!_event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+        onSelect(d.e.id === selectedId ? null : d.e.id);
+      });
 
     svg.on('click', () => onSelect(null));
-    setDim(selectedRef.current ? related(selectedRef.current) : null);
-    nodesRef.current = nodes;
-    return () => { simulation.stop(); };
-  }, [project, showShared, height, onSelect]);
-
-  // 选中态：只更新高亮，不重建
-  useEffect(() => {
-    selectedRef.current = selectedId;
-    setDimRef.current(selectedId ? relatedRef.current(selectedId) : null);
-  }, [selectedId]);
+    setDim(selectedId ? related(selectedId) : null);
+  }, [project, selectedId, showShared, height, onSelect]);
 
   return (
     <div className="graph-canvas" ref={wrapRef}>

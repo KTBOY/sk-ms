@@ -79,12 +79,13 @@ export function GraphPage() {
               <span className="dim">节点大小 = 关系数</span>
             </>)}
             {tab === 'events' && (<>
-              <span className="dim">横轴 = 时间序</span>
-              <span><i className="dot" style={{ background: IMPORTANCE_COLORS[4] }} /> 重要度高</span>
-              <span><i className="dot" style={{ background: IMPORTANCE_COLORS[0] }} /> 重要度低</span>
+              <span className="dim">横轴 = 时间序 · 纵轴 = 因果泳道</span>
+              <span><i className="dot" style={{ background: '#FFC24B' }} /> 重要事件（≥4）</span>
+              <span><i className="dot" style={{ background: 'rgba(250,250,233,.4)' }} /> 普通事件</span>
+              <span className="dim">红虚线 = 时序倒置警示</span>
               <label className="graph-legend__toggle">
                 <input type="checkbox" checked={showShared} onChange={(e) => setShowShared(e.target.checked)} />
-                显示共享人物连线
+                共享连线（选中事件）
               </label>
             </>)}
             {tab === 'trajectory' && <span className="dim">按时间序展示该人物的全部事件路径</span>}
@@ -156,7 +157,7 @@ export function GraphPage() {
             </div>
           ) : (
             <div className="graph-detail graph-detail--empty">
-              <p className="dim">点击事件节点查看因果链与参与人物。</p>
+              <p className="dim">点击事件节点查看因果链与参与人物；开启上方「共享连线」开关后，会显示该事件与其他事件的共同人物。</p>
             </div>
           ))}
           {tab === 'trajectory' && (
