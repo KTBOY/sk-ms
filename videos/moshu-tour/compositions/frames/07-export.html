@@ -256,7 +256,7 @@
         });
 
         /* gentle glow sweep across the stack as badges resolve */
-        tl.fromTo("#root #e7-sweep", { yPercent: 114, opacity: 0 }, { yPercent: -16, opacity: 1, duration: 2.6, ease: "sine.inOut" }, 2.0);
+        tl.fromTo("#root #e7-sweep", { opacity: 0 }, { opacity: 0.85, duration: 1.2, ease: "sine.inOut" }, 2.0);
 
         /* Scene 3 (5.5-8.0s): finale badge — gold fill lights up with a pulse, local line lands */
         tl.fromTo("#root #e7-badge-4", { x: 26, opacity: 0.22 }, { x: 0, opacity: 1, duration: 0.55, ease: "power2.out" }, 5.5);
