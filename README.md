@@ -5,6 +5,10 @@
 
 ![tech](https://img.shields.io/badge/Vite%205%20·%20React%2018%20·%20TS%20strict%20·%20Zustand%20·%20D3%207-墨枢-blueviolet)
 
+![图谱中心：设定即图谱，D3 力导向关系网络把人物、物品、地点、势力连成一张可校验的图](docs/assets/tour-graph-center.gif)
+
+*图谱中心 · 关系网络 / 事件因果 / 人物轨迹（截自产品导览片 `videos/moshu-tour`）*
+
 ## 快速开始
 
 ```bash
