@@ -85,6 +85,16 @@ export interface Faction extends BaseEntity {
 
 export type ChapterStatus = '草稿' | '写作中' | '已完成';
 
+/** 章节快照：自动/手动留存的历史版本（每章上限 20 条，超出淘汰最旧）。 */
+export interface ChapterVersion {
+  id: string;
+  at: number;              // 快照时间
+  title: string;           // 快照时的章节标题
+  content: string;         // 快照时的正文
+  wordCount: number;       // 快照时字数
+  label: 'auto' | 'manual' | 'replace'; // 自动保存 / 手动 / 替换前
+}
+
 export interface Chapter {
   id: string;
   title: string;
@@ -93,6 +103,7 @@ export interface Chapter {
   status: ChapterStatus;
   order: number;
   updatedAt: number;
+  versions?: ChapterVersion[];
 }
 
 export interface AISettings {

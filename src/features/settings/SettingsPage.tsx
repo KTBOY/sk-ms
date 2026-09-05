@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createAdapter, type AdapterId } from '../../core/storage';
+import { getDesktopBridge, isDesktop, type DataDirInfo } from '../../core/desktop';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
 import { Button, Field, Input, Segmented, Textarea } from '../../components/ui/primitives';
 import { Modal } from '../../components/ui/Modal';
 import { IconPlus, IconRefresh, IconTrash } from '../../components/icons';
 
-/** 设置：存储适配器（含 REST 契约）/ AI 接口 / 作品管理 / 危险区。 */
+/** 设置：存储适配器（桌面端本机文件 / 含 REST 契约）/ AI 接口 / 作品管理 / 危险区。 */
+
+const REST_CONTRACT = 'GET /projects · GET /projects/:id · PUT /projects/:id · DELETE /projects/:id';
 
 export function SettingsPage() {
   const project = useProjectStore((s) => s.project);
@@ -30,7 +33,40 @@ export function SettingsPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [form, setForm] = useState({ name: '', genre: '', description: '' });
 
+  // 桌面端：本机文件存储的数据目录信息（仅当启用本机文件适配器时展示）
+  const desktop = isDesktop();
+  const dataStorage = getDesktopBridge()?.dataStorage ?? null;
+  const [dataDir, setDataDir] = useState<DataDirInfo | null>(null);
+
+  useEffect(() => {
+    if (!dataStorage || appSettings.adapterId !== 'desktop') return;
+    let alive = true;
+    dataStorage.getInfo()
+      .then((info) => { if (alive) setDataDir(info); })
+      .catch(() => undefined);
+    return () => { alive = false; };
+  }, [dataStorage, appSettings.adapterId]);
+
   if (!project) return null;
+
+  /** 应用目录变更：换目录/恢复默认后重启渲染层，让 store 从新数据源重新加载。 */
+  const applyDirChange = (info: DataDirInfo | null) => {
+    if (!info) return; // 用户在目录选择框点了取消
+    setDataDir(info);
+    if (info.error) { pushToast(info.error, 'error'); return; }
+    pushToast('数据存放位置已更新，即将重新加载…', 'success');
+    setTimeout(() => window.location.reload(), 800);
+  };
+
+  const chooseDataDir = async () => {
+    if (!dataStorage) return;
+    applyDirChange(await dataStorage.chooseDirectory());
+  };
+  const resetDataDir = async () => {
+    if (!dataStorage) return;
+    applyDirChange(await dataStorage.resetToDefault());
+  };
+  const openDataFolder = () => { void dataStorage?.openFolder(); };
 
   const testConnection = async () => {
     setTesting(true);
@@ -50,8 +86,16 @@ export function SettingsPage() {
     const ok = await confirm('切换存储适配器', '建议先在「导出」页备份 JSON。切换后作品列表将读取新数据源，未导出的修改不会迁移。');
     if (!ok) return;
     await setAdapter(id, id === 'rest' ? { baseUrl: restBase, token: restToken } : undefined);
-    pushToast(`已切换到${id === 'rest' ? ' REST API' : id === 'localstorage' ? ' LocalStorage' : ' IndexedDB'}`, 'success');
+    pushToast(`已切换到${id === 'desktop' ? ' 本机文件存储' : id === 'rest' ? ' REST API' : id === 'localstorage' ? ' LocalStorage' : ' IndexedDB'}`, 'success');
   };
+
+  // 适配器选项按端显示：桌面端才有「本机文件」；浏览器端只谈浏览器存储与远程
+  const storageOptions: Array<{ value: AdapterId; label: string }> = [
+    ...(desktop ? [{ value: 'desktop' as AdapterId, label: '本机文件（推荐）' }] : []),
+    { value: 'indexeddb', label: desktop ? 'IndexedDB（浏览器内置）' : 'IndexedDB（本地·推荐）' },
+    { value: 'localstorage', label: desktop ? 'LocalStorage（浏览器内置）' : 'LocalStorage' },
+    { value: 'rest', label: 'REST API（远程）' },
+  ];
 
   return (
     <div className="page page--narrow">
@@ -69,29 +113,52 @@ export function SettingsPage() {
           <Segmented<AdapterId>
             value={appSettings.adapterId}
             onChange={(v) => void switchAdapter(v)}
-            options={[
-              { value: 'indexeddb', label: 'IndexedDB（本地·推荐）' },
-              { value: 'localstorage', label: 'LocalStorage' },
-              { value: 'rest', label: 'REST API（远程）' },
-            ]} />
-          <p className="dim" style={{ marginTop: 12 }}>
-            数据默认只存在你的浏览器里。预置 REST 适配器 —— 服务端实现以下契约即可无缝上云：
-            <code className="contract">GET /projects · GET /projects/:id · PUT /projects/:id · DELETE /projects/:id</code>
-            （鉴权可选 Authorization: Bearer，需开启 CORS）
-          </p>
-          {appSettings.adapterId === 'rest' && (
-            <div className="grid2" style={{ marginTop: 12 }}>
-              <Field label="Base URL"><Input value={restBase} onChange={(e) => setRestBase(e.target.value)} placeholder="https://api.example.com/novel" /></Field>
-              <Field label="Token（可选）"><Input value={restToken} onChange={(e) => setRestToken(e.target.value)} placeholder="Bearer 鉴权令牌" /></Field>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <Button onClick={() => void testConnection()} disabled={testing || !restBase}>{testing ? '测试中…' : '测试连接'}</Button>
-                <Button variant="primary" disabled={!restBase}
-                  onClick={async () => {
-                    await setAdapter('rest', { baseUrl: restBase, token: restToken });
-                    pushToast('REST 配置已保存并生效', 'success');
-                  }}>保存并启用</Button>
+            options={storageOptions} />
+          {appSettings.adapterId === 'desktop' ? (
+            <>
+              <p className="dim" style={{ marginTop: 12 }}>
+                数据以 JSON 文件保存在本机，不经任何服务器。默认位于软件安装目录的 data 文件夹，可自行更改：
+              </p>
+              <div className="data-loc">
+                <code className="contract data-loc__path" title={dataDir?.dir}>{dataDir?.dir ?? '读取中…'}</code>
+                <div className="data-loc__ops">
+                  <Button size="sm" onClick={() => void chooseDataDir()}>更改位置</Button>
+                  <Button size="sm" onClick={() => void openDataFolder()}>打开文件夹</Button>
+                  {dataDir?.source === 'custom' && (
+                    <Button size="sm" onClick={() => void resetDataDir()}>恢复默认位置</Button>
+                  )}
+                </div>
+                {dataDir?.source === 'fallback' && (
+                  <p className="dim data-loc__warn">安装目录不可写，已自动回退到系统用户数据目录；也可「更改位置」另选目录。</p>
+                )}
               </div>
-            </div>
+            </>
+          ) : (
+            <>
+              <p className="dim" style={{ marginTop: 12 }}>
+                {appSettings.adapterId === 'rest' ? (
+                  <>服务端实现以下契约即可无缝上云：<code className="contract">{REST_CONTRACT}</code>（鉴权可选 Authorization: Bearer，需开启 CORS）</>
+                ) : desktop ? (
+                  <>数据保存在浏览器内置存储中。桌面端建议使用「本机文件」—— 数据落盘为 JSON 文件，目录可选、便于备份与迁移。</>
+                ) : (
+                  <>数据默认只存在你的浏览器里。预置 REST 适配器 —— 服务端实现以下契约即可无缝上云：<code className="contract">{REST_CONTRACT}</code>（鉴权可选 Authorization: Bearer，需开启 CORS）</>
+                )}
+              </p>
+              {appSettings.adapterId === 'rest' && (
+                <div className="grid2" style={{ marginTop: 12 }}>
+                  <Field label="Base URL"><Input value={restBase} onChange={(e) => setRestBase(e.target.value)} placeholder="https://api.example.com/novel" /></Field>
+                  <Field label="Token（可选）"><Input value={restToken} onChange={(e) => setRestToken(e.target.value)} placeholder="Bearer 鉴权令牌" /></Field>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Button onClick={() => void testConnection()} disabled={testing || !restBase}>{testing ? '测试中…' : '测试连接'}</Button>
+                    <Button variant="primary" disabled={!restBase}
+                      onClick={async () => {
+                        await setAdapter('rest', { baseUrl: restBase, token: restToken });
+                        pushToast('REST 配置已保存并生效', 'success');
+                      }}>保存并启用</Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

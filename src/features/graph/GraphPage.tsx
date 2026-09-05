@@ -4,9 +4,11 @@ import { useUIStore } from '../../store/uiStore';
 import { Button, Segmented, Tag } from '../../components/ui/primitives';
 import { EntityPickerSingle } from '../../components/ui/EntityPicker';
 import { CharacterAvatar } from '../../components/ui/Avatar';
+import { IconSparkles } from '../../components/icons';
 import { RelationshipGraph, factionColor } from './RelationshipGraph';
 import { EventGraph, IMPORTANCE_COLORS } from './EventGraph';
 import { TrajectoryChart } from './TrajectoryChart';
+import { BuildFromTextModal } from './BuildFromTextModal';
 
 type GraphTab = 'relations' | 'events' | 'trajectory';
 
@@ -19,6 +21,7 @@ export function GraphPage() {
   const [selEvent, setSelEvent] = useState<string | null>(null);
   const [showShared, setShowShared] = useState(false);
   const [trajChar, setTrajChar] = useState<string | null>(null);
+  const [buildOpen, setBuildOpen] = useState(false);
 
   useEffect(() => {
     if (!project) return;
@@ -41,15 +44,19 @@ export function GraphPage() {
           <h2>图谱中心<span className="page__en">ATLAS</span></h2>
           <p className="page__sub">关系网络 · 因果时序 · 人物轨迹 —— 拖拽节点、滚轮或右上角按钮缩放、点击查看详情</p>
         </div>
-        <Segmented<GraphTab>
-          value={tab}
-          onChange={(v) => { setTab(v); setSelChar(null); setSelEvent(null); }}
-          options={[
-            { value: 'relations', label: '关系图谱' },
-            { value: 'events', label: '事件图谱' },
-            { value: 'trajectory', label: '人物轨迹' },
-          ]}
-        />
+        <div className="page__head-ops">
+          <Button size="sm" icon={<IconSparkles size={12} />} onClick={() => setBuildOpen(true)}
+            title="粘贴既有正文，AI 抽取实体批量入库">AI 建谱</Button>
+          <Segmented<GraphTab>
+            value={tab}
+            onChange={(v) => { setTab(v); setSelChar(null); setSelEvent(null); }}
+            options={[
+              { value: 'relations', label: '关系图谱' },
+              { value: 'events', label: '事件图谱' },
+              { value: 'trajectory', label: '人物轨迹' },
+            ]}
+          />
+        </div>
       </header>
 
       <div className="graph-layout">
@@ -170,6 +177,8 @@ export function GraphPage() {
           )}
         </aside>
       </div>
+
+      <BuildFromTextModal open={buildOpen} onClose={() => setBuildOpen(false)} />
     </div>
   );
 }

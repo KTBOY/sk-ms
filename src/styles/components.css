@@ -467,3 +467,32 @@ input[type="range"]::-moz-range-thumb {
 .imgcrop__zoom { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0 8px; font-size: 12px; color: var(--ink-dim, #9a9a9a); }
 .imgcrop__zoom input[type='range'] { flex: 1; }
 .imgcrop__hint { margin: 0; font-size: 12px; color: var(--ink-dim, #9a9a9a); }
+
+/* ---------------- 勾选框：纯直角 + 金色选中 ---------------- */
+.ui-checkbox {
+  appearance: none; -webkit-appearance: none;
+  width: 15px; height: 15px; flex: none; margin: 0;
+  border: 1px solid rgba(201, 172, 103, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer; position: relative;
+  transition: border 0.15s, background 0.15s;
+}
+.ui-checkbox:hover { border-color: var(--gold-dim, #c9ac67); }
+.ui-checkbox:checked { background: rgba(201, 172, 103, 0.22); border-color: var(--gold-dim, #c9ac67); }
+.ui-checkbox:checked::after {
+  content: ''; position: absolute; left: 4px; top: 1px;
+  width: 5px; height: 9px;
+  border: solid var(--gold-bright, #e6cf95); border-width: 0 2px 2px 0;
+  transform: rotate(42deg);
+}
+
+/* ---------------- 数据存放位置（设置页·桌面端本机文件存储） ---------------- */
+.data-loc { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.data-loc__path {
+  display: block; margin: 0; padding: 8px 12px;
+  font-family: Consolas, "Courier New", monospace;
+  word-break: break-all; line-height: 1.5;
+  border-left: 2px solid var(--gold-dim, #c9ac67);
+}
+.data-loc__ops { display: flex; flex-wrap: wrap; gap: 8px; }
+.data-loc__warn { color: var(--gold-bright, #e6cf95); }

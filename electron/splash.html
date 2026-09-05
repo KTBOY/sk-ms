@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>墨枢 NovelAtlas · 启动</title>
+  <style>
+    /* Resonance HUD 启动画面：近黑基底 / 品牌金 / 纯直角 / L 角标 / 发丝线。
+       自包含页面，由 electron/main.cjs 以无框窗口加载，主窗口就绪后加 .is-done 淡出。 */
+    :root {
+      --gold: #c9ac67;
+      --gold-bright: #e6cf95;
+      --gold-dim: rgba(201, 172, 103, 0.3);
+      --cream: #fafae9;
+      --cream-dim: rgba(250, 250, 233, 0.45);
+      --hair: rgba(201, 172, 103, 0.2);
+      --latin: "Bahnschrift", "DIN Alternate", "Segoe UI", sans-serif;
+      --zh: "Microsoft YaHei", "PingFang SC", sans-serif;
+      --ease: cubic-bezier(0.32, 0.72, 0.24, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: linear-gradient(152deg, #1b1e23 0%, #14161a 58%, #101216 100%);
+      color: var(--cream);
+      font-family: var(--zh);
+      user-select: none;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 38px;
+      position: relative;
+      opacity: 1;
+      transition: opacity 0.38s var(--ease);
+    }
+    body.is-done { opacity: 0; }
+
+    /* L 形四角角标 */
+    .corner { position: absolute; width: 22px; height: 22px; }
+    .corner::before, .corner::after { content: ""; position: absolute; background: var(--gold); opacity: 0.55; }
+    .corner::before { width: 100%; height: 2px; }
+    .corner::after { width: 2px; height: 100%; }
+    .corner.tl { top: 14px; left: 14px; }
+    .corner.tr { top: 14px; right: 14px; transform: scaleX(-1); }
+    .corner.bl { bottom: 14px; left: 14px; transform: scaleY(-1); }
+    .corner.br { bottom: 14px; right: 14px; transform: scale(-1); }
+
+    /* 品牌记号：枢环能量流动 + 枢核呼吸（与 build/icon.svg 同一几何） */
+    .mark { width: 96px; height: 96px; }
+    .mark .ring {
+      fill: none; stroke: var(--gold-bright); stroke-width: 2.5;
+      stroke-dasharray: 7 4.5;
+      animation: march 2.6s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(201, 172, 103, 0.45));
+    }
+    .mark .core {
+      fill: var(--gold);
+      transform-origin: 48px 48px;
+      animation: breathe 1.8s var(--ease) infinite;
+      filter: drop-shadow(0 0 10px rgba(201, 172, 103, 0.6));
+    }
+    .mark .sat { fill: #14161a; stroke: var(--gold); stroke-width: 2; }
+    .mark .tick { stroke: var(--gold); stroke-opacity: 0.35; stroke-width: 1.5; }
+    @keyframes march { to { stroke-dashoffset: -23; } }
+    @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.82; } 50% { transform: scale(1.07); opacity: 1; } }
+
+    .name { margin-top: 14px; font-size: 21px; font-weight: 600; letter-spacing: 5px; }
+    .caption {
+      margin-top: 7px;
+      font: 400 9px/1 var(--latin);
+      letter-spacing: 3.2px;
+      color: var(--gold-dim);
+    }
+
+    /* 区块标题：金色短划 + 中英双语 */
+    .block-head { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
+    .block-head .mk { width: 3px; height: 12px; background: var(--gold); }
+    .block-head b { font-size: 12px; font-weight: 600; letter-spacing: 3px; color: var(--cream); }
+    .block-head i { font: 400 8px/1 var(--latin); font-style: normal; letter-spacing: 2.6px; color: var(--gold-dim); }
+
+    /* 进度：发丝轨道 + 金色扫掠段（不确定进度） */
+    .track {
+      margin-top: 12px;
+      width: 224px; height: 2px;
+      background: rgba(201, 172, 103, 0.16);
+      position: relative;
+      overflow: hidden;
+    }
+    .track .sweep {
+      position: absolute; top: 0; bottom: 0; width: 42%;
+      background: linear-gradient(90deg, rgba(230, 207, 149, 0), var(--gold-bright));
+      animation: sweep 1.35s var(--ease) infinite;
+    }
+    @keyframes sweep { from { left: -42%; } to { left: 100%; } }
+
+    .status {
+      margin-top: 11px;
+      height: 14px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--cream-dim);
+      transition: opacity 0.24s var(--ease);
+    }
+    .status.swap { opacity: 0; }
+
+    .foot {
+      position: absolute; left: 26px; right: 26px; bottom: 22px;
+      display: flex; justify-content: space-between;
+      font: 400 8px/1 var(--latin); letter-spacing: 2.2px; color: var(--gold-dim);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mark .ring, .mark .core, .track .sweep { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <span class="corner tl"></span><span class="corner tr"></span>
+  <span class="corner bl"></span><span class="corner br"></span>
+
+  <svg class="mark" viewBox="0 0 96 96" aria-hidden="true">
+    <!-- 轴向刻线 + 卫星菱形（与应用图标同一语法） -->
+    <line class="tick" x1="48" y1="14" x2="48" y2="24" />
+    <line class="tick" x1="48" y1="72" x2="48" y2="82" />
+    <line class="tick" x1="14" y1="48" x2="24" y2="48" />
+    <line class="tick" x1="72" y1="48" x2="82" y2="48" />
+    <polygon class="ring" points="48,10 86,48 48,86 10,48" />
+    <polygon class="core" points="48,28 68,48 48,68 28,48" />
+  </svg>
+
+  <div class="name">墨枢 NovelAtlas</div>
+  <div class="caption">AI CONSISTENCY WORKBENCH</div>
+
+  <div class="block-head">
+    <span class="mk"></span><b>系统启动</b><i>SYSTEM BOOT</i>
+  </div>
+
+  <div class="track"><div class="sweep"></div></div>
+  <div class="status" id="status">正在初始化界面框架…</div>
+
+  <div class="foot">
+    <span>RESONANCE HUD · BOOT SEQUENCE</span>
+    <span id="version"></span>
+  </div>
+
+  <script>
+    const version = new URLSearchParams(location.search).get('v');
+    if (version) document.getElementById('version').textContent = 'V' + version;
+
+    const steps = ['正在初始化界面框架…', '正在加载本地项目数据…', '正在准备图谱引擎…', '即将就绪…'];
+    const el = document.getElementById('status');
+    let i = 0;
+    setInterval(() => {
+      el.classList.add('swap');
+      setTimeout(() => {
+        i = (i + 1) % steps.length;
+        el.textContent = steps[i];
+        el.classList.remove('swap');
+      }, 240);
+    }, 1100);
+  </script>
+</body>
+</html>

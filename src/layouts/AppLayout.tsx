@@ -8,6 +8,8 @@ import { useUIStore, PAGE_TITLES } from '../store/uiStore';
 import type { Page } from '../store/uiStore';
 import { Input, StatusPill } from '../components/ui/primitives';
 import { CharacterAvatar } from '../components/ui/Avatar';
+import { getDesktopBridge } from '../core/desktop';
+import { WindowControls } from '../components/layout/WindowControls';
 import {
   IconDashboard, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
   IconSearch, IconSettings, IconTimeline, IconUsers, IconWriting, IconX,
@@ -59,6 +61,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   // 头像：优先主角形象，其次作品封面字
   const hero = project?.characters.find((c) => c.role === '主角');
+
+  // 桌面端（Electron）才有的无边框窗口控制；浏览器为 null
+  const desktop = getDesktopBridge();
 
   return (
     <div className="app-shell">
@@ -113,6 +118,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 : <span className="app-avatar__fallback">{project?.name.slice(0, 1) ?? '书'}</span>}
               {issueCount > 0 && <i>{issueCount > 9 ? '9+' : issueCount}</i>}
             </button>
+            {desktop && <WindowControls bridge={desktop} />}
           </div>
         </header>
         <main className="app-content hud-scope">{children}</main>
@@ -120,7 +126,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <span>{PAGE_TITLES[page]} · 《{project?.name ?? '…'}》</span>
           <span className="app-foot__right">
             <StatusPill state={saveState} />
-            <em>数据存储于本地 · 墨枢 NovelAtlas v1.0</em>
+            <em>{desktop ? '数据存储于本机文件' : '数据存储于浏览器'} · 墨枢 NovelAtlas v1.1</em>
           </span>
         </footer>
       </div>

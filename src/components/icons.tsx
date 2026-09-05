@@ -106,3 +106,6 @@ export const IconRefresh = (p: P) => base(p, <>
 export const IconEye = (p: P) => base(p, <>
   <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />
 </>);
+export const IconHistory = (p: P) => base(p, <>
+  <path d="M3.5 12a8.5 8.5 0 1 1 2.5 6" /><path d="M3.5 8.5V12H7" /><path d="M12 8v4.5l3 2" />
+</>);

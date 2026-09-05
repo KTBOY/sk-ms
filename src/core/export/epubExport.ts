@@ -1,8 +1,8 @@
-import JSZip from 'jszip';
 import type { Project } from '../types';
 import { downloadBlob, sanitize, type ExportOptions } from './index';
 
-/** EPUB3 导出：JSZip 手工组装，正文按段落转 XHTML。 */
+/** EPUB3 导出：JSZip 手工组装，正文按段落转 XHTML。
+    jszip 按需动态加载，不进启动包。 */
 
 const escapeXml = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -24,6 +24,7 @@ const paragraphs = (text: string) =>
     .join('\n');
 
 export async function exportEpub(project: Project, options: ExportOptions): Promise<void> {
+  const { default: JSZip } = await import('jszip');
   const zip = new JSZip();
   zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
   zip.file(

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 墨枢 NovelAtlas · 小尺寸图标（16–48px 用）：仅保留枢环 + 枢核，保证小尺寸可读 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.42" y2="1">
+      <stop offset="0" stop-color="#1b1e23"/>
+      <stop offset="0.62" stop-color="#14161a"/>
+      <stop offset="1" stop-color="#101216"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6cf95"/>
+      <stop offset="1" stop-color="#c9ac67"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <polygon points="512,212 812,512 512,812 212,512" fill="none" stroke="#e6cf95" stroke-width="56"/>
+  <polygon points="512,327 697,512 512,697 327,512" fill="#c9ac67" opacity="0.7" filter="url(#glow)"/>
+  <polygon points="512,327 697,512 512,697 327,512" fill="url(#core)"/>
+</svg>

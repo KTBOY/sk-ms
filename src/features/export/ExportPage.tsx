@@ -80,7 +80,7 @@ export function ExportPage() {
       <header className="page__head">
         <div>
           <h2>导出中心<span className="page__en">EXPORT</span></h2>
-          <p className="page__sub">《{project.name}》· {project.chapters.length} 章 · 全部格式在浏览器本地生成，不经任何服务器</p>
+          <p className="page__sub">《{project.name}》· {project.chapters.length} 章 · 全部格式在本机生成，不经任何服务器</p>
         </div>
         <label className="check-row">
           <input type="checkbox" checked={includeWorldbook} onChange={(e) => setIncludeWorldbook(e.target.checked)} />

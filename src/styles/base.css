@@ -60,7 +60,6 @@ code.contract {
 /* ---------------- 应用壳层 ---------------- */
 .app-shell {
   height: 100%;
-  padding: 22px;
   display: flex;
 }
 
@@ -157,6 +156,42 @@ code.contract {
 }
 
 .app-topbar__right { display: flex; align-items: center; gap: 14px; }
+
+/* ===== 桌面端（Electron 无边框窗口）：顶栏兼作标题栏 =====
+   仅 is-desktop（存在 preload 桥）时生效：顶栏整体可拖拽移动窗口，
+   交互元素 no-drag；右上角窗控按钮贴边通高，样式同 flash-edit。 */
+.is-desktop .app-topbar {
+  padding-right: 0;
+  -webkit-app-region: drag;
+}
+.is-desktop .app-topbar button,
+.is-desktop .app-topbar input,
+.is-desktop .app-topbar .app-search {
+  -webkit-app-region: no-drag;
+}
+.win-controls {
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  margin-left: 4px;
+  border-left: 1px solid rgba(201, 172, 103, 0.12);
+}
+.win-controls button {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px;
+  background: none; border: none; padding: 0;
+  color: var(--cream-dim);
+  transition: all 0.15s var(--hud-ease);
+  cursor: pointer;
+}
+.win-controls button:hover {
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.08);
+}
+.win-controls button.close:hover {
+  color: #ff6b5e;
+  background: rgba(255, 107, 94, 0.12);
+}
 
 .app-search { position: relative; display: flex; align-items: center; gap: 8px; }
 .app-search > svg { position: absolute; left: 13px; color: var(--gold-dim); pointer-events: none; }

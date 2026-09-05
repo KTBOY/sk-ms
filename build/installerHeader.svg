@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="57" viewBox="0 0 150 57">
+  <!-- NSIS 安装向导内页右上品牌条，MUI_HEADERIMAGE_BITMAP = 150×57 -->
+  <defs>
+    <linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1e23"/>
+      <stop offset="1" stop-color="#14161a"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6cf95"/>
+      <stop offset="1" stop-color="#c9ac67"/>
+    </linearGradient>
+    <filter id="hglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <rect width="150" height="57" fill="url(#hbg)"/>
+  <rect y="54" width="150" height="2.5" fill="#c9ac67" opacity="0.4"/>
+
+  <!-- 枢核记号 -->
+  <polygon points="31,8 50,27 31,46 12,27" fill="none" stroke="#e6cf95" stroke-width="3.5"/>
+  <polygon points="31,16 42,27 31,38 20,27" fill="#c9ac67" opacity="0.7" filter="url(#hglow)"/>
+  <polygon points="31,16 42,27 31,38 20,27" fill="url(#core)"/>
+
+  <!-- 品牌字 -->
+  <text x="60" y="30" font-family="'Microsoft YaHei','PingFang SC',sans-serif"
+        font-size="21" font-weight="700" letter-spacing="4" fill="#fafae9">墨枢</text>
+  <text x="60" y="46" font-family="'Bahnschrift','Segoe UI',sans-serif"
+        font-size="8.5" letter-spacing="2.2" fill="#c9ac67" fill-opacity="0.85">NOVEL ATLAS</text>
+
+  <polygon points="134,19 142,27 134,35 126,27" fill="#c9ac67" fill-opacity="0.8"/>
+</svg>

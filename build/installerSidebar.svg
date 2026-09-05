@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="164" height="314" viewBox="0 0 164 314">
+  <!-- NSIS 安装向导侧栏（欢迎页 / 完成页 / 卸载页），MUI_WELCOMEFINISHPAGE_BITMAP = 164×314 -->
+  <defs>
+    <linearGradient id="sbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1e23"/>
+      <stop offset="0.62" stop-color="#14161a"/>
+      <stop offset="1" stop-color="#101216"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6cf95"/>
+      <stop offset="1" stop-color="#c9ac67"/>
+    </linearGradient>
+    <filter id="sglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+
+  <rect width="164" height="314" fill="url(#sbg)"/>
+
+  <!-- L 形四角角标 -->
+  <g fill="none" stroke="#c9ac67" stroke-opacity="0.5" stroke-width="3">
+    <path d="M12 50 V12 H50"/>
+    <path d="M114 12 H152 V50"/>
+    <path d="M12 264 V302 H50"/>
+    <path d="M152 264 V302 H114"/>
+  </g>
+
+  <!-- 枢核记号（与应用图标同源） -->
+  <g fill="#c9ac67" fill-opacity="0.85">
+    <polygon points="82,37.5 89.5,44 82,50.5 74.5,44"/>
+    <polygon points="82,173.5 89.5,180 82,186.5 74.5,180"/>
+    <polygon points="11,108 17.5,114.5 11,121 4.5,114.5"/>
+    <polygon points="147,108 153.5,114.5 147,121 140.5,114.5"/>
+  </g>
+  <g stroke="#c9ac67" stroke-opacity="0.35" stroke-width="2">
+    <line x1="82" y1="55" x2="82" y2="72"/>
+    <line x1="82" y1="156" x2="82" y2="173"/>
+    <line x1="29" y1="112" x2="46" y2="112"/>
+    <line x1="118" y1="112" x2="135" y2="112"/>
+  </g>
+  <polygon points="82,58 136,112 82,166 28,112" fill="none" stroke="#e6cf95" stroke-width="5"/>
+  <polygon points="82,82 112,112 82,142 52,112" fill="#c9ac67" opacity="0.7" filter="url(#sglow)"/>
+  <polygon points="82,82 112,112 82,142 52,112" fill="url(#core)"/>
+
+  <!-- 品牌字 -->
+  <text x="87" y="234" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif"
+        font-size="40" font-weight="700" letter-spacing="10" fill="#fafae9">墨枢</text>
+
+  <!-- 装饰分隔：细金线 + 菱形 -->
+  <g stroke="#c9ac67" stroke-opacity="0.35" stroke-width="1.5">
+    <line x1="38" y1="258" x2="70" y2="258"/>
+    <line x1="94" y1="258" x2="126" y2="258"/>
+  </g>
+  <polygon points="82,253 87,258 82,263 77,258" fill="#c9ac67"/>
+
+  <text x="84.5" y="284" text-anchor="middle" font-family="'Bahnschrift','Segoe UI',sans-serif"
+        font-size="9.5" letter-spacing="3" fill="#c9ac67" fill-opacity="0.85">NOVEL ATLAS</text>
+
+  <!-- 点阵装饰 -->
+  <g fill="#c9ac67">
+    <polygon points="58,294 60.5,296.5 58,299 55.5,296.5" fill-opacity="0.8"/>
+    <polygon points="70,294 72.5,296.5 70,299 67.5,296.5" fill-opacity="0.4"/>
+    <polygon points="82,294 84.5,296.5 82,299 79.5,296.5" fill-opacity="0.8"/>
+    <polygon points="94,294 96.5,296.5 94,299 91.5,296.5" fill-opacity="0.4"/>
+    <polygon points="106,294 108.5,296.5 106,299 103.5,296.5" fill-opacity="0.8"/>
+  </g>
+</svg>

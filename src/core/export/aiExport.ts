@@ -1,4 +1,3 @@
-import JSZip from 'jszip';
 import type { Project } from '../types';
 import { auditProject } from '../consistency';
 import { downloadBlob, sanitize } from './index';
@@ -386,6 +385,7 @@ export async function writeAiContextToDirectory(project: Project, handle: DirHan
 
 /** 打包为 ZIP 并触发浏览器下载（不支持直写的浏览器回退路径）。返回文件名。 */
 export async function exportAiContextZip(project: Project): Promise<string> {
+  const { default: JSZip } = await import('jszip');
   const zip = new JSZip();
   const root = zip.folder(`${sanitize(project.name)}-ai-context`);
   if (!root) throw new Error('ZIP 打包失败');

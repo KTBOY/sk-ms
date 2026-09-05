@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Chapter, EntityKind } from '../../core/types';
 import { newId } from '../../core/id';
 import { auditProject, collectMentions, detectUnknownNames } from '../../core/consistency';
@@ -10,7 +10,7 @@ import { useUIStore } from '../../store/uiStore';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { Button, Segmented, Select, StatusPill, Tag, Textarea } from '../../components/ui/primitives';
 import { Modal } from '../../components/ui/Modal';
-import { IconAlert, IconArrowDown, IconArrowUp, IconCopy, IconLink, IconPlus, IconSend, IconSparkles, IconTrash } from '../../components/icons';
+import { IconAlert, IconArrowDown, IconArrowUp, IconCopy, IconHistory, IconLink, IconPlus, IconSearch, IconSend, IconSparkles, IconTrash, IconX } from '../../components/icons';
 import { UnknownActions, UnknownBubble } from './UnknownActions';
 import { CharacterFormModal, emptyCharacter } from '../characters/CharacterFormModal';
 
@@ -26,24 +26,48 @@ interface Annotation {
   word?: string;
 }
 
-/** 写作台：章节编辑 + 实时一致性提示 + 上下文包。 */
+/** 写作台：章节编辑 + 实时一致性提示 + 上下文包 + 查找替换 + 版本历史。 */
+/** 自动快照最小间隔：正文有改动时每 10 分钟留一档。 */
+const AUTO_SNAPSHOT_MS = 10 * 60 * 1000;
+
+/** 转义正则元字符（非正则模式下按字面量查找）。 */
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+interface FindMatch { start: number; end: number }
+
 export function WritingPage() {
   const project = useProjectStore((s) => s.project);
   const saveState = useProjectStore((s) => s.saveState);
   const upsertChapter = useProjectStore((s) => s.upsertChapter);
   const removeChapter = useProjectStore((s) => s.removeChapter);
   const moveChapter = useProjectStore((s) => s.moveChapter);
+  const snapshotChapter = useProjectStore((s) => s.snapshotChapter);
+  const restoreChapterVersion = useProjectStore((s) => s.restoreChapterVersion);
   const openDetail = useUIStore((s) => s.openDetail);
   const navigate = useUIStore((s) => s.navigate);
   const pushToast = useUIStore((s) => s.pushToast);
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
-  const [panel, setPanel] = useState<'consistency' | 'context'>('consistency');
+  const [panel, setPanel] = useState<'consistency' | 'context' | 'history'>('consistency');
   const [bubble, setBubble] = useState<{ candidate: UnknownCandidate; x: number; y: number } | null>(null);
   const [quickCharName, setQuickCharName] = useState<string | null>(null);
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
+
+  // 查找替换
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const findInputRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
+  const [findOpen, setFindOpen] = useState(false);
+  const [findText, setFindText] = useState('');
+  const [replaceText, setReplaceText] = useState('');
+  const [matchCase, setMatchCase] = useState(false);
+  const [useRegex, setUseRegex] = useState(false);
+  const [matchIdx, setMatchIdx] = useState(0);
+
+  // 版本历史：自动快照节流（记录上次快照时间与章节）
+  const lastSnapRef = useRef<{ at: number; chapterId: string }>({ at: Date.now(), chapterId: '' });
 
   const chapters = useMemo(() => [...(project?.chapters ?? [])].sort((a, b) => a.order - b.order), [project]);
   const chapter = chapters.find((c) => c.id === activeId) ?? chapters[0] ?? null;
@@ -85,11 +109,132 @@ export function WritingPage() {
     return list.sort((a, b) => a.start - b.start);
   }, [chapter, mentions, unknowns]);
 
+  // -------------------------------------------------- 查找替换：匹配计算与定位
+  const findMatches = useMemo<FindMatch[]>(() => {
+    if (!chapter || !findText) return [];
+    let re: RegExp;
+    try {
+      re = new RegExp(useRegex ? findText : escapeRegExp(findText), `g${matchCase ? '' : 'i'}`);
+    } catch {
+      return [];
+    }
+    const out: FindMatch[] = [];
+    for (;;) {
+      const m = re.exec(chapter.content);
+      if (!m) break;
+      out.push({ start: m.index, end: m.index + m[0].length });
+      if (m.index === re.lastIndex) re.lastIndex += 1; // 空匹配防死循环
+      if (out.length >= 999) break;
+    }
+    return out;
+  }, [chapter, findText, matchCase, useRegex]);
+
+  useEffect(() => { setMatchIdx((i) => Math.min(i, Math.max(0, findMatches.length - 1))); }, [findMatches.length]);
+
+  /** 把当前匹配滚动进视口并选中（textarea 唯一可靠的原生方案）。 */
+  const revealMatch = (idx: number) => {
+    const m = findMatches[idx];
+    const el = editorRef.current;
+    if (!m || !el || mode !== 'edit' || !chapter) return;
+    el.focus();
+    el.setSelectionRange(m.start, m.end);
+    // 粗略滚动定位：按字数比例估算行位置
+    const lines = chapter.content.slice(0, m.start).split('\n').length;
+    const lineH = 30;
+    el.scrollTop = Math.max(0, (lines - 4) * lineH);
+  };
+
+  const openFind = (withReplace: boolean) => {
+    if (mode !== 'edit') setMode('edit');
+    setFindOpen(true);
+    const sel = window.getSelection()?.toString();
+    if (sel && sel.length <= 50) setFindText(sel);
+    setTimeout(() => (withReplace ? replaceInputRef.current?.focus() : findInputRef.current?.focus()), 0);
+  };
+
+  // Ctrl+F / Ctrl+H 唤起查找替换
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey) return;
+      const key = e.key.toLowerCase();
+      if (key !== 'f' && key !== 'h') return;
+      const target = e.target as HTMLElement | null;
+      const inTextField = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
+      if (inTextField && !((target as HTMLTextAreaElement).classList.contains('editor-area'))) return;
+      e.preventDefault();
+      openFind(key === 'h');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, chapter?.id]);
+
   if (!project) return null;
 
+  /** 从 store 取最新章节：快照写入 versions 后闭包里的 chapter 已过期，必须以 store 为准。 */
+  const latestChapter = () => useProjectStore.getState().project?.chapters.find((c) => c.id === chapter?.id) ?? null;
+
   const patchChapter = (patch: Partial<Chapter>) => {
+    const cur = latestChapter();
+    if (!cur) return;
+    // 版本历史：正文即将变化时，按 10 分钟节流把改动前的内容留档
+    if (patch.content != null && patch.content !== cur.content) {
+      const now = Date.now();
+      if (now - lastSnapRef.current.at > AUTO_SNAPSHOT_MS || lastSnapRef.current.chapterId !== cur.id) {
+        lastSnapRef.current = { at: now, chapterId: cur.id };
+        snapshotChapter(cur.id, 'auto');
+      }
+    }
+    const after = latestChapter() ?? cur;
+    upsertChapter({ ...after, ...patch });
+  };
+
+  /** 替换当前匹配：改写该处文本，保持光标在原匹配序号。 */
+  const replaceCurrent = () => {
+    const cur = latestChapter();
+    if (!cur || findMatches.length === 0) return;
+    const idx = Math.min(matchIdx, findMatches.length - 1);
+    const m = findMatches[idx];
+    const next = cur.content.slice(0, m.start) + replaceText + cur.content.slice(m.end);
+    patchChapter({ content: next });
+    pushToast(`已替换第 ${idx + 1} 处`, 'success');
+  };
+
+  /** 全部替换：替换前强制留档（label=replace），回滚有底。 */
+  const replaceAll = async () => {
+    const cur = latestChapter();
+    if (!cur || findMatches.length === 0) return;
+    const ok = await useUIStore.getState().confirm(
+      '全部替换',
+      `将「${findText}」全部替换为「${replaceText || '（空）'}」，共 ${findMatches.length} 处。替换前会自动留存当前版本。`,
+    );
+    if (!ok) return;
+    snapshotChapter(cur.id, 'replace');
+    lastSnapRef.current = { at: Date.now(), chapterId: cur.id }; // 已留档，跳过自动快照
+    const re = new RegExp(useRegex ? findText : escapeRegExp(findText), `g${matchCase ? '' : 'i'}`);
+    // 字面量模式下替换文本原样写入（$&、$1 不解释）；正则模式下保留 $1 等捕获组语义
+    const source = (latestChapter() ?? cur).content;
+    const next = useRegex ? source.replace(re, replaceText) : source.replace(re, () => replaceText);
+    patchChapter({ content: next });
+    pushToast(`已替换 ${findMatches.length} 处，替换前版本已留存`, 'success');
+  };
+
+  /** 手动快照。 */
+  const saveSnapshot = () => {
     if (!chapter) return;
-    upsertChapter({ ...chapter, ...patch });
+    if (snapshotChapter(chapter.id, 'manual')) {
+      pushToast('已保存当前版本快照', 'success');
+      setPanel('history');
+    }
+  };
+
+  /** 回滚到快照（store 内会先把当前内容留档）。 */
+  const rollbackTo = async (versionId: string, excerpt: string) => {
+    if (!chapter) return;
+    const ok = await useUIStore.getState().confirm('回滚版本', `将本章正文回滚到「${excerpt}」？当前内容会先自动留档。`);
+    if (!ok) return;
+    if (restoreChapterVersion(chapter.id, versionId)) pushToast('已回滚，当前内容已留档', 'success');
+    else pushToast('回滚失败', 'error');
   };
 
   const addChapter = () => {
@@ -213,6 +358,7 @@ export function WritingPage() {
                 <option value="写作中">写作中</option>
                 <option value="已完成">已完成</option>
               </Select>
+              <Button size="sm" icon={<IconSearch size={12} />} onClick={() => openFind(false)} title="查找替换（Ctrl+F）">查找</Button>
               <Segmented value={mode} onChange={setMode}
                 options={[{ value: 'edit', label: '编辑' }, { value: 'preview', label: '预览' }]} />
               <StatusPill state={saveState} />
@@ -221,10 +367,39 @@ export function WritingPage() {
               <input className="ui-input" value={chapter.synopsis} placeholder="本章大纲（一句话，会进入上下文包）"
                 onChange={(e) => patchChapter({ synopsis: e.target.value })} />
             </div>
+            {findOpen && (
+              <div className="find-bar">
+                <IconSearch size={13} />
+                <input ref={findInputRef} className="ui-input find-bar__input" value={findText}
+                  placeholder="查找（Enter 下一个）" autoFocus
+                  onChange={(e) => { setFindText(e.target.value); setMatchIdx(0); }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); if (findMatches.length) { const n = (matchIdx + 1) % findMatches.length; setMatchIdx(n); revealMatch(n); } }
+                    if (e.key === 'Escape') setFindOpen(false);
+                  }} />
+                <span className="find-bar__arrow">→</span>
+                <input ref={replaceInputRef} className="ui-input find-bar__input" value={replaceText}
+                  placeholder="替换为"
+                  onChange={(e) => setReplaceText(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setFindOpen(false); }} />
+                <button type="button" className={`find-bar__toggle ${matchCase ? 'is-on' : ''}`}
+                  title="区分大小写" onClick={() => setMatchCase((v) => !v)}>Aa</button>
+                <button type="button" className={`find-bar__toggle ${useRegex ? 'is-on' : ''}`}
+                  title="正则表达式" onClick={() => setUseRegex((v) => !v)}>.*</button>
+                <span className="find-bar__count">
+                  {findText ? (findMatches.length ? `${matchIdx + 1}/${findMatches.length}` : '无结果') : '0/0'}
+                </span>
+                <Button size="sm" disabled={!findMatches.length} onClick={() => { if (findMatches.length) { const p = (matchIdx - 1 + findMatches.length) % findMatches.length; setMatchIdx(p); revealMatch(p); } }}>上一个</Button>
+                <Button size="sm" disabled={!findMatches.length} onClick={() => { if (findMatches.length) { const n = (matchIdx + 1) % findMatches.length; setMatchIdx(n); revealMatch(n); } }}>下一个</Button>
+                <Button size="sm" disabled={!findMatches.length} onClick={replaceCurrent}>替换</Button>
+                <Button size="sm" variant="primary" disabled={!findMatches.length} onClick={replaceAll}>全部替换</Button>
+                <button type="button" className="ui-iconbtn" aria-label="关闭查找" onClick={() => setFindOpen(false)}><IconX size={13} /></button>
+              </div>
+            )}
             {mode === 'edit' ? (
-              <Textarea className="editor-area" value={chapter.content}
+              <Textarea ref={editorRef} className="editor-area" value={chapter.content}
                 onChange={(e) => patchChapter({ content: e.target.value })}
-                placeholder="开始写作… 正文中的实体会被自动识别并与图谱对照" />
+                placeholder="开始写作… 正文中的实体会被自动识别并与图谱对照；Ctrl+F 查找替换" />
             ) : (
               <div className="editor-area editor-area--preview">{renderPreview()}</div>
             )}
@@ -247,6 +422,7 @@ export function WritingPage() {
           options={[
             { value: 'consistency', label: `一致性${unknowns.length + issues.length ? ` (${unknowns.length + issues.length})` : ''}` },
             { value: 'context', label: '上下文包' },
+            { value: 'history', label: '历史' },
           ]} />
 
         {panel === 'consistency' && (
@@ -297,6 +473,38 @@ export function WritingPage() {
               )}
             </div>
             <pre className="ctx-preview">{buildContextPack(project, chapter)}</pre>
+          </div>
+        )}
+
+        {panel === 'history' && chapter && (
+          <div className="writing-panel__body">
+            <div className="ctx-ops">
+              <Button size="sm" icon={<IconHistory size={13} />} onClick={saveSnapshot}>保存当前版本</Button>
+              <span className="dim">每 10 分钟自动留档 · 上限 20 条</span>
+            </div>
+            {(chapter.versions?.length ?? 0) === 0 ? (
+              <div className="panel-ok">本章还没有历史版本。编辑正文时会自动留档，也可点击上方按钮手动保存。</div>
+            ) : (
+              <ul className="version-list">
+                {[...(chapter.versions ?? [])].reverse().map((v) => (
+                  <li key={v.id} className="version-row">
+                    <div className="version-row__meta">
+                      <span className={`version-badge version-badge--${v.label}`}>
+                        {v.label === 'auto' ? '自动' : v.label === 'replace' ? '替换前' : '手动'}
+                      </span>
+                      <span className="version-row__time">
+                        {new Date(v.at).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className="version-row__count">{v.wordCount} 字</span>
+                    </div>
+                    <div className="version-row__excerpt">{v.content.replace(/\s+/g, ' ').slice(0, 48) || '（空）'}</div>
+                    <div className="version-row__ops">
+                      <Button size="sm" onClick={() => rollbackTo(v.id, v.content.replace(/\s+/g, ' ').slice(0, 12))}>回滚到此版本</Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </aside>

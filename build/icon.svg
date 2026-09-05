@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 墨枢 NovelAtlas · 应用图标（Resonance HUD：近黑基底 / 品牌金 / 纯直角 / L 角标 / 菱形枢核）
+       色值取自 src/styles/tokens.css 的 bg-0 / bg-1 / gold / gold-bright -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.42" y2="1">
+      <stop offset="0" stop-color="#1b1e23"/>
+      <stop offset="0.62" stop-color="#14161a"/>
+      <stop offset="1" stop-color="#101216"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6cf95"/>
+      <stop offset="1" stop-color="#c9ac67"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- HUD 取景框：L 形四角角标 -->
+  <g fill="none" stroke="#c9ac67" stroke-opacity="0.55" stroke-width="14">
+    <path d="M72 204 V72 H204"/>
+    <path d="M820 72 H952 V204"/>
+    <path d="M72 820 V952 H204"/>
+    <path d="M952 820 V952 H820"/>
+  </g>
+
+  <!-- 图谱连线：中心 → 四隅卫星（起点止于枢环内缘） -->
+  <g stroke="#c9ac67" stroke-opacity="0.4" stroke-width="10">
+    <line x1="396" y1="396" x2="250" y2="250"/>
+    <line x1="628" y1="396" x2="774" y2="250"/>
+    <line x1="396" y1="628" x2="250" y2="774"/>
+    <line x1="628" y1="628" x2="774" y2="774"/>
+  </g>
+
+  <!-- 卫星菱形节点 -->
+  <g fill="#14161a" stroke="#c9ac67" stroke-width="13">
+    <polygon points="250,198 302,250 250,302 198,250"/>
+    <polygon points="774,198 826,250 774,302 722,250"/>
+    <polygon points="250,722 302,774 250,826 198,774"/>
+    <polygon points="774,722 826,774 774,826 722,774"/>
+  </g>
+
+  <!-- 轴向校准点阵 + 刻线 -->
+  <g fill="#c9ac67" fill-opacity="0.85">
+    <polygon points="512,153 527,168 512,183 497,168"/>
+    <polygon points="512,841 527,856 512,871 497,856"/>
+    <polygon points="153,512 168,497 183,512 168,527"/>
+    <polygon points="841,512 856,497 871,512 856,527"/>
+  </g>
+  <g stroke="#c9ac67" stroke-opacity="0.35" stroke-width="6">
+    <line x1="512" y1="189" x2="512" y2="262"/>
+    <line x1="512" y1="762" x2="512" y2="835"/>
+    <line x1="189" y1="512" x2="262" y2="512"/>
+    <line x1="762" y1="512" x2="835" y2="512"/>
+  </g>
+
+  <!-- 枢环（「枢」= 中轴）：亮金描边菱形 -->
+  <polygon points="512,272 752,512 512,752 272,512" fill="none" stroke="#e6cf95" stroke-width="16"/>
+
+  <!-- 枢核：品牌金实心菱形 + 辉光（与应用内 logo 同一记号） -->
+  <polygon points="512,352 672,512 512,672 352,512" fill="#c9ac67" opacity="0.7" filter="url(#glow)"/>
+  <polygon points="512,352 672,512 512,672 352,512" fill="url(#core)"/>
+</svg>

@@ -1,4 +1,4 @@
-import { Children, isValidElement, useEffect, useMemo, useRef, useState } from 'react';
+import { Children, forwardRef, isValidElement, useEffect, useMemo, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes, ChangeEvent, InputHTMLAttributes, ReactElement, ReactNode, TextareaHTMLAttributes } from 'react';
 import { IconAlert, IconCheck } from '../icons';
 
@@ -24,9 +24,16 @@ export function Input({ className = '', ...rest }: InputHTMLAttributes<HTMLInput
   return <input className={`ui-input ${className}`} {...rest} />;
 }
 
-export function Textarea({ className = '', ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={`ui-input ui-textarea ${className}`} {...rest} />;
+/** HUD 风格勾选框：金色对角勾，纯直角。 */
+export function Checkbox({ className = '', ...rest }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input type="checkbox" className={`ui-checkbox ${className}`} {...rest} />;
 }
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  function Textarea({ className = '', ...rest }, ref) {
+    return <textarea ref={ref} className={`ui-input ui-textarea ${className}`} {...rest} />;
+  },
+);
 
 interface SelectOptionProps {
   value?: string | number;

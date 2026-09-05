@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import type {
-  Chapter, Character, Faction, Item, LocationNode, Project, ProjectMeta,
+  Chapter, ChapterVersion, Character, Faction, Item, LocationNode, Project, ProjectMeta,
   Relation, StoryEvent,
 } from '../core/types';
-import { createAdapter, loadAppSettings, saveAppSettings, type AppSettings } from '../core/storage';
+import { createAdapter, loadAppSettings, saveAppSettings, indexedDbAdapter, desktopAdapter, type AppSettings } from '../core/storage';
 import { createSeedProject } from '../core/seed';
 import { newId } from '../core/id';
 
@@ -53,7 +53,18 @@ interface ProjectStore {
   upsertChapter: (c: Chapter) => void;
   removeChapter: (id: string) => void;
   moveChapter: (id: string, dir: -1 | 1) => void;
+  snapshotChapter: (id: string, label: ChapterVersion['label']) => boolean;
+  restoreChapterVersion: (chapterId: string, versionId: string) => boolean;
+
+  /** AI 建谱：一批实体/关系/事件经确认后一次性入库（单次持久化）。 */
+  importGraph: (batch: {
+    characters: Character[]; relations: Relation[]; events: StoryEvent[];
+    items: Item[]; locations: LocationNode[]; factions: Faction[];
+  }) => void;
 }
+
+/** 每章快照上限：超出淘汰最旧。 */
+export const CHAPTER_VERSION_LIMIT = 20;
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -110,6 +121,21 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
         projects = await adapter.listProjects();
       } catch {
         projects = [];
+      }
+      // 桌面端首次启用本机文件存储：把旧 IndexedDB 里的作品迁移进数据目录（非破坏性，IndexedDB 原样保留）
+      if (adapter.id === 'desktop' && projects.length === 0 && !settings.fileStorageMigrated) {
+        settings.fileStorageMigrated = true;
+        saveAppSettings(settings);
+        try {
+          const legacy = await indexedDbAdapter.listProjects();
+          for (const meta of legacy) {
+            const project = await indexedDbAdapter.loadProject(meta.id);
+            if (project) await desktopAdapter.saveProject(project);
+          }
+          projects = await adapter.listProjects();
+        } catch {
+          // 迁移失败不阻塞启动，IndexedDB 原数据仍在
+        }
       }
       if (projects.length === 0) {
         const seed = createSeedProject();
@@ -316,6 +342,59 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
       if (idx < 0 || target < 0 || target >= list.length) return;
       [list[idx], list[target]] = [list[target], list[idx]];
       list.forEach((c, i) => { c.order = i + 1; });
+    }),
+
+    // ------------------------------------------------ 版本历史（快照留存当前内容，回滚前自动再留一份）
+    snapshotChapter: (id, label) => {
+      const ch = get().project?.chapters.find((c) => c.id === id);
+      if (!ch) return false;
+      const snap: ChapterVersion = {
+        id: newId(), at: Date.now(), title: ch.title,
+        content: ch.content, wordCount: ch.content.replace(/\s/g, '').length, label,
+      };
+      apply((p) => {
+        const target = p.chapters.find((c) => c.id === id);
+        if (!target) return;
+        target.versions = [...(target.versions ?? []), snap].slice(-CHAPTER_VERSION_LIMIT);
+      });
+      return true;
+    },
+    restoreChapterVersion: (chapterId, versionId) => {
+      const project = get().project;
+      const ch = project?.chapters.find((c) => c.id === chapterId);
+      const ver = ch?.versions?.find((v) => v.id === versionId);
+      if (!ch || !ver) return false;
+      const rollbackSnap: ChapterVersion = {
+        id: newId(), at: Date.now(), title: ch.title,
+        content: ch.content, wordCount: ch.content.replace(/\s/g, '').length,
+        label: 'manual',
+      };
+      apply((p) => {
+        const target = p.chapters.find((c) => c.id === chapterId);
+        if (!target) return;
+        target.title = ver.title;
+        target.content = ver.content;
+        target.updatedAt = Date.now();
+        // 回滚不可逆，先把当前内容留档，再挂上历史
+        target.versions = [
+          ...(target.versions ?? []).filter((v) => v.id !== versionId),
+          rollbackSnap,
+        ].slice(-CHAPTER_VERSION_LIMIT);
+      });
+      return true;
+    },
+
+    importGraph: (batch) => apply((p) => {
+      const push = <T extends { id: string }>(list: T[], arr: T[]) => {
+        const known = new Set(list.map((x) => x.id));
+        for (const x of arr) if (!known.has(x.id)) { list.push(x); known.add(x.id); }
+      };
+      push(p.characters, batch.characters);
+      push(p.relations, batch.relations);
+      push(p.events, batch.events);
+      push(p.items, batch.items);
+      push(p.locations, batch.locations);
+      push(p.factions, batch.factions);
     }),
   };
 });
