@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { exportTxt, exportMarkdown } from '../../core/export/textExport';
 import { exportDocx } from '../../core/export/docxExport';
 import { exportEpub } from '../../core/export/epubExport';
@@ -7,6 +7,12 @@ import {
   exportAiContextZip, getSavedTarget, pickTargetDirectory,
   supportsDirectoryExport, writeAiContextToDirectory, type DirHandle,
 } from '../../core/export/aiExport';
+import {
+  parseContextBundle, parseVolumeMarkdown, applyVolumes, countWords,
+  type ParsedVolume, type VolumeMergeResult,
+} from '../../core/import/aiImport';
+import type { Project } from '../../core/types';
+import { newId } from '../../core/id';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
 import { Button } from '../../components/ui/primitives';
@@ -30,6 +36,11 @@ export function ExportPage() {
   const [includeWorldbook, setIncludeWorldbook] = useState(true);
   const [target, setTarget] = useState<DirHandle | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const bundleRef = useRef<HTMLInputElement>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
+  const [imported, setImported] = useState<Project | null>(null);
+  const [volumes, setVolumes] = useState<ParsedVolume[]>([]);
+  const [volumeInfo, setVolumeInfo] = useState<{ added: number; updated: number } | null>(null);
 
   useEffect(() => {
     void getSavedTarget().then(setTarget).catch(() => setTarget(null));
@@ -75,6 +86,84 @@ export function ExportPage() {
     }
   };
 
+  /* ---------------- AI 上下文包回导 ---------------- */
+
+  // 分卷合并预览：选了卷文件就在「导入的 JSON 作品」之上即时演算合并结果
+  const mergedPreview = useMemo<VolumeMergeResult | null>(() => {
+    if (!imported) return null;
+    if (volumes.length === 0) return null;
+    try {
+      return applyVolumes(imported, volumes);
+    } catch {
+      return null;
+    }
+  }, [imported, volumes]);
+
+  const importTarget = mergedPreview?.project ?? imported;
+
+  const handleBundleFile = async () => {
+    const file = bundleRef.current?.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = parseContextBundle(text);
+      setImported(parsed);
+      setVolumeInfo(null);
+      pushToast(`已解析「${file.name}」：${parsed.characters.length} 人物 · ${parsed.chapters.length} 章节`, 'success');
+    } catch (err) {
+      setImported(null);
+      pushToast(err instanceof Error ? err.message : '解析失败', 'error');
+    } finally {
+      if (bundleRef.current) bundleRef.current.value = '';
+    }
+  };
+
+  const handleVolumeFiles = async () => {
+    const files = Array.from(volumeRef.current?.files ?? []);
+    if (files.length === 0) return;
+    try {
+      const parsed: ParsedVolume[] = [];
+      for (const f of files) parsed.push(parseVolumeMarkdown(f.name, await f.text()));
+      setVolumes(parsed);
+      if (imported) {
+        const preview = applyVolumes(imported, parsed);
+        setVolumeInfo({ added: preview.added, updated: preview.updated });
+      }
+      pushToast(`已解析 ${parsed.length} 个分卷文件，共 ${parsed.reduce((a, v) => a + v.chapters.length, 0)} 章`, 'success');
+    } catch (err) {
+      pushToast(err instanceof Error ? err.message : '分卷解析失败', 'error');
+    } finally {
+      if (volumeRef.current) volumeRef.current.value = '';
+    }
+  };
+
+  const runImport = async (mode: 'new' | 'overwrite') => {
+    if (!importTarget) return;
+    const name = importTarget.name;
+    if (mode === 'new') {
+      const ok = await confirm('导入为新作品', `将把「${name}」导入为一部新作品并载入（${importTarget.characters.length} 人物 · ${importTarget.chapters.length} 章节），不影响现有作品。继续吗？`, false);
+      if (!ok) return;
+      try {
+        // 换新 ID，避免与库内同 ID 旧作品互相覆盖
+        await importProject({ ...importTarget, id: newId() });
+        pushToast(`《${name}》已导入为新作品并载入`, 'success');
+        setImported(null); setVolumes([]); setVolumeInfo(null);
+      } catch (err) {
+        pushToast(err instanceof Error ? err.message : '导入失败', 'error');
+      }
+      return;
+    }
+    const ok = await confirm('覆盖当前作品', `确定用「${name}」覆盖当前作品《${project?.name ?? ''}》的全部数据吗？此操作不可撤销（建议先导出一份 JSON 备份）。`);
+    if (!ok) return;
+    try {
+      await importProject(importTarget);
+      pushToast(`当前作品已替换为《${name}》`, 'success');
+      setImported(null); setVolumes([]); setVolumeInfo(null);
+    } catch (err) {
+      pushToast(err instanceof Error ? err.message : '导入失败', 'error');
+    }
+  };
+
   return (
     <div className="page">
       <header className="page__head">
@@ -111,6 +200,64 @@ export function ExportPage() {
             </Button>
           </div>
           {target && <p className="dim ai-export__target">目标文件夹：{target.name}/ · 再次导出一键覆盖，无需重新选择</p>}
+        </div>
+      </section>
+
+      {/* AI 上下文包回导：把外部 AI 工作区产出的数据导回应用 */}
+      <section className="glass-panel ai-export" style={{ marginTop: 20 }}>
+        <header className="glass-panel__head">
+          <h3>AI 上下文包回导<span className="head-en">AI CONTEXT IMPORT</span></h3>
+        </header>
+        <div className="ai-export__body">
+          <p className="ai-export__desc">
+            把 AI 工作区（ZCode 等）维护的上下文包导回应用：选择 <code>novel-context.json</code>
+            （结构化全量，兼容 JSON 备份），可选配 <code>卷01-xxx.md</code> 等正文分卷文件合并最新章节。
+            <code>00-09</code> 号 Markdown 是导出视图，无需导入；<code>10-outline.md</code> /
+            <code>11-writing-log.md</code> 属于 AI 工作区文件，不参与导入。
+          </p>
+          <div className="ai-export__ops">
+            <Button icon={<IconUpload size={14} />} onClick={() => bundleRef.current?.click()}>
+              ① 选择 novel-context.json
+            </Button>
+            <Button icon={<IconBook size={14} />} onClick={() => volumeRef.current?.click()}>
+              ② 选择正文分卷（可选，可多选）
+            </Button>
+            <input ref={bundleRef} type="file" accept="application/json,.json" style={{ display: 'none' }}
+              onChange={() => void handleBundleFile()} />
+            <input ref={volumeRef} type="file" accept=".md,.markdown,.txt" multiple style={{ display: 'none' }}
+              onChange={() => void handleVolumeFiles()} />
+          </div>
+          {importTarget && (
+            <div style={{ marginTop: 12, padding: '10px 14px', border: '1px solid var(--border-dim, rgba(255,255,255,.12))', borderRadius: 8 }}>
+              <b>《{importTarget.name}》</b>
+              <span className="dim">
+                {' '}· {importTarget.genre || '未设类型'} · {importTarget.characters.length} 人物 · {importTarget.relations.length} 关系 ·
+                {' '}{importTarget.events.length} 事件 · {importTarget.locations.length} 地点 · {importTarget.factions.length} 势力 ·
+                {' '}{importTarget.items.length} 物品 · {importTarget.chapters.length} 章 · 约 {countWords(importTarget).toLocaleString()} 字
+              </span>
+              {volumes.length > 0 && (
+                <p className="dim" style={{ margin: '6px 0 0' }}>
+                  已选 {volumes.length} 个分卷（{volumes.map((v) => v.volumeTitle).join('、')}）
+                  {volumeInfo ? <>：合并预览 —— 更新 {volumeInfo.updated} 章 · 新增 {volumeInfo.added} 章</> : '（选择 JSON 后自动预览合并）'}
+                </p>
+              )}
+              {mergedPreview && mergedPreview.untouched > 0 && (
+                <p className="dim" style={{ margin: '4px 0 0' }}>另有 {mergedPreview.untouched} 章与导入包一致，无需变动</p>
+              )}
+            </div>
+          )}
+          <div className="ai-export__ops" style={{ marginTop: 12 }}>
+            <Button variant="primary" icon={<IconSparkles size={14} />} disabled={!importTarget} onClick={() => void runImport('new')}>
+              导入为新作品
+            </Button>
+            <Button variant="glass" icon={<IconUpload size={14} />} disabled={!importTarget} onClick={() => void runImport('overwrite')}>
+              覆盖当前作品
+            </Button>
+          </div>
+          <p className="dim ai-export__target">
+            提示：「导入为新作品」会分配新作品 ID，不影响库内任何作品；「覆盖当前作品」以导入包数据整库替换。
+            导入后再次执行「AI 上下文包导出」会以应用数据覆盖工作区里的 00-09 号文件与 JSON（10/11 号 AI 工作区文件不受影响）。
+          </p>
         </div>
       </section>
 
