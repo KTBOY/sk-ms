@@ -6,8 +6,9 @@
       <stop offset="0.62" stop-color="#14161a"/>
       <stop offset="1" stop-color="#101216"/>
     </linearGradient>
-    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#e6cf95"/>
+    <linearGradient id="core" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#f0dcae"/>
+      <stop offset="0.5" stop-color="#e6cf95"/>
       <stop offset="1" stop-color="#c9ac67"/>
     </linearGradient>
     <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
