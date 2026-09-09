@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>《九州烟云》设定集 V2 · 大纲与世界观总览</title>
+<style>
+:root{
+  --bg:#0b0f16; --bg2:#0e1420; --card:#121a27; --card2:#172030;
+  --line:#27334a; --line-soft:#1d2737; --line-gold:rgba(212,165,89,.35);
+  --gold:#d4a559; --gold-soft:#e8c572; --gold-dim:#9a7b46;
+  --jade:#6ec5b8; --jade-soft:#9adcd2; --jade-dim:#3f7a72;
+  --red:#c05b5b; --red-soft:#d98a8a; --purple:#9a7fd8; --green:#8fbf7f;
+  --rose:#d88aa0; --blue:#8fa8d8; --gray:#5a6578;
+  --ink:#e9e3d6; --ink2:#aeb7c5; --ink3:#7d8697;
+  --serif:"Noto Serif SC","STZhongsong","STSong","SimSun","Songti SC",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Heiti SC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.75;
+  background-image:radial-gradient(1200px 600px at 85% -5%,rgba(110,197,184,.055),transparent 60%),
+                   radial-gradient(900px 500px at -10% 20%,rgba(212,165,89,.05),transparent 60%);}
+a{color:var(--jade);text-decoration:none}
+::selection{background:rgba(212,165,89,.35)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#253044;border-radius:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+
+/* ---------- 布局 ---------- */
+#sidenav{position:fixed;left:0;top:0;bottom:0;width:216px;z-index:50;overflow-y:auto;
+  background:linear-gradient(180deg,#0d131e,#0b1017);border-right:1px solid var(--line-soft);
+  padding:22px 0 18px;}
+.nav-brand{padding:0 20px 16px;border-bottom:1px solid var(--line-soft);margin-bottom:12px}
+.nav-brand .nb-t{font-family:var(--serif);font-size:21px;letter-spacing:2px;color:var(--gold-soft)}
+.nav-brand .nb-s{font-size:11px;color:var(--ink3);letter-spacing:3px;margin-top:2px}
+.nav-links a{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--ink2);
+  font-size:13.5px;border-left:3px solid transparent;transition:all .18s}
+.nav-links a .n{font-family:var(--serif);color:var(--ink3);font-size:12px;width:18px;flex:none}
+.nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.03)}
+.nav-links a.active{color:var(--gold-soft);border-left-color:var(--gold);background:rgba(212,165,89,.07)}
+.nav-links a.active .n{color:var(--gold)}
+.nav-foot{margin-top:14px;padding:12px 20px 0;border-top:1px solid var(--line-soft);
+  font-size:11px;color:var(--ink3);line-height:1.7}
+main{margin-left:216px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 30px 40px}
+@media (max-width:960px){
+  #sidenav{position:sticky;top:0;width:100%;height:auto;padding:8px 0;display:flex;flex-direction:column}
+  .nav-brand{display:none}
+  .nav-links{display:flex;overflow-x:auto;padding:0 8px}
+  .nav-links a{border-left:none;border-bottom:3px solid transparent;white-space:nowrap;padding:8px 12px}
+  .nav-links a.active{border-bottom-color:var(--gold)}
+  .nav-foot{display:none}
+  main{margin-left:0}
+  .wrap{padding:0 16px 32px}
+}
+
+/* ---------- 英雄区 ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-soft);
+  background:linear-gradient(180deg,#101724 0%,#0c121c 100%)}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.hero-inner{position:relative;max-width:1180px;margin:0 auto;padding:64px 30px 46px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.hero-title{font-family:var(--serif);font-size:52px;letter-spacing:10px;line-height:1.25;
+  background:linear-gradient(135deg,#f0dcae 10%,var(--gold) 45%,#b08a4a 90%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:0 0 40px rgba(212,165,89,.15)}
+.hero-sub{margin-top:12px;color:var(--ink2);font-size:15.5px;letter-spacing:2px;max-width:640px}
+.hero-sub b{color:var(--gold-soft);font-weight:600}
+.hero-meta{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,255,255,.028);font-size:12px;color:var(--ink2)}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none}
+.chip.c-j .dot{background:var(--jade)} .chip.c-r .dot{background:var(--red)}
+.hero-seal{writing-mode:vertical-rl;font-family:var(--serif);font-size:19px;letter-spacing:8px;
+  color:var(--gold-soft);border:2px solid rgba(212,165,89,.55);border-radius:8px;
+  padding:16px 10px;background:rgba(212,165,89,.06);align-self:stretch;
+  box-shadow:0 0 24px rgba(212,165,89,.12) inset}
+.progress-line{position:relative;max-width:1180px;margin:0 auto;padding:0 30px 30px}
+.progress-line .pl-label{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:7px}
+.progress-line .pl-label b{color:var(--gold-soft);font-weight:600}
+.progress-line .bar{height:8px;border-radius:6px;background:#1a2332;border:1px solid var(--line-soft);overflow:hidden}
+.progress-line .bar span{display:block;height:100%;width:26.5%;border-radius:6px;
+  background:linear-gradient(90deg,var(--jade-dim),var(--jade) 45%,var(--gold-soft));
+  box-shadow:0 0 14px rgba(110,197,184,.5)}
+@media (max-width:700px){.hero-title{font-size:34px;letter-spacing:6px}.hero-seal{display:none}}
+
+/* ---------- 章节 ---------- */
+section.sec{padding:52px 0 6px;scroll-margin-top:16px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.sec-num{font-family:var(--serif);font-size:30px;color:var(--gold);opacity:.9;line-height:1;
+  text-shadow:0 0 18px rgba(212,165,89,.25)}
+.sec-title{font-family:var(--serif);font-size:25px;letter-spacing:4px;color:var(--ink)}
+.sec-sub{font-size:12.5px;color:var(--ink3);letter-spacing:1px}
+.sec-rule{height:1px;background:linear-gradient(90deg,var(--line-gold),var(--line) 30%,transparent 90%);
+  margin:10px 0 22px}
+.sec-body{display:flex;flex-direction:column;gap:18px}
+
+/* ---------- 通用卡片 ---------- */
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:900px){.grid3,.grid4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:18px 20px;
+  transition:border-color .2s, transform .2s, box-shadow .2s}
+.card:hover{border-color:var(--line);transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.35)}
+.card h4{font-family:var(--serif);font-size:16.5px;color:var(--gold-soft);letter-spacing:2px;margin-bottom:8px}
+.card h4 .tag{font-family:var(--sans);font-size:11px;letter-spacing:1px;color:var(--ink3);margin-left:8px}
+.card p{color:var(--ink2)}
+.card .big{font-size:26px;font-family:var(--serif);color:var(--ink);letter-spacing:1px;line-height:1.4}
+.card .hl{color:var(--gold-soft)}
+.small{font-size:12px;color:var(--ink3)}
+
+.bdg{display:inline-block;padding:1px 10px;border-radius:4px;font-size:11.5px;letter-spacing:1px;
+  border:1px solid;white-space:nowrap}
+.bdg.done{color:var(--gold-soft);border-color:rgba(212,165,89,.5);background:rgba(212,165,89,.08)}
+.bdg.live{color:var(--jade-soft);border-color:rgba(110,197,184,.5);background:rgba(110,197,184,.08)}
+.bdg.live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--jade);margin-right:5px;vertical-align:1px;animation:pulse 1.6s infinite}
+.bdg.wait{color:var(--ink3);border-color:var(--line);background:rgba(255,255,255,.02)}
+.bdg.red{color:var(--red-soft);border-color:rgba(192,91,91,.45);background:rgba(192,91,91,.07)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.note,.warn{border-radius:10px;padding:13px 18px;font-size:13px;color:var(--ink2)}
+.note{border:1px solid rgba(110,197,184,.35);background:rgba(110,197,184,.05)}
+.note b{color:var(--jade-soft)}
+.warn{border:1px solid rgba(212,165,89,.4);background:rgba(212,165,89,.06)}
+.warn b{color:var(--gold-soft)}
+.note .t,.warn .t{font-family:var(--serif);letter-spacing:2px;display:block;margin-bottom:4px}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;background:var(--card)}
+table.tbl th{background:#182233;color:var(--gold-soft);font-family:var(--serif);letter-spacing:2px;
+  font-weight:600;padding:9px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+table.tbl td{padding:8px 12px;color:var(--ink2);border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.tbl tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+table.tbl tr:hover td{background:rgba(212,165,89,.04)}
+table.tbl td.em{color:var(--ink)}
+
+/* ---------- 折叠 ---------- */
+.fold{border:1px solid var(--line-soft);border-radius:12px;background:var(--card);overflow:hidden}
+.fold-head{display:flex;align-items:center;gap:10px;padding:13px 18px;cursor:pointer;user-select:none;
+  font-family:var(--serif);letter-spacing:2px;color:var(--ink);font-size:15px;transition:background .15s}
+.fold-head:hover{background:rgba(212,165,89,.05)}
+.fold-head .fh-sub{font-family:var(--sans);font-size:12px;color:var(--ink3);letter-spacing:0;margin-left:auto}
+.chev{width:0;height:0;border-left:6px solid var(--ink3);border-top:5px solid transparent;
+  border-bottom:5px solid transparent;transition:transform .2s;flex:none}
+.fold.open .chev,.vol.open .chev{transform:rotate(90deg)}
+.fold-body{display:none;padding:6px 18px 16px}
+.fold.open .fold-body{display:block;animation:fadeIn .25s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* ---------- 总览/世界观 ---------- */
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:900px){.kv{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.kv{grid-template-columns:1fr}}
+.kv .card .big{font-size:22px}
+.region{border-top:3px solid var(--rc,var(--gold))}
+.region .rg-name{font-family:var(--serif);font-size:17px;color:var(--rc,var(--gold));letter-spacing:3px}
+.region .rg-loc{margin-top:6px;font-size:12.5px;color:var(--jade-soft)}
+.region .rg-loc b{color:var(--ink2);font-weight:600}
+.region p{font-size:12.5px;margin-top:8px}
+
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,var(--gold),var(--jade-dim))}
+.tl-item{position:relative;padding:0 0 18px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-24px;top:7px;width:11px;height:11px;border-radius:50%;
+  background:var(--bg);border:2.5px solid var(--gold)}
+.tl-item .tl-t{font-family:var(--serif);color:var(--gold-soft);letter-spacing:2px;font-size:15px}
+.tl-item p{color:var(--ink2);font-size:13px;margin-top:3px}
+
+.key3{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr;gap:10px;align-items:center}
+@media (max-width:860px){.key3{display:flex;flex-wrap:wrap;gap:10px}}
+.keycard{border:1px solid var(--line-gold);border-radius:10px;padding:12px 14px;background:rgba(212,165,89,.05);
+  font-family:var(--serif);text-align:center}
+.keycard .kn{font-size:17px;color:var(--gold-soft);letter-spacing:3px}
+.keycard .kv2{font-size:12px;color:var(--ink2);font-family:var(--sans);margin-top:3px}
+.key3 .plus{font-family:var(--serif);font-size:22px;color:var(--ink3)}
+.quote{border-left:3px solid var(--gold);padding:10px 16px;background:rgba(212,165,89,.06);
+  border-radius:0 8px 8px 0;font-family:var(--serif);color:var(--gold-soft);letter-spacing:1.5px;font-size:15px}
+.rules li{list-style:none;padding:8px 12px 8px 30px;position:relative;color:var(--ink2);font-size:13px;
+  border-bottom:1px dashed var(--line-soft)}
+.rules li:last-child{border-bottom:none}
+.rules li::before{content:"禁";position:absolute;left:2px;top:9px;font-size:11px;color:var(--red);
+  border:1px solid rgba(192,91,91,.5);border-radius:4px;padding:0 4px;line-height:1.5}
+
+/* ---------- 战力 ---------- */
+.radbox{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:stretch}
+@media (max-width:900px){.radbox{grid-template-columns:1fr}}
+.radpanel{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:16px 18px}
+.radpanel .rp-title{font-family:var(--serif);letter-spacing:2px;color:var(--gold-soft);margin-bottom:10px}
+#radarCanvas{display:block;margin:0 auto;max-width:100%}
+.rad-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.rad-btns button{padding:5px 14px;border-radius:6px;border:1px solid var(--line);background:#1a2434;
+  color:var(--ink2);cursor:pointer;font-size:12.5px;transition:all .15s;font-family:var(--sans)}
+.rad-btns button:hover{border-color:var(--jade-dim);color:var(--ink)}
+.rad-btns button.on{border-color:var(--gold);color:var(--gold-soft);background:rgba(212,165,89,.1)}
+.rad-cmp{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;color:var(--ink3);cursor:pointer}
+.hbar-row{display:grid;grid-template-columns:112px 1fr 40px;gap:10px;align-items:center;padding:4px 0}
+.hbar-label{font-size:12.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{height:12px;border-radius:6px;background:#1a2332;border:1px solid #223046;overflow:hidden}
+.hbar-track i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#33555e,var(--jade))}
+.hbar-val{font-size:12px;color:var(--ink3);text-align:right;font-family:var(--serif)}
+.hbar-row.me .hbar-label{color:var(--gold-soft)} .hbar-row.me .hbar-track i{background:linear-gradient(90deg,#6b5a35,var(--gold-soft))}
+.hbar-row.mi .hbar-track i{background:linear-gradient(90deg,#5e3232,var(--red))}
+.hbar-row.roy .hbar-track i{background:linear-gradient(90deg,#39475f,var(--blue))}
+.hbar-row.dl{opacity:.45}
+.stepg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:800px){.stepg{grid-template-columns:1fr}}
+.step{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:16px 18px;position:relative}
+.step .st-name{font-family:var(--serif);font-size:18px;color:var(--gold-soft);letter-spacing:3px}
+.step .st-apt{font-size:12.5px;color:var(--ink2);margin:8px 0}
+.step .st-ft{font-size:12px;color:var(--ink3)}
+.step.locked{border-style:dashed;opacity:.85}
+.sklist{display:flex;flex-wrap:wrap;gap:8px}
+.sk{border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--ink2);
+  background:var(--card);cursor:default;transition:all .15s}
+.sk:hover{border-color:var(--jade-dim);color:var(--ink)}
+.sk b{color:var(--jade-soft);font-weight:600;margin-right:4px;font-family:var(--serif);letter-spacing:1px}
+.sk.rk b{color:var(--red-soft)}
+.growline{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.gn{padding:5px 12px;border-radius:6px;font-size:12.5px;border:1px solid var(--line);color:var(--ink2);background:var(--card)}
+.gn.ok{border-color:rgba(212,165,89,.45);color:var(--gold-soft);background:rgba(212,165,89,.06)}
+.gn.no{border-style:dashed;color:var(--ink3)}
+.garrow{color:var(--ink3);font-size:11px}
+
+/* ---------- 人物 ---------- */
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{padding:6px 16px;border-radius:999px;border:1px solid var(--line);background:#141d2b;
+  color:var(--ink2);cursor:pointer;font-size:13px;font-family:var(--sans);transition:all .15s}
+.tabs button:hover{color:var(--ink);border-color:var(--jade-dim)}
+.tabs button.on{border-color:var(--gold);color:var(--gold-soft);background:rgba(212,165,89,.1)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(345px,1fr));gap:14px}
+.ccard{background:var(--card);border:1px solid var(--line-soft);border-left:3px solid var(--fc,var(--gold));
+  border-radius:12px;padding:16px 18px;transition:all .2s}
+.ccard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35);border-color:var(--line)}
+.ccard.hide{display:none}
+.c-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.c-name{font-family:var(--serif);font-size:20px;letter-spacing:3px;color:var(--ink)}
+.c-fac{font-size:11px;letter-spacing:1px;padding:1px 8px;border-radius:4px;white-space:nowrap;
+  color:var(--fc,var(--gold));border:1px solid var(--fc,var(--gold));opacity:.9}
+.c-age{margin-left:auto;font-size:11.5px;color:var(--ink3)}
+.c-line{margin-top:6px;font-size:12.5px;color:var(--ink2);font-style:italic}
+.dims{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:5px 16px}
+@media (max-width:520px){.dims{grid-template-columns:1fr}}
+.dim{display:grid;grid-template-columns:34px 1fr 26px;gap:8px;align-items:center;font-size:11.5px}
+.dim-label{color:var(--ink3)}
+.dim-bar{height:7px;border-radius:4px;background:#1a2332;overflow:hidden}
+.dim-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#2c3a4d,var(--fc,var(--jade)))}
+.dim.off .dim-bar{background:repeating-linear-gradient(45deg,#1c2534 0 5px,#161e2b 5px 10px)}
+.dim.off .dim-bar i{display:none}
+.dim-val{text-align:right;color:var(--ink3);font-family:var(--serif)}
+.c-sec{margin-top:12px;padding:8px 12px;border-radius:8px;font-size:12.5px;color:var(--ink2)}
+.c-sec .ct{font-size:11.5px;letter-spacing:2px;color:var(--ink3);display:block;margin-bottom:2px;font-family:var(--serif)}
+.c-status{background:rgba(110,197,184,.06);border:1px solid rgba(110,197,184,.25)}
+.c-status .ct{color:var(--jade-soft)}
+.c-dest{background:rgba(212,165,89,.05);border:1px dashed rgba(212,165,89,.4)}
+.c-dest .ct{color:var(--gold-dim)}
+.c-alias{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.c-alias .al{font-size:11px;color:var(--ink3)}
+.tagc{font-size:11px;padding:1px 9px;border-radius:999px;background:rgba(255,255,255,.04);
+  border:1px solid var(--line);color:var(--ink2)}
+.f-protag{--fc:#e8c572}.f-qingyun{--fc:#7dd4c0}.f-royal{--fc:#8fa8d8}
+.f-ming{--fc:#c96a6a}.f-yaowang{--fc:#9ac48a}.f-ling{--fc:#d8c9a0}
+
+/* ---------- 关系图 ---------- */
+.graphbox{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:10px;overflow-x:auto}
+#relsvg{display:block;margin:0 auto;min-width:840px}
+.node circle{fill:#1a2432;stroke:var(--nc,var(--jade));stroke-width:2.2;transition:all .15s;cursor:pointer}
+.node .nname{fill:var(--ink2);font-size:12px;text-anchor:middle;font-family:var(--sans)}
+.node .nsub{fill:var(--ink3);font-size:9.5px;text-anchor:middle}
+.node:hover circle{stroke-width:3.4;filter:drop-shadow(0 0 6px rgba(255,255,255,.25))}
+.edge{stroke:var(--ec,#4a5872);stroke-opacity:.5;transition:all .15s;cursor:pointer}
+.edge.hl{stroke-opacity:1;stroke-width:2.6;filter:drop-shadow(0 0 4px currentColor)}
+.elabel{fill:var(--ink2);font-size:10.5px;text-anchor:middle;opacity:0;transition:opacity .15s;
+  paint-order:stroke;stroke:#0b0f16;stroke-width:3px;font-family:var(--sans)}
+.elabel.hl{opacity:1;fill:var(--ink)}
+svg.dimmed .node:not(.hl):not(.conn){opacity:.22}
+svg.dimmed .edge:not(.hl){stroke-opacity:.08}
+svg.dimmed .elabel:not(.hl){opacity:0}
+.lg-grid{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:10px;font-size:12px;color:var(--ink3)}
+.lg{display:flex;align-items:center;gap:8px}
+.lg .sw{width:26px;height:0;border-top:2.5px solid}
+.lg .sw.dash{border-top-style:dashed}
+
+/* ---------- 势力 ---------- */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.fac{background:var(--card);border:1px solid var(--line-soft);border-top:3px solid var(--fcl,var(--jade));
+  border-radius:12px;padding:16px 18px;transition:all .2s}
+.fac:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.fac .fn{font-family:var(--serif);font-size:17.5px;letter-spacing:2px;color:var(--ink)}
+.fac .ft{font-size:11px;color:var(--fcl,var(--jade));letter-spacing:1px}
+.fac .fr{margin-top:6px;font-size:12px;color:var(--ink3)}
+.fac .fs{margin-top:8px;font-size:12.5px;color:var(--ink2)}
+.fac .fd{margin-top:8px;font-size:12.5px;color:var(--gold-dim);border-top:1px dashed var(--line-soft);padding-top:8px}
+.struct{display:flex;flex-direction:column;gap:12px;align-items:center;padding:8px 0}
+.srow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.sbox{border:1px solid var(--line);border-radius:10px;padding:10px 18px;text-align:center;background:var(--card2);min-width:150px}
+.sbox .b1{font-family:var(--serif);font-size:15px;letter-spacing:2px;color:var(--ink)}
+.sbox .b2{font-size:11px;color:var(--ink3);margin-top:2px}
+.sbox.top{border-color:rgba(192,91,91,.55);box-shadow:0 0 18px rgba(192,91,91,.1)}
+.sbox.top .b1{color:var(--red-soft)}
+.sarrow{color:var(--ink3);font-size:18px;line-height:1}
+.snote{font-size:12px;color:var(--ink3);text-align:center}
+
+/* ---------- 大纲 ---------- */
+.vol{border:1px solid var(--line-soft);border-radius:12px;background:var(--card);overflow:hidden;margin-bottom:12px}
+.vol-head{display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;user-select:none;transition:background .15s}
+.vol-head:hover{background:rgba(212,165,89,.05)}
+.vol-seal{font-family:var(--serif);width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--gold-dim);border-radius:8px;color:var(--gold-soft);font-size:15px;letter-spacing:1px;
+  background:rgba(212,165,89,.06);writing-mode:vertical-rl}
+.vol.open .vol-seal{border-color:var(--gold);color:var(--gold-soft)}
+.vol-tt{min-width:0}
+.vol-name{font-family:var(--serif);font-size:18px;letter-spacing:3px;color:var(--ink)}
+.vol-meta{font-size:12px;color:var(--ink3);margin-top:2px}
+.vol-head .bdg{margin-left:auto}
+.chev.v2{border-left-color:var(--gold-dim)}
+.vol-body{display:none;padding:4px 22px 18px}
+.vol.open .vol-body{display:block;animation:fadeIn .25s}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 10px}
+.fl{padding:4px 11px;border-radius:6px;border:1px solid var(--line);font-size:12px;color:var(--ink2);background:#151f2e}
+.fl b{color:var(--jade-soft);font-family:var(--serif);margin-right:4px;font-weight:600}
+.fl.hot{border-color:rgba(192,91,91,.4);color:var(--red-soft)}
+.fl.key{border-color:var(--line-gold);color:var(--gold-soft)}
+.farrow{color:var(--ink3);font-size:10px}
+.beat{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.bt{flex:1;min-width:86px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#141d2b;text-align:center}
+.bt .bn{font-family:var(--serif);color:var(--gold-soft);font-size:13px}
+.bt .bl{font-size:11px;color:var(--ink2);margin-top:1px;line-height:1.5}
+.bt.cur{border-color:var(--jade);background:rgba(110,197,184,.07)}
+.bt.cur .bn{color:var(--jade-soft)}
+.bt.end{border-color:rgba(192,91,91,.45)}
+.anchorg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:860px){.anchorg{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.anchorg{grid-template-columns:1fr}}
+.anchor{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:center}
+.anchor .an{font-family:var(--serif);font-size:26px;color:var(--gold-soft);line-height:1.3}
+.anchor .al{font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:3px}
+
+/* ---------- 伏笔 ---------- */
+.fstatg{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+@media (max-width:700px){.fstatg{grid-template-columns:1fr;justify-items:center}}
+.donut{width:168px;height:168px;border-radius:50%;position:relative;flex:none;
+  background:conic-gradient(#d4a559 0 9.1%,#4fae9f 9.1% 81.8%,#39465a 81.8% 100%);
+  box-shadow:0 0 30px rgba(110,197,184,.12)}
+.donut::after{content:"";position:absolute;inset:29px;border-radius:50%;background:var(--card);border:1px solid var(--line-soft)}
+.donut .dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
+.donut .dc .n{font-family:var(--serif);font-size:33px;color:var(--ink);line-height:1.2}
+.donut .dc .l{font-size:11px;color:var(--ink3);letter-spacing:2px}
+.fstat-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:700px){.fstat-rows{grid-template-columns:1fr}}
+.fs-row{background:var(--card);border:1px solid var(--line-soft);border-radius:10px;padding:12px 16px}
+.fs-row .fn2{font-family:var(--serif);font-size:24px;line-height:1.3}
+.fs-row .fl2{font-size:12px;color:var(--ink3)}
+.fs-row.r1 .fn2{color:var(--gold-soft)} .fs-row.r2 .fn2{color:var(--jade-soft)} .fs-row.r3 .fn2{color:var(--ink2)}
+.fbig{border:1px solid var(--line-gold);border-radius:12px;padding:16px 20px;background:linear-gradient(160deg,rgba(212,165,89,.07),rgba(212,165,89,.02))}
+.fbig .fbn{font-family:var(--serif);font-size:17px;color:var(--gold-soft);letter-spacing:2px}
+.fbig .fbr{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.fstep{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;font-size:13px;color:var(--ink2)}
+.fstep .fst{font-family:var(--serif);color:var(--gold);letter-spacing:1px;white-space:nowrap}
+.heat-row{display:grid;grid-template-columns:150px 1fr 84px;gap:12px;align-items:center;padding:5px 0}
+.heat-label{font-size:12.5px;color:var(--ink2)}
+.heat-track{height:14px;border-radius:7px;background:#19222f;overflow:hidden;position:relative}
+.heat-track i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#7a5a2f,var(--gold))}
+.heat-val{font-size:11.5px;color:var(--ink3);text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- 页脚/其他 ---------- */
+.foot{margin-top:46px;border-top:1px solid var(--line-soft);padding:22px 30px 34px;
+  font-size:12px;color:var(--ink3);line-height:2}
+.foot b{color:var(--ink2);font-weight:600}
+#topBtn{position:fixed;right:22px;bottom:24px;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(18,26,39,.9);color:var(--gold-soft);cursor:pointer;font-size:15px;z-index:60;
+  opacity:0;pointer-events:none;transition:all .25s;backdrop-filter:blur(4px)}
+#topBtn.show{opacity:1;pointer-events:auto}
+#topBtn:hover{border-color:var(--gold)}
+.disc-list li{list-style:none;padding:9px 4px 9px 26px;position:relative;color:var(--ink2);font-size:13px;
+  border-bottom:1px dashed var(--line-soft)}
+.disc-list li:last-child{border-bottom:none}
+.disc-list li::before{content:"◆";position:absolute;left:4px;top:9px;color:var(--gold-dim);font-size:10px}
+</style>
+</head>
+<body>
+
+<nav id="sidenav">
+  <div class="nav-brand">
+    <div class="nb-t">九州烟云</div>
+    <div class="nb-s">设定集 · V2</div>
+  </div>
+  <div class="nav-links">
+    <a href="#ov"><span class="n">壹</span>总览</a>
+    <a href="#world"><span class="n">贰</span>世界观</a>
+    <a href="#power"><span class="n">叁</span>战力体系</a>
+    <a href="#chars"><span class="n">肆</span>人物谱</a>
+    <a href="#rel"><span class="n">伍</span>人物关系</a>
+    <a href="#fac"><span class="n">陆</span>势力格局</a>
+    <a href="#plot"><span class="n">柒</span>主线大纲</a>
+    <a href="#fore"><span class="n">捌</span>伏笔规划</a>
+    <a href="#disc"><span class="n">玖</span>写作纪律</a>
+    <a href="#expand"><span class="n">拾</span>扩展大纲</a>
+  </div>
+  <div class="nav-foot">
+    快照基准：第 56 章<br>（第二年 · 夏末）<br><br>
+    事实源：yrdy 资料库<br>整合：设定集架构师
+  </div>
+</nav>
+
+<main>
+<!-- ================= 英雄区 ================= -->
+<header class="hero">
+  <svg class="hero-bg" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <circle cx="960" cy="100" r="72" fill="#d4a559" opacity="0.09"/>
+    <circle cx="960" cy="100" r="48" fill="#e8c572" opacity="0.07"/>
+    <path d="M0,420 L200,235 L330,330 L480,140 L660,345 L780,255 L920,420 Z" fill="#131c2b"/>
+    <path d="M480,140 L575,250 L500,320 L440,235 Z" fill="#1a2435"/>
+    <path d="M600,420 L770,295 L870,360 L1010,255 L1200,420 Z" fill="#0f1725"/>
+    <path d="M1010,255 L1080,330 L940,420 L900,340 Z" fill="#151f30"/>
+  </svg>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-title">九州烟云</div>
+      <div class="hero-sub">少年林霄拜入青云剑宗，<b>携玄天令之秘</b>，卷入正邪两道<b>千年棋局</b>。本页为团队整合之《小说大纲与设定集》，供审查确认后续写基准。</div>
+      <div class="hero-meta">
+        <span class="chip"><span class="dot"></span>东方玄幻 · 宗门 · 剑修 · 正邪对立</span>
+        <span class="chip c-j"><span class="dot"></span>1200 章 · 四部三十六卷 · 约 264 万字</span>
+        <span class="chip c-r"><span class="dot"></span>正稿 56 / 1200 章（第一部 1–200）</span>
+        <span class="chip c-j"><span class="dot"></span>每章约 2200 字 · 章末留钩</span>
+      </div>
+    </div>
+    <div class="hero-seal">设定集</div>
+  </div>
+  <div class="progress-line">
+    <div class="pl-label"><span>卷一《风雪入青云》完稿 · 卷二《藏锋录》写至 53 章</span><b>26.5%</b></div>
+    <div class="bar"><span></span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ================= 壹 总览 ================= -->
+<section class="sec" id="ov">
+  <div class="sec-head"><span class="sec-num">壹</span><span class="sec-title">总览</span><span class="sec-sub">作品基本盘 · 进度锚点 · 审查指引</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="warn"><span class="t">审 查 指 引</span>
+      本设定集整合自用户上传之 yrdy 资料库（唯一事实源），供<b>审查与续写基准确认</b>。建议重点核对三处：
+      <b>① 世界观自洽性</b>：千年旧局、三钥体系与矛盾矩阵是否闭环；
+      <b>② 人物卡</b>：当前状态（截至 53 章）与全书既定走向是否有冲突；
+      <b>③ 主线走向</b>：六卷节拍、卷末钩子与伏笔回收密度是否合意。
+      有任何修改意见请直接提出，团队将先核对数据源再修订落笔。
+    </div>
+
+    <div class="kv">
+      <div class="card"><h4>核心立意</h4>
+        <div class="big">少年 · 守令 · 千年棋局</div>
+        <p style="margin-top:6px">林霄以杂役之身入青云剑宗，身怀玄天令而不自知，正邪两道为这枚令，已对弈千年。</p>
+      </div>
+      <div class="card"><h4>题材类型</h4>
+        <div class="big">东方玄幻</div>
+        <p style="margin-top:6px">宗门修行 · 剑修主线 · 正邪对立 · 皇朝制衡四线并进。</p>
+      </div>
+      <div class="card"><h4>体量规格</h4>
+        <div class="big">1200 章 · 四部三十六卷</div>
+        <p style="margin-top:6px">每章约 2200 字（区间 1800–2600），总字数目标约 264 万字。<b>2026-09-07 用户确认由 200 章/六卷扩展</b>；原 1–200 章规划与伏笔锚点零改动，201–1200 章见「拾 · 扩展大纲」。</p>
+      </div>
+      <div class="card"><h4>文风纪律</h4>
+        <div class="big">职业连载风</div>
+        <p style="margin-top:6px">内容密度优先，每章结尾留钩子；每 3–5 章小高潮，卷末大高潮＋大钩子。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>进度锚点<span class="tag">截至 2026-09-08 · 团队续写已转正日更</span></h4>
+      <div class="anchorg" style="margin-top:8px">
+        <div class="anchor"><div class="an">56 / 1200</div><div class="al">已完稿章数（1–53 用户原稿＋54–56 团队续写试笔，已确认转正）</div></div>
+        <div class="anchor"><div class="an">第 57 章</div><div class="al">日更流水线进行中（每日 1 章 · 20:00 前交付）</div></div>
+        <div class="anchor"><div class="an">6.5 万字</div><div class="al">卷一 1–33 章 · 完稿</div></div>
+        <div class="anchor"><div class="an">201–1200</div><div class="al">扩展大纲已落盘（见「拾 · 扩展大纲」）</div></div>
+      </div>
+      <p class="small" style="margin-top:10px">注：49–53 章叙事完整但字数 957–1286，列「待润」（低优先级润色至 2000 字档）；卷二剩余节拍 54–66 详见「柒 · 主线大纲」。</p>
+    </div>
+
+    <div class="note"><span class="t">事 实 源 声 明</span>
+      本集全部设定提炼自 <b>九州烟云-ai-context/</b>（AGENTS.md 写作规则＋设定数据源＋卷一/卷二正文）。凡本集与数据源冲突之处，<b>一律以数据源为准</b>；确需变更设定，须先在 09-consistency.md 留痕再落笔。
+    </div>
+  </div>
+</section>
+
+<!-- ================= 贰 世界观 ================= -->
+<section class="sec" id="world">
+  <div class="sec-head"><span class="sec-num">贰</span><span class="sec-title">世界观</span><span class="sec-sub">九州地理 · 千年旧局 · 核心矛盾 · 三钥体系 · 硬规则</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 九州地理格局（五大区域 · 17 处核心地点）</h4>
+    <div class="grid3">
+      <div class="card region" style="--rc:#7dd4c0"><div class="rg-name">东洲</div>
+        <div class="rg-loc"><b>青云山</b>（问剑峰 / 试剑崖 / 杂役院 / 藏经阁 / 剑冢）· <b>落霞镇</b> · <b>黑风隘</b></div>
+        <p>正道魁首青云剑宗山门所在；主角故乡落霞镇为血案起点；黑风隘为东洲通南疆咽喉，是幽冥渗透与两度行军的必经之地。</p>
+      </div>
+      <div class="card region" style="--rc:#c96a6a"><div class="rg-name">南疆</div>
+        <div class="rg-loc"><b>幽冥谷</b>（九幽台 / 哭碑涧）· <b>断魂原</b></div>
+        <p>幽冥教总坛；九幽台为血魂大阵阵眼。断魂原系千年前十杰战魔主的古战场，幻境藏千年真相、地脉指向九幽之眼。</p>
+      </div>
+      <div class="card region" style="--rc:#8fa8d8"><div class="rg-name">中州</div>
+        <div class="rg-loc"><b>皇城</b>（观星楼）· <b>万宝楼</b></div>
+        <p>大离皇朝都城，政治博弈主舞台；万宝楼为九州最大拍卖行，消息财货枢纽，林霄与云梦瑶初遇之地。</p>
+      </div>
+      <div class="card region" style="--rc:#9ac48a"><div class="rg-name">西泽</div>
+        <div class="rg-loc"><b>药王谷</b></div>
+        <p>医道圣地，《青囊残卷》旧案与护炉成丹之地；女主苏映雪的师门。</p>
+      </div>
+      <div class="card region" style="--rc:#d4a559"><div class="rg-name">东海</div>
+        <div class="rg-loc"><b>归墟守令碑林</b></div>
+        <p>上古遗迹，历代守令人「封 / 渡」选择之碑，三钥之学源头，卷六主线舞台。</p>
+      </div>
+      <div class="card"><h4>主要地点速查</h4>
+        <p class="small" style="line-height:2">问剑峰＝宗主居所 / 亲传修行地 · 藏经阁＝《青云剑典》所在（慕长风将盗卷处，洛惊鸿自请守阁十年）· 剑冢＝历代剑修埋剑禁地，深处「万剑朝宗台」为青莲剑觉醒地 · 幽冥谷战后封为「镇魔谷」 · 观星楼＝苍梧真人居所，星图藏千年旧局 · 碑上无名，唯「封」「渡」二字之道。</p>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 千年旧局（世界观底层史）</h4>
+    <div class="card">
+      <div class="tl">
+        <div class="tl-item"><div class="tl-t">一 · 千年前正邪大战</div>
+          <p>魔主<b style="color:var(--red-soft)">殷无涯</b>（原十杰同门，因「正道伪善」被放逐、一念成魔）与十大高手决战断魂原。十杰封魔<b class="hl">只得封形、未灭其魂</b>；十杰之首洛清愁为青莲剑原主（秦烛挚友，卷五回收）。</p>
+        </div>
+        <div class="tl-item"><div class="tl-t">二 · 守令人封印</div>
+          <p>守令人<b class="hl">秦烛</b>以自身残魂入玄天令续封千年；林家（落霞镇猎户）即守令一脉传承。续封需守令人精血，<b style="color:var(--red-soft)">千年之期将满</b>，全书倒计时的源头。</p>
+        </div>
+        <div class="tl-item"><div class="tl-t">三 · 玄天令三重封</div>
+          <p>一重纹·藏忆（秦老残魂），已于第 26 章解；二重纹·藏史（十杰封魔真相），回收点第 114 章《万骨枯》；三重纹·藏钥（开合九幽之眼），回收点第 152 章《故人》/ 186 章《剑令合一》。</p>
+        </div>
+        <div class="tl-item"><div class="tl-t">四 · 血魂大阵与九幽之眼</div>
+          <p>幽冥教千年布局：聚生魂开「九幽之眼」（谷中最深处封印）以放魔主临世；<b class="hl">血月悬空</b>为大阵将成的时间指针。</p>
+        </div>
+        <div class="tl-item"><div class="tl-t">五 · 皇朝龙脉旧账</div>
+          <p>大离皇朝龙脉与封印有「压梁」旧关联，云梦瑶玉牌可退冥殿（39 章正文 / 11-writing-log 伏笔记录）。</p>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 核心矛盾矩阵（四线并进）</h4>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th style="width:96px">层次</th><th style="width:230px">矛盾</th><th>演进说明</th></tr></thead>
+      <tbody>
+        <tr><td class="em">明线 · 正邪</td><td class="em">幽冥教寻令开眼 VS 守令人护封补印</td><td>屠九屠镇寻令（已发生）→ 血魂大阵（建设期）→ 教主借阵临世（148 章）→ 终战补封（186–193 章）</td></tr>
+        <tr><td class="em">暗线 · 执念</td><td class="em">「正道伪善」心结 VS「封与渡」的主题抉择</td><td>殷无涯被放逐成魔的执念，最终由续魂之法<b class="hl">渡化</b>而非单纯镇压，全书主题落点（178–192 章）</td></tr>
+        <tr><td class="em">政治线</td><td class="em">大离皇朝制衡宗门</td><td>观礼插手（当前已启动）→ 云铮勾结幽冥（117 / 163 章）→ 云鼎苍索令「共管」（118 / 161 章）→ 战后新约（165 章）→ 云梦瑶新政（197 章）</td></tr>
+        <tr><td class="em">内线 · 同门</td><td class="em">慕长风叛门线</td><td>大比失利心态失衡（52–53 章已落）→ 密使交易（56–57 章）→ 盗典叛门（76–78 章）→ 被夺舍（156 章）→ 残识悔悟（187–188 章）</td></tr>
+      </tbody>
+    </table></div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 三钥体系（补封总设定 · 167–169 章集三钥）</h4>
+    <div class="card">
+      <div class="key3">
+        <div class="keycard"><div class="kn">钥心</div><div class="kv2">玄天令，封印之钥<br>内封秦烛残魂</div></div>
+        <span class="plus">＋</span>
+        <div class="keycard"><div class="kn">钥锋</div><div class="kv2">青莲剑，剑冢灵剑<br>遇血则鸣 · 原主洛清愁</div></div>
+        <span class="plus">＋</span>
+        <div class="keycard"><div class="kn">钥引</div><div class="kv2">《青囊残卷》续魂之法<br>上古医道总纲 · 渡执念之关键</div></div>
+      </div>
+      <p style="margin-top:12px">三钥归一于第 178–186 章「碑林问答 → 剑令合一」段落完成补封：</p>
+      <div class="quote" style="margin-top:8px">「渡其执念，封其魔渊。」此为归墟碑林历代守令人「封 / 渡」之问，林霄给出的答案</div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 世界观硬规则（写作红线）</h4>
+    <div class="card"><ul class="rules">
+      <li>已死亡人物不再正面出场（回忆 / 闪回除外）。截至 53 章，正史死亡者仅夜枭（第 25 章）。</li>
+      <li>时间线两套表示：timeLabel（第X年 · 季）与 sortIndex 全书唯一序；因果方向永远遵循 03-events 前因 → 后果。</li>
+      <li>数据源与正文冲突以数据源为准；改设定先改数据源并在 09-consistency.md 留痕。</li>
+      <li>实体引用一律用「名字」；人物称呼遵循 01-characters 别名表。</li>
+      <li>战斗写「势」与「巧」，不堆数值；感情线克制、重留白。</li>
+      <li>单章视角原则上不切换超过一次；反派视角章每卷不超两章（如 56 章《慕长风的夜》）。</li>
+    </ul></div>
+  </div>
+</section>
+<!-- ================= 叁 战力体系 ================= -->
+<section class="sec" id="power">
+  <div class="sec-head"><span class="sec-num">叁</span><span class="sec-title">战力体系</span><span class="sec-sub">五维数值 · 修行晋升 · 剑修 / 幽冥 / 医道三系</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="note"><span class="t">标 尺 说 明</span>
+      全书人物战力以<b>五维数值（0–100）</b>标定：力量 / 智谋 / 魅力 / 意志 / 机缘。数据源<b>未设「炼气筑基」式境界等级，严禁擅自引入数值化境界体系</b>；数值不落正文，仅作团队内控标尺。战斗描写纪律：<b>写「势」与「巧」，不堆数值</b>。
+    </div>
+
+    <div class="radbox">
+      <div class="radpanel">
+        <div class="rp-title">◆ 五维雷达 · 主角团对照</div>
+        <canvas id="radarCanvas" width="360" height="330"></canvas>
+        <div class="rad-btns" id="radBtns">
+          <button data-k="linxiao" class="on">林霄</button>
+          <button data-k="suyingxue">苏映雪</button>
+          <button data-k="tieniu">铁牛</button>
+          <button data-k="xuanqingzi">玄清子</button>
+        </div>
+        <label class="rad-cmp"><input type="checkbox" id="radCmp"> 叠加对比四人（其余半透明）</label>
+        <p class="small" style="margin-top:8px">注：仅以上四人数据源提供全五维；其余人物已知维度见「肆 · 人物谱」卡片。</p>
+      </div>
+      <div class="card">
+        <h4>力量维参照系<span class="tag">全书主要战力标尺（升序）</span></h4>
+        <div style="margin-top:6px">
+          <div class="hbar-row dl"><span class="hbar-label">夜枭 †</span><span class="hbar-track"><i style="width:70%"></i></span><span class="hbar-val">70</span></div>
+          <div class="hbar-row me"><span class="hbar-label">林霄（当前）</span><span class="hbar-track"><i style="width:78%"></i></span><span class="hbar-val">78</span></div>
+          <div class="hbar-row"><span class="hbar-label">叶惊寒</span><span class="hbar-track"><i style="width:80%"></i></span><span class="hbar-val">80</span></div>
+          <div class="hbar-row mi"><span class="hbar-label">慕长风</span><span class="hbar-track"><i style="width:82%"></i></span><span class="hbar-val">82</span></div>
+          <div class="hbar-row mi"><span class="hbar-label">姒媚</span><span class="hbar-track"><i style="width:82%"></i></span><span class="hbar-val">82</span></div>
+          <div class="hbar-row"><span class="hbar-label">霍山河</span><span class="hbar-track"><i style="width:84%"></i></span><span class="hbar-val">84</span></div>
+          <div class="hbar-row"><span class="hbar-label">洛惊鸿</span><span class="hbar-track"><i style="width:88%"></i></span><span class="hbar-val">88</span></div>
+          <div class="hbar-row"><span class="hbar-label">铁牛（横练）</span><span class="hbar-track"><i style="width:88%"></i></span><span class="hbar-val">88</span></div>
+          <div class="hbar-row mi"><span class="hbar-label">血手屠九</span><span class="hbar-track"><i style="width:90%"></i></span><span class="hbar-val">90</span></div>
+          <div class="hbar-row roy"><span class="hbar-label">苍梧真人</span><span class="hbar-track"><i style="width:90%"></i></span><span class="hbar-val">90</span></div>
+          <div class="hbar-row"><span class="hbar-label">玄清子</span><span class="hbar-track"><i style="width:95%"></i></span><span class="hbar-val">95</span></div>
+          <div class="hbar-row mi"><span class="hbar-label">殷无涯（教主）</span><span class="hbar-track"><i style="width:99%"></i></span><span class="hbar-val">99</span></div>
+          <div class="hbar-row"><span class="hbar-label">秦烛（残魂）</span><span class="hbar-track"><i style="width:99%"></i></span><span class="hbar-val">99</span></div>
+        </div>
+        <p class="small" style="margin-top:10px">†＝已故（第 25 章林霄斩）。林霄 78 的硬实力对上 90+ 高手（屠九）仍需剑诀进阶＋剑令合一补差，第 108 章「首败屠九」即为此设计。<b style="color:var(--red-soft)">防崩坏红线：林霄对 90+ 级反派当前必败或借势脱身，严禁越级斩杀。</b></p>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 剑修体系 · 青莲剑诀（林霄主线剑法，秦老所传，原主＝十杰之首洛清愁）</h4>
+    <div class="stepg">
+      <div class="step"><div class="st-name">莲开一线</div><span class="bdg done" style="margin:8px 0;display:inline-block">已成就</span>
+        <div class="st-apt">引气如走火炭，「剑是势，不是招」；一线剖物。</div>
+        <div class="st-ft">第 12 章觉醒 · 17 / 25 章实战斩夜枭</div>
+      </div>
+      <div class="step"><div class="st-name">莲开二段</div><span class="bdg done" style="margin:8px 0;display:inline-block">已成就</span>
+        <div class="st-apt">「分」与「裂」之别；第四尺、第六尺渐次走出。</div>
+        <div class="st-ft">26 章初试溃散 → 48 章断旗索 → 51 章第六尺</div>
+      </div>
+      <div class="step locked"><div class="st-name">莲开三段 · 斩锁</div><span class="bdg wait" style="margin:8px 0;display:inline-block">未习得</span>
+        <div class="st-apt">病榻悟剑所成，斩屠九之技。</div>
+        <div class="st-ft">规划第 109 章秦老亲传 → 145 章阵斩屠九</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>青云剑宗 · 修行晋升线与剑法谱</h4>
+      <p style="margin:6px 0 4px"><b class="hl">宗门等级</b>：杂役 → 外门 → 内门 → 亲传（问剑峰）。林霄节点：杂役（3 章）→ 春考入外门前百（7 章 · 第 47 名）→ 内门选拔第十九名（9–10 章）→ 问剑峰亲传第一人（11 章拜师）。</p>
+      <p style="margin:6px 0 8px"><b class="hl">剑意核心口诀</b>：「不在高，在<b style="color:var(--gold-soft)">直</b>」（27 章师父出关所授）；53 章赐后三重心法（玄清子亲授，尚未展开，为 54–66 章修行素材）。《青云剑典》镇派总纲＋青莲剑诀正篇合流＝第 81 章《封山冬训》进阶关口（未写）。</p>
+      <div class="sklist">
+        <span class="sk rk"><b>听潮</b>慕长风新剑（听雨重铸 · 42 章命名），收势朝东南＝叛向幽冥暗线</span>
+        <span class="sk"><b>听雨 108 式</b>慕长风原剑法（10 章「四招破听雨」）</span>
+        <span class="sk"><b>镇脉秋水剑</b>洛惊鸿亲授慕长风的决赛兵器（51 章 · 师徒羁绊重场）</span>
+        <span class="sk"><b>回风三叠</b>气路暗藏逆行心关之坑，林霄识破反用（19 章埋 → 51–52 章收）</span>
+        <span class="sk"><b>青莲剑</b>31 章认主 · 遇血则鸣 · 别名「钥锋」三钥之一</span>
+        <span class="sk"><b>问水</b>玄清子所授未开锋剑胚（11 章）</span>
+        <span class="sk"><b>横练金身</b>铁牛一途 · 110 章小成（未写）</span>
+        <span class="sk"><b>支线技法</b>叠浪剑（沈青崖）· 剑丸（周明礼）· 寒潭三百提按（洗剑池练腕）</span>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--red-soft);letter-spacing:3px;font-size:16px">◆ 幽冥功法体系（邪道）</h4>
+    <div class="grid3">
+      <div class="card"><h4 style="color:var(--red-soft)">幽冥鬼气</h4><p class="small">屠九级战力攻击附带反噬根伤；玄清子中此伤贯穿卷一至 42 章服丹渐稳（根治需九转续脉丹）。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">采魂术</h4><p class="small">分「急性采魂」（尸傀）与「慢性采魂」（引魂钉长期吸魂，36 章谷中怪病即此），手法与二十年前盗《青囊残卷》同源。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">借尸炼魂</h4><p class="small">血魂幡分幡采活人魂（24 章黑风隘石窑）；「幡物勿毁，<b style="color:var(--jade-soft)">魂可渡</b>」，与终局「渡」主题呼应。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">血魂大阵 / 血魂幡</h4><p class="small">聚生魂开九幽之眼；阵眼九幽台。当前仅「雏形＋前兆」：53 章「东南暗红云线逐夜变亮」＝血月前兆，<b style="color:var(--red-soft)">未成阵</b>。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">夺舍 / 炼血奴</h4><p class="small">教主级手段，夺舍慕长风（156 章）、炼姒媚为血奴（120 章），<b style="color:var(--red-soft)">均尚未发生，当前进度下不得提前使用</b>。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">尸傀</h4><p class="small">幽冥教基础战力；掘地寻令、护窑巡逻的耗材。</p></div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--green);letter-spacing:3px;font-size:16px">◆ 医道体系（药王谷）与势力军队</h4>
+    <div class="grid3">
+      <div class="card"><h4 style="color:var(--green)">九转续脉丹</h4><p class="small">续命固本至高丹药，专治鬼气根伤；开炉需护炉，<b>护炉代价＝护炉者经脉受损</b>，41 章映雪第一炉（已发生），158 章第二炉（未写）。</p></div>
+      <div class="card"><h4 style="color:var(--green)">《青囊残卷》</h4><p class="small">上古医道总纲、三钥之「钥引」，内藏续魂之法。上半卷未寻回（85–86 章破案）、下半卷未现世（96 章万宝楼流出）。</p></div>
+      <div class="card"><h4 style="color:var(--green)">其余医道</h4><p class="small">回春丹＝映雪所炼疗伤圣药，吊住重伤者一缕生机（存量三枚）；雪魄散＝映雪药引（17 章上山解刀毒）。</p></div>
+      <div class="card"><h4 style="color:var(--blue)">玄甲军</h4><p class="small">大离最精锐军镇（云铮统领），皇朝插手正邪之战的筹码；幽冥谷之战坐观 → 被林霄阵前威慑参战（139–140 章，未写）。</p></div>
+      <div class="card"><h4 style="color:var(--gold-soft)">诛邪盟</h4><p class="small">九宗世家联军，<b style="color:var(--red-soft)">当前未成立</b>（第 101 章立盟）；破魔阵图（115 章出世）为破阵凭仗。</p></div>
+      <div class="card"><h4 style="color:var(--gold-soft)">林霄成长锚点</h4><p class="small" style="line-height:1.9">✅ 杂役→亲传（3–11）｜✅ 剑诀一 / 二段（12 / 26–48）｜✅ 大比夺魁 · 令发光（52）｜⬜ 剑典合流 · 剑心通明（81–82）｜⬜ 首败屠九（108）｜⬜ 莲开三段（109）｜⬜ 守令人承名→剑令合一（33 / 186）｜⬜ 代盟主（173–174）</p></div>
+    </div>
+  </div>
+</section>
+<!-- ================= 肆 人物谱 ================= -->
+<section class="sec" id="chars">
+  <div class="sec-head"><span class="sec-num">肆</span><span class="sec-title">人物谱</span><span class="sec-sub">20 人档案卡 · 五维 · 当前状态与既定走向</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="note"><span class="t">读 法</span>
+      ①「<b>当前状态</b>」＝截至第 53 章实况（写作口径）；②「<b>既定走向</b>」＝数据源全书档案预告（未写章节不得提前写透，防剧透外泄）；③正文人物称呼一律遵循别名表；④悬殊未知维度以「—」标示。
+    </div>
+
+    <div class="tabs" id="charTabs">
+      <button data-f="all" class="on">全部 20</button>
+      <button data-f="protag">主角团 4</button>
+      <button data-f="qingyun">青云剑宗 5</button>
+      <button data-f="royal">大离皇朝 4</button>
+      <button data-f="ming">幽冥教 5</button>
+      <button data-f="other">药王谷 · 玄天令 2</button>
+    </div>
+
+    <div class="cgrid" id="charGrid">
+
+      <div class="ccard f-protag" data-fac="protag">
+        <div class="c-head"><span class="c-name">林霄</span><span class="c-fac">青云剑宗 · 主角</span><span class="c-age">16 岁（书末 21）</span></div>
+        <div class="c-line">「剑眉星目，左手掌心青色令状胎记，外冷内热、遇强则强、认死理。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:78%"></i></span><span class="dim-val">78</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:62%"></i></span><span class="dim-val">62</span></div>
+          <div class="dim"><span class="dim-label">魅力</span><span class="dim-bar"><i style="width:70%"></i></span><span class="dim-val">70</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:88%"></i></span><span class="dim-val">88</span></div>
+          <div class="dim"><span class="dim-label">机缘</span><span class="dim-bar"><i style="width:92%"></i></span><span class="dim-val">92</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>问剑峰亲传第一人 · 宗门大比魁首 · 守令人身份半公开（52 章玄天令当众发光）。参与 22 场事件（全书最多）。第 54 章起将从玄清子处得知百年前重创教主内幕。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>成长线：杂役→外门→内门→亲传→守令人→诛邪盟代盟主；与映雪定情。目标：查血案真相→护身边人→补千年封印→登剑道之巅。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">霄少</span><span class="tagc">小霄</span><span class="tagc">守令传人</span></div>
+      </div>
+
+      <div class="ccard f-protag" data-fac="protag">
+        <div class="c-head"><span class="c-name">苏映雪</span><span class="c-fac">药王谷 · 女主</span><span class="c-age">15 岁</span></div>
+        <div class="c-line">「素白衣裙、青玉药箱，温婉聪慧、外柔内刚、医者仁心有主见。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:45%"></i></span><span class="dim-val">45</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:85%"></i></span><span class="dim-val">85</span></div>
+          <div class="dim"><span class="dim-label">魅力</span><span class="dim-bar"><i style="width:92%"></i></span><span class="dim-val">92</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:70%"></i></span><span class="dim-val">70</span></div>
+          <div class="dim"><span class="dim-label">机缘</span><span class="dim-bar"><i style="width:66%"></i></span><span class="dim-val">66</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>医武双修 · 经脉旧损（41 章护炉）。目标：寻回《青囊残卷》、查师门旧案、重振药王谷。注意：档案「两度护炉」为全书口径，<b>当前只发生过第一炉（41 章）</b>。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>接掌药王谷；参悟续魂之法（169 章）；与林霄定情。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">映雪</span></div>
+      </div>
+
+      <div class="ccard f-protag" data-fac="protag">
+        <div class="c-head"><span class="c-name">铁牛</span><span class="c-fac">青云剑宗</span><span class="c-age">18 岁</span></div>
+        <div class="c-line">「虎背熊腰，直肠子讲义气，力大却怕师父骂；横练一途登峰造极。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:88%"></i></span><span class="dim-val">88</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:40%"></i></span><span class="dim-val">40</span></div>
+          <div class="dim"><span class="dim-label">魅力</span><span class="dim-bar"><i style="width:62%"></i></span><span class="dim-val">62</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:80%"></i></span><span class="dim-val">80</span></div>
+          <div class="dim"><span class="dim-label">机缘</span><span class="dim-bar"><i style="width:58%"></i></span><span class="dim-val">58</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>内门八强 · 右膝伤退（48 章），「伤愈归队」排在 60 章秋巡。目标：陪兄弟闯出名堂，护住乡亲。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>横练金身小成（110 章）；守落霞镇、主持重建（终局图景）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">牛哥</span></div>
+      </div>
+
+      <div class="ccard f-protag" data-fac="protag">
+        <div class="c-head"><span class="c-name">叶惊寒</span><span class="c-fac">青云剑宗</span><span class="c-age">17 岁</span></div>
+        <div class="c-line">「傲而守礼、胜负心纯粹，留话『记住这个数！』（49 章负于慕长风的六十招之数）。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:80%"></i></span><span class="dim-val">80</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>大比四强（负于慕长风）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>与林霄成生死之交；战后掌剑庐。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">惊寒</span></div>
+      </div>
+
+      <div class="ccard f-qingyun" data-fac="qingyun">
+        <div class="c-head"><span class="c-name">玄清子</span><span class="c-fac">青云剑宗 · 宗主</span><span class="c-age">320 岁</span></div>
+        <div class="c-line">「鹤发童颜、青袍无鞘古剑，威严正直、护短，对山外世人近乎苛刻。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:95%"></i></span><span class="dim-val">95</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:90%"></i></span><span class="dim-val">90</span></div>
+          <div class="dim"><span class="dim-label">魅力</span><span class="dim-bar"><i style="width:60%"></i></span><span class="dim-val">60</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:92%"></i></span><span class="dim-val">92</span></div>
+          <div class="dim"><span class="dim-label">机缘</span><span class="dim-bar"><i style="width:40%"></i></span><span class="dim-val">40</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>服丹后鬼气退过肘弯（42 章）。关键底牌：<b>百年前曾重创幽冥教主、深知玄天令之秘</b>，54 章夜话正是向林霄揭示内幕的既定节点。三训之一：「玄天令不许给第二个人看」。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>诛邪盟首任盟主；终战独挡教主半刻。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">老宗主</span></div>
+      </div>
+
+      <div class="ccard f-qingyun" data-fac="qingyun">
+        <div class="c-head"><span class="c-name">慕长风</span><span class="c-fac">青云剑宗 · 大师兄</span><span class="c-age">21 岁</span></div>
+        <div class="c-line">「白衣负剑、温润藏刺，骄傲自负、极度渴望认可、不甘居人下。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:82%"></i></span><span class="dim-val">82</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:74%"></i></span><span class="dim-val">74</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:55%"></i></span><span class="dim-val">55</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>大比失利（52 章）→ 洛惊鸿点破剑底幽冥功夫（53 章）→「骰子已掷出」。<b>叛门尚未发生</b>（56–57 密使、76–78 出走）。意志薄弱是其堕落内因。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>叛门投教 → 被夺舍（156 章）→ 残识悔悟而逝（187–188 章「师弟，我错了」）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">长风师兄</span></div>
+      </div>
+
+      <div class="ccard f-qingyun" data-fac="qingyun">
+        <div class="c-head"><span class="c-name">洛惊鸿</span><span class="c-fac">青云剑宗 · 剑首长老</span><span class="c-age">180 岁</span></div>
+        <div class="c-line">「严苛孤直、责己更甚于人，慕长风之师，毕生之憾。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:88%"></i></span><span class="dim-val">88</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>夜审慕长风（53 章新增）：剑底幽冥功夫被点破。持家谱「冢中少一柄剑，多一桩债」之疑（27 章埋，卷五回收）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>徒叛后自请守藏经阁十年；决战围攻教主。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">剑首长老</span></div>
+      </div>
+
+      <div class="ccard f-qingyun" data-fac="qingyun">
+        <div class="c-head"><span class="c-name">霍山河</span><span class="c-fac">青云剑宗 · 执法长老</span><span class="c-age">150 岁</span></div>
+        <div class="c-line">「法不徇情、情不废法，43 章起任大比监察线、执法堂线主导者。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:84%"></i></span><span class="dim-val">84</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>对林霄「吾家麒麟」。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>主持叛门案与赵氏父子案军法清算（79–80 章）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">执法长老</span></div>
+      </div>
+
+      <div class="ccard f-qingyun" data-fac="qingyun">
+        <div class="c-head"><span class="c-name">赵拓</span><span class="c-fac">青云剑宗 · 外门</span><span class="c-age">19 岁</span></div>
+        <div class="c-line">「锦袍束冠，仗势记仇、色厉内荏；45 章『你把剑练成了怨气』一败后深揖。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>45 章认输深揖、录名剑首历练册；赵管事 45 章下山往南（79 章案发线）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>父子案败露，第 80 章军法伏诛，留洗白弧线。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">—</span></div>
+      </div>
+
+      <div class="ccard f-royal" data-fac="royal">
+        <div class="c-head"><span class="c-name">云梦瑶</span><span class="c-fac">大离皇朝 · 郡主</span><span class="c-age">19 岁</span></div>
+        <div class="c-line">「金冠华服、机锋暗藏，八面玲珑善布局，棋道之上重信义；智谋 93 仅次于云鼎苍 / 秦烛。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:93%"></i></span><span class="dim-val">93</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>半摊牌结盟（40 章「互相当饵」）· 52 章落注林霄 · 53 章赠空盒「勿急」。映雪诊出<b>心脉亏空（「她是个病人」）</b>，写作须保留此脆弱底色。目标：借正邪之局为皇朝搏变法新路。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>与父兄决裂，执掌皇朝新政（197 章），与林霄君子之约。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">梦瑶公主</span></div>
+      </div>
+
+      <div class="ccard f-royal" data-fac="royal">
+        <div class="c-head"><span class="c-name">云鼎苍</span><span class="c-fac">大离皇朝 · 皇帝</span><span class="c-age">58 岁</span></div>
+        <div class="c-line">「制衡大师，『要正义的胜利，更要皇朝不倒』；智谋 96 全书第一档。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:96%"></i></span><span class="dim-val">96</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>观礼线已启动（28 章）；当前仅以观礼帖 / 使团暗线存在。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>清算亲子云铮，与诛邪盟立新约（165 章）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">大离皇帝</span></div>
+      </div>
+
+      <div class="ccard f-royal" data-fac="royal">
+        <div class="c-head"><span class="c-name">云铮</span><span class="c-fac">大离 · 大皇子</span><span class="c-age">26 岁</span></div>
+        <div class="c-line">「鹰派，野心大于才略、狠而急；统领玄甲军。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span><b>未正面登场</b>（暗线推进中；93 章官道亮獠牙）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>勾结幽冥制衡宗门，反受其害；死于青云保卫战（第四年 · 秋）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">大皇子</span></div>
+      </div>
+
+      <div class="ccard f-royal" data-fac="royal">
+        <div class="c-head"><span class="c-name">苍梧真人</span><span class="c-fac">大离 · 国师</span><span class="c-age">200 余岁</span></div>
+        <div class="c-line">「缄默守拙、关键处一言定局；居观星楼，星图藏千年旧局。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:90%"></i></span><span class="dim-val">90</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span><b>未正面登场</b>；当前仅在玉如意 / 残卷购买等暗线中被提及（96 章购残卷下半卷）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>十杰后人赎罪，181 章身份揭晓，终归隐。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">国师</span></div>
+      </div>
+
+      <div class="ccard f-ming" data-fac="ming">
+        <div class="c-head"><span class="c-name">殷无涯</span><span class="c-fac">幽冥教 · 教主</span><span class="c-age">千余岁</span></div>
+        <div class="c-line">「常服儒雅，临世则玄袍鬼纹、眼底幽绿，高傲耐心，视众生为棋，唯独敬重故人秦烛。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:99%"></i></span><span class="dim-val">99</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:95%"></i></span><span class="dim-val">95</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:98%"></i></span><span class="dim-val">98</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>闭眼三百年初睁（33 章）；心结＝「正道伪善」。行事逻辑：要「<b>心甘情愿喂令的人</b>」，不走纯暴力夺令路线，续写幽冥线严禁写成无脑强攻。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>借阵临世（148 章）→ 夺舍重生（156–157 章）→ 执念得渡（第五年 · 春）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">幽冥教主</span><span class="tagc">冥主</span></div>
+      </div>
+
+      <div class="ccard f-ming" data-fac="ming">
+        <div class="c-head"><span class="c-name">血手屠九</span><span class="c-fac">幽冥教 · 左坛主</span><span class="c-age">不详</span></div>
+        <div class="c-line">「青铜鬼面、双手尸斑，嗜血残忍、对教主死忠。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:90%"></i></span><span class="dim-val">90</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:66%"></i></span><span class="dim-val">66</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:72%"></i></span><span class="dim-val">72</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>左坛主；33 章「请命东洲」＝秋巡血祭（60–62 章）冲突预埋；与玄清子有百年恩怨（终战了结）。121 章才升右使。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>升右使（121 章）；第四年 · 春死于林霄「莲开三段」阵斩（144–145 章全书第一大高潮）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">屠九</span><span class="tagc">右使（晋升后）</span></div>
+      </div>
+
+      <div class="ccard f-ming" data-fac="ming">
+        <div class="c-head"><span class="c-name">阿蛮</span><span class="c-fac">幽冥教 · 圣女</span><span class="c-age">16 岁</span></div>
+        <div class="c-line">「南疆巫祝出身，赤足银铃、眉心朱砂，野性直率、恩怨分明。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span><b>尚未反正</b>，当前仍是圣女（敌阵未破），60–61 章血祭场被救才转向。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>教中内线 → 反教 → 倡「渡魔」，战后守碑林。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">圣女</span></div>
+      </div>
+
+      <div class="ccard f-ming" data-fac="ming">
+        <div class="c-head"><span class="c-name">姒媚</span><span class="c-fac">幽冥教 · 右使</span><span class="c-age">—</span></div>
+        <div class="c-line">「白骨钗环、语声温柔、指尖泛青，毒而不蠢、善权衡。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:82%"></i></span><span class="dim-val">82</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>与屠九相争为暗线（晋升之争，「取屠九而代之」）；未正面登场。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>105–106 章反间计展开，事败，被教主炼成血奴（120 章 · 第三年冬）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">右使（生前）</span></div>
+      </div>
+
+      <div class="ccard f-ming" data-fac="ming" style="opacity:.75">
+        <div class="c-head"><span class="c-name">夜枭 †</span><span class="c-fac">幽冥教 · 屠九义子</span><span class="c-age">已故</span></div>
+        <div class="c-line">「屠九义子；遗言『是它，在等着你』（151–156 章回收），仅回忆 / 闪回可出。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:70%"></i></span><span class="dim-val">70</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态</span><b style="color:var(--red-soft)">死亡（第 25 章，林霄斩）</b>，截至 53 章全书唯一正史死亡者。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向</span>—（遗言伏笔已登记台账 F-022）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">—</span></div>
+      </div>
+
+      <div class="ccard f-ling" data-fac="other">
+        <div class="c-head"><span class="c-name">秦老 / 秦烛</span><span class="c-fac">寄于玄天令 · 守令人</span><span class="c-age">千余岁残魂</span></div>
+        <div class="c-line">「虚影缥缈、惜字如金，千年前亲手封魔的守令人。」</div>
+        <div class="dims">
+          <div class="dim"><span class="dim-label">力量</span><span class="dim-bar"><i style="width:99%"></i></span><span class="dim-val">99</span></div>
+          <div class="dim"><span class="dim-label">智谋</span><span class="dim-bar"><i style="width:99%"></i></span><span class="dim-val">99</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim"><span class="dim-label">意志</span><span class="dim-bar"><i style="width:99%"></i></span><span class="dim-val">99</span></div>
+          <div class="dim"><span class="dim-label">机缘</span><span class="dim-bar"><i style="width:10%"></i></span><span class="dim-val">10</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>识海挡神念透支（46 章）、残魂渐虚。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>152–154 章真身显圣揭示（核心揭示三），补封后归天（193–194 章）。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">秦烛</span></div>
+      </div>
+
+      <div class="ccard f-yaowang" data-fac="other">
+        <div class="c-head"><span class="c-name">苏浅语</span><span class="c-fac">药王谷 · 谷主</span><span class="c-age">120 岁</span></div>
+        <div class="c-line">「慈和护短、医道底线重于性命。」</div>
+        <div class="dims">
+          <div class="dim off"><span class="dim-label">力量</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">智谋</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">魅力</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">意志</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+          <div class="dim off"><span class="dim-label">机缘</span><span class="dim-bar"></span><span class="dim-val">—</span></div>
+        </div>
+        <div class="c-sec c-status"><span class="ct">当前状态（53 章）</span>50 章收回第二枚续脉丹（158 章救玄清子伏笔）。</div>
+        <div class="c-sec c-dest"><span class="ct">既定走向（全书）</span>传位映雪，将谷主之位与续魂之法钥匙并授。</div>
+        <div class="c-alias"><span class="al">别名</span><span class="tagc">谷主</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>次要角色（已出场未入 01 档案 · 续写可复用，禁止喧宾夺主）</h4>
+      <div class="chips" style="margin-top:8px">
+        <span class="sk"><b>沈青崖</b>叠浪剑 · 大比四强</span>
+        <span class="sk"><b>韩刚</b>金身 / 攥剑断腕 · 四强</span>
+        <span class="sk"><b>周明礼</b>剑丸伏杀者</span>
+        <span class="sk"><b>罗长老</b>「看」字诀 · 19 年前丧徒黑风隘（67 章呼应伏笔）</span>
+        <span class="sk"><b>吴巡查 / 鲁独臂</b>洗剑池线</span>
+        <span class="sk"><b>周执事 / 文执事</b>杂役院考功线</span>
+        <span class="sk"><b>小蝉</b>药王谷侍女</span>
+        <span class="sk"><b>陈伯</b>落霞镇药铺报信人</span>
+        <span class="sk"><b>赵管事</b>45 章下山往南 · 79 章案发线</span>
+        <span class="sk"><b>桂伯</b>药王谷手记 · 已故（手记揭 23 年布局链）</span>
+      </div>
+      <p class="small" style="margin-top:10px">写作提醒：慕长风、阿蛮、姒媚、云铮、苍梧真人五人「真人档位未到」，严禁提前正面登场或提前揭底；感情线：林霄 × 映雪（克制留白）、林霄 × 云梦瑶（博弈知己向）。</p>
+    </div>
+  </div>
+</section>
+<!-- ================= 伍 人物关系 ================= -->
+<section class="sec" id="rel">
+  <div class="sec-head"><span class="sec-num">伍</span><span class="sec-title">人物关系</span><span class="sec-sub">25 条关系提炼 · 悬停节点查看关系（实线＝已发生 · 虚线＝既定未发生）</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="graphbox">
+      <svg id="relsvg" viewBox="0 0 920 660" width="100%">
+        <g id="edges">
+          <line class="edge t-shi" data-a="linxiao" data-b="xuanqingzi" data-w="5" data-label="师徒 · 问剑峰亲传第一人" x1="380" y1="290" x2="150" y2="90"/>
+          <line class="edge t-shi" data-a="qinlao" data-b="linxiao" data-w="5" data-label="守令传承 · 令中残魂授剑" x1="540" y1="320" x2="380" y2="290"/>
+          <line class="edge t-shi" data-a="luojinghong" data-b="muchangfeng" data-w="4" data-label="师徒 · 毕生之憾" x1="60" y1="200" x2="250" y2="120"/>
+          <line class="edge t-shi" data-a="suqianyu" data-b="suyingxue" data-w="4" data-label="师徒 · 传位并授续魂之法之钥" x1="150" y1="530" x2="240" y2="430"/>
+          <line class="edge t-qing" data-a="linxiao" data-b="suyingxue" data-w="5" data-label="恋人（克制留白）" x1="380" y1="290" x2="240" y2="430"/>
+          <line class="edge t-qing" data-a="linxiao" data-b="tieniu" data-w="5" data-label="挚友" x1="380" y1="290" x2="300" y2="150"/>
+          <line class="edge t-qing" data-a="linxiao" data-b="yejinghan" data-w="4" data-label="对手 · 挚友（六十招之约）" x1="380" y1="290" x2="330" y2="430"/>
+          <line class="edge t-zhu" data-a="huoshanhe" data-b="linxiao" data-w="2" data-label="器重「吾家麒麟」" x1="180" y1="230" x2="380" y2="290"/>
+          <line class="edge t-zhu" data-a="cangwu" data-b="linxiao" data-w="3" data-label="暗助 · 十杰后人（身份未揭）" x1="838" y1="52" x2="380" y2="290"/>
+          <line class="edge t-di" data-a="qinlao" data-b="yinwuya" data-w="5" data-label="千年宿敌 · 一封一逃（全书最高对位）" x1="540" y1="320" x2="720" y2="450"/>
+          <line class="edge t-di" data-a="tujiu" data-b="xuanqingzi" data-w="4" data-label="敌对 · 百年恩怨（终战了结）" x1="560" y1="560" x2="150" y2="90"/>
+          <line class="edge t-di" data-a="linxiao" data-b="muchangfeng" data-w="4" data-label="同门宿敌" x1="380" y1="290" x2="250" y2="120"/>
+          <line class="edge t-di dash" data-a="aman" data-b="yinwuya" data-w="4" data-label="反叛（未发生 · 60–61 转向）" x1="690" y1="590" x2="720" y2="450"/>
+          <line class="edge t-di dash" data-a="yunmengyao" data-b="yunzheng" data-w="3" data-label="兄妹对立 · 坐视其败亡（未发生）" x1="640" y1="180" x2="850" y2="168"/>
+          <line class="edge t-di" data-a="yinwuya" data-b="tujiu" data-w="4" data-label="君臣 · 死忠" x1="720" y1="450" x2="560" y2="560"/>
+          <line class="edge t-di" data-a="yinwuya" data-b="simei" data-w="2" data-label="可弃之棋" x1="720" y1="450" x2="850" y2="530"/>
+          <line class="edge t-an dash" data-a="muchangfeng" data-b="tujiu" data-w="3" data-label="暗中勾结（未公开 · 56 密使）" x1="250" y1="120" x2="560" y2="560"/>
+          <line class="edge t-an dash" data-a="yunzheng" data-b="yinwuya" data-w="3" data-label="勾结 · 以邪制宗（未发生）" x1="850" y1="168" x2="720" y2="450"/>
+          <line class="edge t-an dash" data-a="yinwuya" data-b="muchangfeng" data-w="4" data-label="夺舍（未发生 · 156 章）" x1="720" y1="450" x2="250" y2="120"/>
+          <line class="edge t-meng dash" data-a="yunmengyao" data-b="linxiao" data-w="3" data-label="亦敌亦友 → 终盟友（空盒·勿急）" x1="640" y1="180" x2="380" y2="290"/>
+          <line class="edge t-meng dash" data-a="yundingcang" data-b="linxiao" data-w="3" data-label="博弈 · 天子之诺（118 / 161 索令）" x1="760" y1="70" x2="380" y2="290"/>
+          <line class="edge t-meng dash" data-a="yunmengyao" data-b="yundingcang" data-w="3" data-label="父女 · 路线决裂（未发生）" x1="640" y1="180" x2="760" y2="70"/>
+          <line class="edge t-di" data-a="yexiao" data-b="tujiu" data-w="3" data-label="义父子（夜枭已故 · 25 章）" x1="420" y1="590" x2="560" y2="560"/>
+        </g>
+        <g id="nodes">
+          <g class="node n-qy" data-id="xuanqingzi" transform="translate(150,90)"><circle r="23"/><text class="nname" y="42">玄清子</text><text class="nsub" y="54">青云宗主</text></g>
+          <g class="node n-qy" data-id="luojinghong" transform="translate(60,200)"><circle r="20"/><text class="nname" y="37">洛惊鸿</text><text class="nsub" y="49">剑首长老</text></g>
+          <g class="node n-qy" data-id="huoshanhe" transform="translate(180,230)"><circle r="20"/><text class="nname" y="37">霍山河</text><text class="nsub" y="49">执法长老</text></g>
+          <g class="node n-qy" data-id="muchangfeng" transform="translate(250,120)"><circle r="22"/><text class="nname" y="40">慕长风</text><text class="nsub" y="52">大师兄</text></g>
+          <g class="node n-protag" data-id="tieniu" transform="translate(300,150)"><circle r="20"/><text class="nname" y="37">铁牛</text><text class="nsub" y="49">内门八强</text></g>
+          <g class="node n-protag" data-id="linxiao" transform="translate(380,290)"><circle r="27"/><text class="nname" y="46">林霄</text><text class="nsub" y="58">主角 · 守令人</text></g>
+          <g class="node n-protag" data-id="yejinghan" transform="translate(330,430)"><circle r="20"/><text class="nname" y="37">叶惊寒</text><text class="nsub" y="49">大比四强</text></g>
+          <g class="node n-protag" data-id="suyingxue" transform="translate(240,430)"><circle r="23"/><text class="nname" y="42">苏映雪</text><text class="nsub" y="54">药王谷 · 女主</text></g>
+          <g class="node n-yw" data-id="suqianyu" transform="translate(150,530)"><circle r="20"/><text class="nname" y="37">苏浅语</text><text class="nsub" y="49">谷主</text></g>
+          <g class="node n-ling" data-id="qinlao" transform="translate(540,320)"><circle r="24"/><text class="nname" y="43">秦烛</text><text class="nsub" y="55">守令人 · 残魂</text></g>
+          <g class="node n-roy" data-id="yundingcang" transform="translate(760,70)"><circle r="22"/><text class="nname" y="40">云鼎苍</text><text class="nsub" y="52">大离皇帝</text></g>
+          <g class="node n-roy" data-id="yunmengyao" transform="translate(640,180)"><circle r="23"/><text class="nname" y="42">云梦瑶</text><text class="nsub" y="54">郡主</text></g>
+          <g class="node n-roy" data-id="yunzheng" transform="translate(850,168)"><circle r="20"/><text class="nname" y="37">云铮</text><text class="nsub" y="49">大皇子 · 未登场</text></g>
+          <g class="node n-roy" data-id="cangwu" transform="translate(838,52)"><circle r="19"/><text class="nname" y="34">苍梧真人</text><text class="nsub" y="46">国师 · 未登场</text></g>
+          <g class="node n-mj" data-id="yinwuya" transform="translate(720,450)"><circle r="26"/><text class="nname" y="45">殷无涯</text><text class="nsub" y="57">幽冥教主</text></g>
+          <g class="node n-mj" data-id="tujiu" transform="translate(560,560)"><circle r="22"/><text class="nname" y="40">血手屠九</text><text class="nsub" y="52">左坛主</text></g>
+          <g class="node n-mj" data-id="simei" transform="translate(850,530)"><circle r="20"/><text class="nname" y="37">姒媚</text><text class="nsub" y="49">右使 · 未登场</text></g>
+          <g class="node n-mj" data-id="aman" transform="translate(690,590)"><circle r="20"/><text class="nname" y="37">阿蛮</text><text class="nsub" y="49">圣女</text></g>
+          <g class="node n-dead" data-id="yexiao" transform="translate(420,590)"><circle r="18"/><text class="nname" y="35">夜枭 †</text><text class="nsub" y="47">已故 · 25 章</text></g>
+        </g>
+      </svg>
+      <div class="relinfo" id="relInfo"><span class="ri-hint">悬停人物节点：高亮其全部关系并列出清单；悬停连线：查看单条关系说明。</span></div>
+    </div>
+    <div class="lg-grid">
+      <span class="lg"><span class="sw" style="border-color:#d4a559"></span>师徒 / 传承</span>
+      <span class="lg"><span class="sw" style="border-color:#d88aa0"></span>情谊 / 恋人</span>
+      <span class="lg"><span class="sw" style="border-color:#c05b5b"></span>敌对 / 宿敌</span>
+      <span class="lg"><span class="sw dash" style="border-color:#c05b5b"></span>敌对（既定未发生）</span>
+      <span class="lg"><span class="sw dash" style="border-color:#9a7fd8"></span>勾结 / 夺舍（未发生）</span>
+      <span class="lg"><span class="sw dash" style="border-color:#6ec5b8"></span>博弈 / 盟约</span>
+      <span class="lg"><span class="sw" style="border-color:#8fbf7f"></span>器重 / 暗助</span>
+      <span class="lg" style="color:var(--ink3)">线宽＝关系强度（2–5）；悬停人物节点高亮其全部关系</span>
+    </div>
+    <div class="note"><span class="t">对 位 提 示</span>
+      <b>秦烛 × 殷无涯</b>＝全书最高对位关系（千年故人，一封一逃）；<b>林霄 × 慕长风</b>＝同门宿敌线（叛门 → 夺舍 → 悔悟）；<b>云梦瑶 × 林霄</b>＝亦敌亦友 → 终盟友（玉如意有求 → 半摊牌 → 空盒「勿急」）。
+    </div>
+  </div>
+</section>
+<!-- ================= 陆 势力格局 ================= -->
+<section class="sec" id="fac">
+  <div class="sec-head"><span class="sec-num">陆</span><span class="sec-title">势力格局</span><span class="sec-sub">九大势力 · 幽冥教结构 · 当前冲突棋面（截至 53 章）</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="note"><span class="t">快 照 提 醒</span>
+      截至第 53 章，多数势力的「终局形态」（诛邪盟、镇魔谷、皇朝新政等）<b>尚未发生</b>。下列卡片分别标注当前状态与既定走向。
+    </div>
+
+    <div class="fgrid">
+      <div class="fcard fc-qy"><div class="f-top"><span class="f-name">青云剑宗</span><span class="f-type">宗门 · 正道</span></div>
+        <p class="f-row"><b>首领</b>玄清子</p>
+        <p class="f-row"><b>当前</b>正道魁首，坐镇青云山八百年；刚办完宗门大比（52 章林霄夺魁）。</p>
+        <p class="f-row"><b>走向</b>首倡诛邪盟（101 章）；历经围山保卫战（160–165 章）。</p></div>
+      <div class="fcard fc-mj"><div class="f-top"><span class="f-name">幽冥教</span><span class="f-type">组织 · 邪道</span></div>
+        <p class="f-row"><b>首领</b>殷无涯</p>
+        <p class="f-row"><b>当前</b>教主睁眼布局期（33 章）；屠九请命东洲；谷内血魂大阵<b>仅雏形</b>。</p>
+        <p class="f-row"><b>走向</b>借阵临世（148 章）→ 教众败亡；幽冥谷战后被封为<b>镇魔谷</b>。</p></div>
+      <div class="fcard fc-roy"><div class="f-top"><span class="f-name">大离皇朝</span><span class="f-type">王朝 · 中立（内有鹰派）</span></div>
+        <p class="f-row"><b>首领</b>云鼎苍</p>
+        <p class="f-row"><b>当前</b>观礼使团刚涉入宗门事务（28 / 57 章线）；云铮鹰派暗涌。</p>
+        <p class="f-row"><b>走向</b>云铮党败亡 → 云梦瑶执掌新政。</p></div>
+      <div class="fcard fc-zx"><div class="f-top"><span class="f-name">诛邪盟</span><span class="f-type">联盟 · 正道</span></div>
+        <p class="f-row"><b>首领</b>玄清子 → 林霄（代）</p>
+        <p class="f-row"><b>当前</b><b style="color:var(--red-soft)">尚未成立</b>（第 101 章立盟）。</p>
+        <p class="f-row"><b>走向</b>九宗世家联军 → 战时粮草派系之争 → 战后改制。</p></div>
+      <div class="fcard fc-yw"><div class="f-top"><span class="f-name">药王谷</span><span class="f-type">宗门 · 正道（中立偏善）</span></div>
+        <p class="f-row"><b>首领</b>苏浅语</p>
+        <p class="f-row"><b>当前</b>西泽医道圣地；映雪仍以「客卿弟子 / 传人」身份谷-山之间往来。</p>
+        <p class="f-row"><b>走向</b>映雪接掌（169 章前后）。</p></div>
+      <div class="fcard fc-zl"><div class="f-top"><span class="f-name">天机阁</span><span class="f-type">组织 · 中立（唯利）</span></div>
+        <p class="f-row"><b>首领</b>阁主从不露面</p>
+        <p class="f-row"><b>当前</b>「天下事，明码标价」的情报源；已为云梦瑶供给幽冥谷布防图相关情报。</p>
+        <p class="f-row"><b>走向</b>万宝楼拍卖中「封口收购」等暗手（96 章线）。</p></div>
+      <div class="fcard fc-zl"><div class="f-top"><span class="f-name">万宝楼</span><span class="f-type">商盟 · 中立</span></div>
+        <p class="f-row"><b>首领</b>—</p>
+        <p class="f-row"><b>当前</b>九州最大拍卖行；38 章拍卖会上线（云梦瑶乔装初遇）。</p>
+        <p class="f-row"><b>走向</b>残卷下半卷流出（96 章）→ 苍梧购得。</p></div>
+      <div class="fcard fc-roy"><div class="f-top"><span class="f-name">大离玄甲军</span><span class="f-type">军镇 · 皇朝直属</span></div>
+        <p class="f-row"><b>首领</b>云铮（原统领）</p>
+        <p class="f-row"><b>当前</b><b style="color:var(--red-soft)">未登场</b>；破魔阵图 / 玄甲军均属后置棋子。</p>
+        <p class="f-row"><b>走向</b>幽冥谷之战被林霄阵前威慑参战（139–140 章）。</p></div>
+      <div class="fcard fc-zx"><div class="f-top"><span class="f-name">十杰旧部</span><span class="f-type">暗线 · 跨阵营</span></div>
+        <p class="f-row"><b>首领</b>苍梧真人（暗）</p>
+        <p class="f-row"><b>当前</b>归墟守令碑林暗线（东海）；玉如意与残卷收购为痕迹。</p>
+        <p class="f-row"><b>走向</b>十杰后人赎罪线（181 章揭晓）。</p></div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--red-soft);letter-spacing:3px;font-size:16px">◆ 幽冥教内部结构（截至 53 章）</h4>
+    <div class="card mjstruct">
+      <div class="mjtop">
+        <div class="mjbox mj-boss">教主 · 殷无涯<span>闭眼三百年初睁（33 章）· 直属暗部「冥殿」（掘地寻令）</span></div>
+      </div>
+      <div class="mjarrow">▼</div>
+      <div class="mjrow">
+        <div class="mjbox">左坛 · 血手屠九<span>请命东洲（33 章）＝秋巡血祭预埋 60–62</span></div>
+        <div class="mjbox">右坛 · 姒媚<span>与屠九晋升之争（暗线）· 未正面登场</span></div>
+        <div class="mjbox">圣坛 · 圣女阿蛮<span>当前仍是敌阵（60–61 章被救转向）</span></div>
+      </div>
+      <div class="mjnote">总坛幽冥谷三层结构：外坛 → 哭碑涧（碑刻血祭者名）→ 九幽台（血魂大阵<b>阵眼</b>，阵成处＝终战舞台）。<br>行事逻辑红线：教主要的是「<b>心甘情愿喂令的人</b>」，当前为渗透布局期（采魂、掘令、血祭筹备），严禁写成无脑总攻。</div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--gold-soft);letter-spacing:3px;font-size:16px">◆ 当前冲突格局（棋面 · 截至 53 章）</h4>
+    <div class="graphbox">
+      <svg viewBox="0 0 780 470" width="100%">
+        <defs>
+          <marker id="ar-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#c05b5b"/></marker>
+          <marker id="ar-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#d4a559"/></marker>
+          <marker id="ar-j" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#6ec5b8"/></marker>
+        </defs>
+        <line x1="390" y1="100" x2="170" y2="210" stroke="#c05b5b" stroke-width="2" marker-end="url(#ar-r)"/>
+        <text class="qlbl" x="235" y="135">血魂大阵采魂 · 冥殿掘令探守令人</text>
+        <text class="qlbl" x="215" y="185">屠九请命东洲（血祭预埋 60–62）</text>
+        <line x1="220" y1="240" x2="400" y2="130" stroke="#d4a559" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#ar-g)"/>
+        <text class="qlbl" x="310" y="185">慕长风叛门线（未落地 56–78）</text>
+        <line x1="250" y1="240" x2="560" y2="240" stroke="#8fbf7f" stroke-width="1.6"/>
+        <text class="qlbl" x="330" y="232">求丹之谊（34–42 已落）</text>
+        <line x1="170" y1="260" x2="170" y2="360" stroke="#6ec5b8" stroke-width="1.6" marker-end="url(#ar-j)"/>
+        <text class="qlbl" x="60" y="315">观礼使团（28 / 57）</text>
+        <text class="qlbl" x="60" y="333">云梦瑶半摊牌结盟</text>
+        <line x1="260" y1="360" x2="330" y2="255" stroke="#8fa8d8" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <text class="qlbl" x="262" y="300">云铮鹰派暗涌 · 苍梧暗线</text>
+        <line x1="480" y1="400" x2="420" y2="360" stroke="#5a6578" stroke-width="1.2" stroke-dasharray="3 4"/>
+        <line x1="480" y1="400" x2="600" y2="280" stroke="#5a6578" stroke-width="1.2" stroke-dasharray="3 4"/>
+        <text class="qlbl" x="505" y="330">情报 / 财货枢纽 · 明码标价</text>
+        <g>
+          <rect class="qbox b-mj" x="310" y="46" width="160" height="56" rx="8"/>
+          <text class="qname" x="390" y="70">幽冥教</text>
+          <text class="qsub" x="390" y="90">殷无涯睁眼布局</text>
+          <rect class="qbox b-qy" x="90" y="196" width="160" height="56" rx="8"/>
+          <text class="qname" x="170" y="220">青云剑宗</text>
+          <text class="qsub" x="170" y="240">大比落幕 · 暗流涌动</text>
+          <rect class="qbox b-yw" x="540" y="196" width="140" height="56" rx="8"/>
+          <text class="qname" x="610" y="220">药王谷</text>
+          <text class="qsub" x="610" y="240">中立偏善</text>
+          <rect class="qbox b-roy" x="90" y="360" width="180" height="56" rx="8"/>
+          <text class="qname" x="180" y="384">大离皇朝</text>
+          <text class="qsub" x="180" y="404">观棋 · 郡主结盟线明进</text>
+          <rect class="qbox b-zl" x="420" y="392" width="200" height="50" rx="8"/>
+          <text class="qname" x="520" y="414">天机阁 · 万宝楼</text>
+          <text class="qsub" x="520" y="432">中立枢纽 · 不站队</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h4>写作口径提醒</h4>
+      <ul class="rules" style="margin-top:6px">
+        <li><b>诛邪盟不存在</b>：第 101 章才立盟，54–100 章期间正道各自为战＋药王谷 / 皇朝关系网。</li>
+        <li><b>幽冥教未总攻</b>：当前为渗透布局期（采魂、掘令、血祭筹备）；「血月」未现，仅 53 章「东南暗红云线」前兆。</li>
+        <li><b>皇朝姿态</b>：观礼—郡主结盟线明进（57–58 章观礼台对弈）；云铮 / 苍梧两条暗线严禁提前揭底。</li>
+        <li>中立两组织（天机阁 / 万宝楼）是「信息经济学」工具，参与度受价码驱动，不站队。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<!-- ================= 柒 主线大纲 ================= -->
+<section class="sec" id="plot">
+  <div class="sec-head"><span class="sec-num">柒</span><span class="sec-title">主线大纲</span><span class="sec-sub">六卷 200 章 · 分卷分级树 · 进度锚点与续写节拍</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="anchor">
+      <div class="an-num"><b>53</b><span>/ 200 章</span></div>
+      <div class="an-rows">
+        <div><span class="bdg done">卷一 完稿</span>1–33 章 · 约 6.5–6.6 万字（风雪入青云）</div>
+        <div><span class="bdg live">卷二 写至 53</span>34–53 章 · 约 3.3 万字（大比篇叙事完整：三试落幕、林霄夺魁、玄天令发光、慕长风暗线揭底）</div>
+        <div><span class="bdg wait">待润</span>49–53 章字数 957–1286，列「待润」（低优先级润色轮补至 2000 字档）</div>
+        <div><span class="bdg info">续写起点</span>第 54 章《藏经阁夜话》（玄清子向林霄透露百年前重创教主内幕）</div>
+      </div>
+    </div>
+
+    <div class="vol open">
+      <div class="vol-head"><span class="v-seal">卷一</span><span class="v-title">风雪入青云</span><span class="v-meta">1–33 章 · 第一年夏—第二年春</span><span class="bdg done">完稿</span><span class="chev">▾</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">落霞镇血案（1–3）</span><span class="fa">→</span>
+          <span class="fq">杂役院崛起（杂役→外门→内门 3–10）</span><span class="fa">→</span>
+          <span class="fq">拜师问剑峰（11）</span><span class="fa">→</span>
+          <span class="fq">黑风隘历练 · 斩夜枭（17–25）</span><span class="fa">→</span>
+          <span class="fq">守令之秘初揭（26）</span><span class="fa">→</span>
+          <span class="fq">青云七杰之名（30–33）</span><span class="fa">→</span>
+          <span class="fq">剑冢得青莲剑（30–31 重排）</span>
+        </div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">33 章《纹路亮起》，玄天令第三道纹亮起，秦老：「从今夜起，他们都会来找你。」</div></div>
+        <div class="vrow"><b>里程碑</b>第一卷完成「废柴逆袭 + 之谜升级」双重任务：青云七杰之名立住；「纹路之力」之谜升级入正文。</div>
+      </div>
+    </div>
+
+    <div class="vol open">
+      <div class="vol-head"><span class="v-seal">卷二</span><span class="v-title">藏锋录</span><span class="v-meta">34–66 章 · 第二年春末—秋深</span><span class="bdg live">写至 53</span><span class="chev">▾</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq done">药王谷求丹 · 玄清子续命（34–42）</span><span class="fa">→</span>
+          <span class="fq done">宗门大比 · 林霄夺魁 · 玄天令发光（43–53）</span><span class="fa">→</span>
+          <span class="fq">善后与秋巡 · 撞破血祭（54–59）</span><span class="fa">→</span>
+          <span class="fq">三方印证 · 定计潜入幽冥谷（60–65）</span>
+        </div>
+        <div class="beats">
+          <div class="bt"><b>54</b>藏经阁夜话<span>玄清子揭百年前重创教主内幕 · 反派视角开场</span></div>
+          <div class="bt"><b>55</b>慕长风的夜<span>反派视角章（每卷不超两章之其一）</span></div>
+          <div class="bt"><b>56</b>密使<span>屠九山下会慕长风 · 剑典换机会</span></div>
+          <div class="bt"><b>57</b>观礼副使<span>云梦瑶正式登门</span></div>
+          <div class="bt"><b>58</b>观礼台对弈<span>赠幽冥谷外围布防图</span></div>
+          <div class="bt"><b>59</b>秋巡<span>铁牛伤愈归队</span></div>
+          <div class="bt"><b>60</b>血祭现场<span>救阿蛮</span></div>
+          <div class="bt"><b>61</b>阿蛮吐密</div>
+          <div class="bt"><b>62</b>三方印证<span>血魂大阵真目的＝开九幽之眼（F-012 埋）</span></div>
+          <div class="bt"><b>63</b>潜入之议</div>
+          <div class="bt"><b>64</b>整装</div>
+          <div class="bt"><b>65</b>出发前夜</div>
+          <div class="bt"><b>66</b>夜出后山<span class="hook">卷末钩子 · 转卷三</span></div>
+        </div>
+        <div class="vrow"><b>时间线锚点</b><span class="tchips"><span>54–56＝五月末</span><span>57–58＝六月初</span><span>59–62＝夏末—秋初（第二年 · 秋）</span><span>63–66＝秋深</span><span>卷三自「黑风再渡」始（第二年 · 秋）</span></span></div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">66 章《夜出后山》，四人夜出山门，谷风带着腥气扑面而来。</div></div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">卷三</span><span class="v-title">幽冥暗潮</span><span class="v-meta">67–100 章 · 第二年秋—冬</span><span class="bdg wait">未启</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">黑风再渡（67）</span><span class="fa">→</span>
+          <span class="fq">哭碑涧 · 潜入外坛（68–72）</span><span class="fa">→</span>
+          <span class="fq">遥望九幽台（73–74）</span><span class="fa">→</span>
+          <span class="fq">情报出谷 · 阿蛮重伤（75）</span><span class="fa">→</span>
+          <span class="fq">藏经阁失窃 · 慕长风叛门（76–78）</span><span class="fa">→</span>
+          <span class="fq">宗门清洗 · 赵氏父子军法收网（79–80）</span><span class="fa">→</span>
+          <span class="fq">封山冬训 · 剑心通明（81–82）</span><span class="fa">→</span>
+          <span class="fq">药王谷旧案破 · 残卷上半寻回（83–87）</span><span class="fa">→</span>
+          <span class="fq">云铮来使 · 观礼之争（88–90）</span><span class="fa">→</span>
+          <span class="fq">皇城出使（91–100）</span>
+        </div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">100 章《风雪入城》，天牢细作灭口，林霄：「这盘棋，我入局了。」</div></div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">卷四</span><span class="v-title">皇朝棋局</span><span class="v-meta">101–135 章 · 第三年</span><span class="bdg wait">未启</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">诛邪盟立（101）</span><span class="fa">→</span>
+          <span class="fq">粮草暗战 · 先锋三镇 · 阵斩扬名（102–104）</span><span class="fa">→</span>
+          <span class="fq">教中内乱 · 反间计（105–106）</span><span class="fa">→</span>
+          <span class="fq">屠九屠镇叫阵（107）</span><span class="fa">→</span>
+          <span class="fq">林霄首败（108）</span><span class="fa">→</span>
+          <span class="fq">病榻悟剑 · 莲开三段（109）</span><span class="fa">→</span>
+          <span class="fq">断魂原真相 · 魔主未死只是被封 · 玄天令＝封印之钥（113–116）</span><span class="fa">→</span>
+          <span class="fq">姒媚败亡（120）</span><span class="fa">→</span>
+          <span class="fq">宫中贵人线 · 天子一诺（117–119）</span><span class="fa">→</span>
+          <span class="fq">誓师出征 · 云梦瑶交底（121–135）</span>
+        </div>
+        <div class="vrow"><b>关键揭底</b>核心揭示二（114 章「万骨枯」：玄天令二重纹藏史）落于本卷。</div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">135 章《进军》，黎明，谷口雾开，血月未落。林霄：「进军。」</div></div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">卷五</span><span class="v-title">血战幽冥</span><span class="v-meta">136–170 章 · 第三年冬—第四年春</span><span class="bdg wait">未启</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">三路破谷（136–139）</span><span class="fa">→</span>
+          <span class="fq">玄甲军阵前威慑参战（140）</span><span class="fa">→</span>
+          <span class="fq">阵斩屠九 · 全书第一大高潮（144–145）</span><span class="fa">→</span>
+          <span class="fq">教主借阵临世（148）</span><span class="fa">→</span>
+          <span class="fq">秦烛真身显圣 · 千年封魔全景闪回（151–154）</span><span class="fa">→</span>
+          <span class="fq">九幽之眼掀开一角（155）</span><span class="fa">→</span>
+          <span class="fq">教主夺舍慕长风遁走 · 惨胜（156–157）</span><span class="fa">→</span>
+          <span class="fq">九转之难 · 二次护炉（158）</span><span class="fa">→</span>
+          <span class="fq">皇朝撕约 · 云铮之乱 · 青云保卫战（160–165）</span><span class="fa">→</span>
+          <span class="fq">秦老最后交代 · 集三钥补封印（167–168）</span><span class="fa">→</span>
+          <span class="fq">映雪参悟续魂之法（169）</span>
+        </div>
+        <div class="vrow"><b>关键揭底</b>核心揭示三（152–154 章秦烛真身＝千年全景）落于本卷。</div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">170 章《血月再升》，「他借躯重生了。」</div></div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">卷六</span><span class="v-title">烟云定九州</span><span class="v-meta">171–200 章 · 第四年夏—第五年春</span><span class="bdg wait">未启</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">教主重塑半魔之体（171）</span><span class="fa">→</span>
+          <span class="fq">林霄承守令人之名 · 代行盟主事（173–174）</span><span class="fa">→</span>
+          <span class="fq">剑令初合（175）</span><span class="fa">→</span>
+          <span class="fq">归墟碑林「封 / 渡」问答（176–178）</span><span class="fa">→</span>
+          <span class="fq">渡魔之议 · 封渡之争（179–180）</span><span class="fa">→</span>
+          <span class="fq">苍梧真相（181）</span><span class="fa">→</span>
+          <span class="fq">青云之巅终战（182–192）</span><span class="fa">→</span>
+          <span class="fq">秦烛归天（193–194）</span><span class="fa">→</span>
+          <span class="fq">九州新局 · 群像收尾（195–200）</span>
+        </div>
+        <div class="vrow"><b>卷末高潮＋钩子</b><div class="quote">200 章《九州烟云》（终章），青云雪又落，落霞镇孩童学剑：「守好眼前人，便是修行。」</div></div>
+      </div>
+    </div>
+
+    <div class="fold">
+      <div class="fold-head"><span class="fh-t">写作口径备忘（已落地偏差与既定口径，点击展开）</span><span class="chev">▸</span></div>
+      <div class="fold-body">
+        <ul class="rules">
+          <li><b>玄天令进度</b>：全书档案值（一重已解 26 章、二重未解、三重渐显 45–46 章探令夜）与 01 档「纹路之力未解」无冲突。</li>
+          <li><b>第一章重写</b>：血案同夜细节重写为「先奸后杀」情节（08 索引已注）；初稿「温和版本」已弃用。</li>
+          <li><b>第三章重排</b>：原第三章「剑冢青莲」重排为 30–31 章；时间线依「三个月前」倒推已修正（09 变更记录 1–2 条）。</li>
+          <li><b>第五十三章增补</b>：洛惊鸿夜审慕长风、云梦瑶赠空盒「勿急」（07 道具登记 / 11 log 已同步）。</li>
+          <li><b>大比篇口径</b>：四强对阵＝慕长风胜叶惊寒（60 招）、林霄先胜韩刚后胜沈青崖，三强循环，决赛 1:1:1，同分加赛；52 章林霄胜慕长风夺魁。</li>
+          <li><b>卷一遗留</b>：原第三章重排后，时间线已依 09 变更记录修正。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 捌 伏笔规划 ================= -->
+<section class="sec" id="fore">
+  <div class="sec-head"><span class="sec-num">捌</span><span class="sec-title">伏笔规划</span><span class="sec-sub">台账 33 条 · 三大主线伏笔 · 回收密度与近期待办</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="fstatg">
+      <div class="fstat">
+        <div class="donut"></div>
+        <div class="d-center"><b>33</b><span>伏笔总数</span></div>
+        <p class="small">09 台账 19 ＋ writing-log<br>卷二新增 14</p>
+      </div>
+      <div class="fstat nums">
+        <div class="fn-row"><span class="fb done2">已回收 3</span>F-001 ~ F-003（埋设与回收均已落章）</div>
+        <div class="fn-row"><span class="fb live2">已埋待收 24</span>F-004 ~ F-027（其中 11 条回收点为 △ 推断，需确认细化）</div>
+        <div class="fn-row"><span class="fb wait2">待埋设 6</span>F-028 ~ F-033（数据源预登记，埋设章节均 &gt; 53）</div>
+        <div class="fn-row" style="color:var(--ink3)">口径：截至 53 章 · 以 ledger/Foreshadowing_Ledger.md 台账为准</div>
+      </div>
+      <div class="fstat warnbox">
+        <div class="wb-t">风控提示</div>
+        已埋待收 24 条虽全部有回收路线（含推断），但距 GOAL 熔断线「未回收伏笔 &gt; 15 且无回收路线规划」规模上限较近，<b>54 章起续写新增伏笔须从严审批，优先回收而非新埋。</b>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--gold-soft);letter-spacing:3px;font-size:16px">◆ 三条最大主线伏笔（贯穿全书 · 不得提前写透）</h4>
+    <div class="big3">
+      <div class="b3c">
+        <div class="b3-t"><span class="b3-n">壹</span>玄天令三重纹</div>
+        <div class="b3-steps">
+          <div class="bs done"><b>一重 · 藏忆</b>◎ 已回收 · 26 章「令中剑意」</div>
+          <div class="bs"><b>二重 · 藏史</b>◎ 第 114 章「万骨枯」</div>
+          <div class="bs"><b>三重 · 藏钥</b>◎ 第 152 / 186 章（归墟补封）</div>
+        </div>
+      </div>
+      <div class="b3c">
+        <div class="b3-t"><span class="b3-n">贰</span>秦老真身＝守令人秦烛</div>
+        <div class="b3-steps">
+          <div class="bs"><b>埋</b>贯穿卷一至卷五（惜字如金的残魂）</div>
+          <div class="bs"><b>收</b>◎ 第 152–154 章 千年全景揭示</div>
+          <div class="bs"><b>终</b>补封后归天（193–194 章）</div>
+        </div>
+      </div>
+      <div class="b3c">
+        <div class="b3-t"><span class="b3-n">叁</span>血魂大阵真目的＝开九幽之眼</div>
+        <div class="b3-steps">
+          <div class="bs"><b>埋</b>△ 第 62 章「三方印证」</div>
+          <div class="bs"><b>收</b>◎ 第 116 章 断魂原真相</div>
+          <div class="bs"><b>余波</b>155 章「九幽之眼掀开一角」</div>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--jade-soft);letter-spacing:3px;font-size:16px">◆ 回收密度热力（按卷 · 台账逐条口径）</h4>
+    <div class="card">
+      <div class="heat-row"><span class="hlab">卷二余 54–66</span><span class="htrack"><i style="width:50%"></i></span><span class="hval">关联 6 条</span><span class="hsub">F-004/005/006/013/019 预兆＋F-011 残叶线推进</span></div>
+      <div class="heat-row"><span class="hlab">卷三 67–100</span><span class="htrack"><i style="width:50%"></i></span><span class="hval">回收 6 条</span><span class="hsub">F-007/008/009/010/011＋F-028 埋设即收点铺垫</span></div>
+      <div class="heat-row"><span class="hlab">卷四 101–135</span><span class="htrack"><i style="width:75%"></i></span><span class="hval">回收 9 · 新埋 4</span><span class="hsub">埋 F-028~031；收 F-012/013/014/015/016/017/018/020/021</span></div>
+      <div class="heat-row"><span class="hlab">卷五 136–170</span><span class="htrack"><i style="width:100%"></i></span><span class="hval">回收 12 条</span><span class="hsub">F-022~027 及 F-021、F-013 终点</span></div>
+      <div class="heat-row"><span class="hlab">卷六 171–200</span><span class="htrack"><i style="width:42%"></i></span><span class="hval">回收 5 条</span><span class="hsub">F-026 后段、F-031/032/033</span></div>
+      <p class="small" style="margin-top:8px">中后期（卷四—卷六）回收密度大，续写时<b>新埋伏笔须谨慎</b>。</p>
+    </div>
+
+    <h4 style="font-family:var(--serif);color:var(--red-soft);letter-spacing:3px;font-size:16px">◆ 近期待办（54–66 章直接关联暗线）</h4>
+    <div class="grid3">
+      <div class="card"><h4 style="color:var(--red-soft)">教主探令线</h4><p class="small">46 章神念被秦老拈碎 →「心甘情愿喂令的人」布局转入暗处（105–106 内乱 / 134 交底远期呼应）。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">慕长风叛门线</h4><p class="small">53 章「骰子已掷出」→ 56–57 密使 → 76–78 出走（收听潮收势朝东南之伏）。</p></div>
+      <div class="card"><h4 style="color:var(--red-soft)">东南暗红云线</h4><p class="small">53 章血月前兆 → 123 章血月初悬（血魂大阵进度条）。</p></div>
+    </div>
+
+    <div class="fold">
+      <div class="fold-head"><span class="fh-t">全量伏笔台账速览（F-001 ~ F-033 · 33 条，点击展开）</span><span class="chev">▸</span></div>
+      <div class="fold-body">
+        <p class="small" style="margin-bottom:8px">◎＝数据源已注明回收章节；△＝回收点为本次整合推断（待主笔落笔 / 巡检确认，不视为既定设定）。状态：已回收＝埋设与回收均已写；已埋待收＝埋设已写、回收未至；待埋设＝埋设章节尚未写到。</p>
+        <div class="tbl-wrap"><table class="tbl">
+          <thead><tr><th>编号</th><th>伏笔内容</th><th>埋设</th><th>回收</th><th>状态</th><th>出处</th></tr></thead>
+          <tbody>
+            <tr><td>F-001</td><td>黑风隘石窑采魂与血魂幡同源（幽冥教手法指纹）</td><td>24 章</td><td>◎ 73 章</td><td class="st-done">已回收</td><td>09 台账</td></tr>
+            <tr><td>F-002</td><td>阿蛮银铃（师父遗物，内有暗格）</td><td>30 章</td><td>◎ 61 章</td><td class="st-done">已回收</td><td>09 台账</td></tr>
+            <tr><td>F-003</td><td>罗长老「看」字诀与十九年前黑风隘丧徒旧事</td><td>34 章</td><td>◎ 67 章</td><td class="st-done">已回收</td><td>09 台账</td></tr>
+            <tr><td>F-004</td><td>「他到底想要什么？」（教主行为的谜面）</td><td>26 章</td><td>◎ 152–154 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-005</td><td>玄天令一重纹路＝「藏忆」</td><td>26 章</td><td>◎ 26 章（已解）＋二重 114 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-006</td><td>青云剑冢为何万剑朝宗</td><td>30–31 章</td><td>△ 151–152 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-007</td><td>玄清子重伤未愈（三枚续脉丹的最后一枚）</td><td>34 章</td><td>◎ 158 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-008</td><td>秦老残魂渐虚（透支的代价）</td><td>35 章</td><td>◎ 167–168 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-009</td><td>幽冥教内部的「温和派」与姒媚</td><td>33 章</td><td>△ 105–106 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-010</td><td>《青囊残卷》上半卷下落</td><td>34 章</td><td>◎ 85–86 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-011</td><td>药王谷内鬼与桂伯手记（二十年前旧案链）</td><td>36 章</td><td>◎ 83–87 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-012</td><td>血魂大阵真目的＝开九幽之眼</td><td>△ 62 章</td><td>◎ 116 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-013</td><td>断魂原地脉为何指向九幽之眼</td><td>36 章</td><td>◎ 113–116 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-014</td><td>魔主「未死只是被封」的千年骗局</td><td>44 章</td><td>◎ 114 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-015</td><td>十杰后人的赎罪暗线</td><td>38 章</td><td>◎ 181 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-016</td><td>云铮与幽冥教的勾结（以邪制宗）</td><td>40 章</td><td>◎ 163 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-017</td><td>云梦瑶「心脉亏空」之症</td><td>41 章</td><td>△ 134 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-018</td><td>「东南暗红云线」＝血月前兆</td><td>53 章</td><td>◎ 123 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-019</td><td>慕长风「听潮」收势朝东南（叛向幽冥）</td><td>42 章</td><td>◎ 56–57 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-020</td><td>空盒「勿急」的第二层含义</td><td>53 章</td><td>△ 134 章 / 161–162 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-021</td><td>慕长风「骰子已掷出」</td><td>53 章</td><td>◎ 76–78 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-022</td><td>夜枭遗言「是它，在等着你」</td><td>25 章</td><td>◎ 151–156 章</td><td class="st-live">已埋待收</td><td>09 台账</td></tr>
+            <tr><td>F-023</td><td>回风三叠气路逆行之坑</td><td>19 章</td><td>◎ 51–52 章</td><td class="st-live">已埋待收</td><td>writing-log</td></tr>
+            <tr><td>F-024</td><td>玄天令「遇血则鸣」反应</td><td>31 章</td><td>△ 46 章 / 52 章发光节点</td><td class="st-live">已埋待收</td><td>writing-log</td></tr>
+            <tr><td>F-025</td><td>幽冥教「冥殿」掘地寻令（3 尺/日进度）</td><td>46 章</td><td>△ 60–62 / 116 章</td><td class="st-live">已埋待收</td><td>writing-log</td></tr>
+            <tr><td>F-026</td><td>「封 / 渡」二道之问（守令人抉择）</td><td>33 章</td><td>◎ 178–186 章</td><td class="st-live">已埋待收</td><td>writing-log</td></tr>
+            <tr><td>F-027</td><td>姒媚「取屠九而代之」晋升之争</td><td>33 章</td><td>△ 105–106 章</td><td class="st-live">已埋待收</td><td>writing-log</td></tr>
+            <tr><td>F-028</td><td>苍梧真人购残卷下半卷</td><td>第 96 章</td><td>第 181 章（身份揭晓）</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+            <tr><td>F-029</td><td>破魔阵图出世</td><td>第 115 章</td><td>第 129 章（破阵）</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+            <tr><td>F-030</td><td>宫中贵人勾结幽冥</td><td>第 99 章</td><td>第 117 章（云铮）/ 163 章（云铮之乱）</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+            <tr><td>F-031</td><td>云梦瑶「玄天令不落到任何人手里」</td><td>第 134 章</td><td>第 161–162 章 / 197 章</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+            <tr><td>F-032</td><td>慕长风被夺舍（残识存续）</td><td>第 156 章</td><td>第 187–188 章《长风》悔悟</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+            <tr><td>F-033</td><td>「封」与「渡」的主题抉择</td><td>第 178 章</td><td>第 190–192 章</td><td class="st-wait">待埋设</td><td>09 台账</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 玖 写作纪律 ================= -->
+<section class="sec" id="disc">
+  <div class="sec-head"><span class="sec-num">玖</span><span class="sec-title">写作纪律</span><span class="sec-sub">AGENTS.md 铁律 · GOAL.md 风控红线</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+    <div class="grid3">
+      <div class="card"><h4>章节铁律</h4><p class="small">每章约 2200 字（1800–2600），标题 4–8 字，<b>结尾留钩子</b>；每 3–5 章小高潮、卷末大高潮＋大钩子。</p></div>
+      <div class="card"><h4>数据源同步</h4><p class="small">每写完一批章节同步数据源（01–09 号文件分工见 AGENTS.md）＋更新 11-writing-log；每卷完结重跑 sync-ai-context.py。</p></div>
+      <div class="card"><h4>视角纪律</h4><p class="small">反派视角章（如 56 章《慕长风的夜》）每卷不超过两章；单章视角原则上不切换超过一次。</p></div>
+      <div class="card"><h4>大纲微调留痕</h4><p class="small">大纲可微调但须在 09-consistency.md 留痕；已写章节以 08-chapters.md 为准。</p></div>
+      <div class="card"><h4>严禁机械降神</h4><p class="small">绝不通过无合理铺设的外挂或强行降智推进剧情；战力对位严格遵循「叁 · 战力体系」。</p></div>
+      <div class="card"><h4>台账纪律</h4><p class="small">新增伏笔先登记编号再落笔；未回收数逼近 15 条熔断线时暂停新埋并提示用户；回收判定＝正文实际完成回收动作。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 拾 扩展大纲（201–1200） ================= -->
+<section class="sec" id="expand">
+  <div class="sec-head"><span class="sec-num">拾</span><span class="sec-title">扩展大纲</span><span class="sec-sub">201–1200 章 · 四部三十六卷 · 核心走向 · 远期伏笔映射</span></div>
+  <div class="sec-rule"></div>
+  <div class="sec-body">
+
+    <div class="warn"><span class="t">扩 展 注 记</span>
+      全书总章数已由 200 章扩展至 <b>1200 章</b>（2026-09-07 用户确认）。原 1–200 章（第一部）完整规划与 34 条伏笔回收锚点<b>零改动、零覆盖</b>；本板块为第 201–1200 章顶层路线图（全文见 <b>setting/outline_expansion_201-1200.md</b>）。核心走向已向用户征询（2026-09-08 表单超时未填，按推荐方案落盘，<b>可随时推翻并触发降级预案</b>）；口径变更已在 09-consistency.md 变更记录第 11 条留痕。
+    </div>
+
+    <h4 style="margin:18px 0 10px;letter-spacing:2px;color:var(--ink)">◆ 四部总览</h4>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>部</th><th>章节</th><th>卷</th><th>部名</th><th>一句话定位</th></tr></thead>
+      <tbody>
+        <tr><td>第一部</td><td>1–200</td><td>卷一～卷六</td><td>千年棋局</td><td>既定规划（见「柒 · 主线大纲」），补封渡魔 · 执念得渡 · 九州新局；<b>第 200 章＝第一部收官章</b></td></tr>
+        <tr><td>第二部</td><td>201–460</td><td>卷七～卷十四</td><td>烟云初霁</td><td>新秩序的裂缝：明线人祸（盟内权争／皇朝反复／幽冥残部「薪火」）＋暗线归墟异动</td></tr>
+        <tr><td>第三部</td><td>461–820</td><td>卷十五～卷二十五</td><td>九渊暗涌</td><td>「渊」之谜全面展开；正道亲手制造新「魔」（殷无涯式悲剧重演）；林霄剑道大成</td></tr>
+        <tr><td>第四部</td><td>821–1200</td><td>卷二十六～卷三十六</td><td>守灯千年</td><td>守渊大战略；主题总落点「封与渡之上是守」；守令人传承收束 · 千年之约兑现</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small" style="margin-top:8px">时间跨度：第一部＝第一年·夏～第五年·春（既定）；第二部＝第五年·春～第八年·春；第三部＝第八年·春～第十二年；第四部＝第十二年～第十七年·春（终局林霄约 32 岁）。章节边界为规划值（±3 章弹性，滚动校准并留痕）。</p>
+
+    <h4 style="margin:18px 0 10px;letter-spacing:2px;color:var(--ink)">◆ 分卷速览（点击展开）</h4>
+
+    <div class="vol open">
+      <div class="vol-head"><span class="v-seal">二部</span><span class="v-title">烟云初霁</span><span class="v-meta">201–460 章 · 第五年春—第八年春 · 卷七～卷十四</span><span class="bdg info">规划</span><span class="chev">▾</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">卷七 烟云初定（201–233）</span><span class="fa">→</span>
+          <span class="fq">卷八 盟坛风雨（234–266）</span><span class="fa">→</span>
+          <span class="fq">卷九 薪火燎原（267–300）</span><span class="fa">→</span>
+          <span class="fq">卷十 皇城惊变（301–333）</span><span class="fa">→</span>
+          <span class="fq">卷十一 观星楼秘图（334–366）</span><span class="fa">→</span>
+          <span class="fq">卷十二 碑林来信（367–400）</span><span class="fa">→</span>
+          <span class="fq">卷十三 东海行（401–433）</span><span class="fa">→</span>
+          <span class="fq">卷十四 渊鸣（434–460）</span>
+        </div>
+        <div class="vrow"><b>主线脉络</b>战后一年盟会定盟主 → 落霞护镇战（呼应 1–2 章）→ 盟坛刺杀＋林霄映雪大婚惊变 → 冤案昭雪「薪火」覆灭 → 皇城政变夜 → 星图谜线启封 → 碑林裂痕求援 → 首赴归墟碑林 → 部末「渊鸣」引爆暗线</div>
+        <div class="vrow"><b>卷末大钩</b>部末主碑「封」字崩角坠海，深渊倒悬映出<b>九州群山的倒影</b>（暗线转明，直入第三部）</div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">三部</span><span class="v-title">九渊暗涌</span><span class="v-meta">461–820 章 · 第八年春—第十二年 · 卷十五～卷二十五</span><span class="bdg info">规划</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">卷十五 倒影之城（461–493）</span><span class="fa">→</span>
+          <span class="fq">卷十六 十杰遗脉（494–526）</span><span class="fa">→</span>
+          <span class="fq">卷十七 新魔（527–560）</span><span class="fa">→</span>
+          <span class="fq">卷十八 第二次封渡之择（561–593）</span><span class="fa">→</span>
+          <span class="fq">卷十九 渊潮（594–626）</span><span class="fa">→</span>
+          <span class="fq">卷二十 万剑朝宗（627–660）</span><span class="fa">→</span>
+          <span class="fq">卷二十一 北望（661–693）</span><span class="fa">→</span>
+          <span class="fq">卷二十二 碑林守卫战（694–727）</span><span class="fa">→</span>
+          <span class="fq">卷二十三 碑上留名（728–760）</span><span class="fa">→</span>
+          <span class="fq">卷二十四 渊底之行（761–793）</span><span class="fa">→</span>
+          <span class="fq">卷二十五 九渊归一（794–820）</span>
+        </div>
+        <div class="vrow"><b>主线脉络</b>归墟倒影实证 → 十杰遗脉现世（「封而不灭」真相）→ 正道放逐者堕为新「魔」（主题拷问）→ 林霄力主「渡」再遭分裂 → 渊潮第一波＋二次会盟 → 万剑朝宗剑道大成 → 碑林守卫战 → 「碑上无名」双层真相 → 渊底之行见「未渡之念」灯海 → 三钥之学终极形态「守渊之钥」</div>
+        <div class="vrow"><b>卷末大钩</b>渊口合拢，守令碑问<b>「谁来续写」</b>，山门方向雪夜里隐约有少年登山</div>
+      </div>
+    </div>
+
+    <div class="vol">
+      <div class="vol-head"><span class="v-seal">四部</span><span class="v-title">守灯千年</span><span class="v-meta">821–1200 章 · 第十二年第十七年春 · 卷二十六～卷三十六</span><span class="bdg info">规划</span><span class="chev">▸</span></div>
+      <div class="vol-body">
+        <div class="flow">
+          <span class="fq">卷二十六 新火（821–853）</span><span class="fa">→</span>
+          <span class="fq">卷二十七 雪满青云（854–886）</span><span class="fa">→</span>
+          <span class="fq">卷二十八 千年之约（887–920）</span><span class="fa">→</span>
+          <span class="fq">卷二十九 渊心（921–954）</span><span class="fa">→</span>
+          <span class="fq">卷三十 人间劫（955–987）</span><span class="fa">→</span>
+          <span class="fq">卷三十一 补天（988–1020）</span><span class="fa">→</span>
+          <span class="fq">卷三十二 守灯人（1021–1053）</span><span class="fa">→</span>
+          <span class="fq">卷三十三 渊渊（1054–1086）</span><span class="fa">→</span>
+          <span class="fq">卷三十四 莲开心底（1087–1120）</span><span class="fa">→</span>
+          <span class="fq">卷三十五 烟云定（1121–1167）</span><span class="fa">→</span>
+          <span class="fq">卷三十六 九州烟云（1168–1200）</span>
+        </div>
+        <div class="vrow"><b>主线脉络</b>守渊盟建制＋新一代入山 → 玄清子封剑／洛惊鸿守阁期满（青云一代交接）→ 碑林公学颁「守令人不孤守」新制（千年之约兑现）→ 渊心初现 → 五域保卫战（落霞「凡人防线」名场面）→ 「守」字诀悟道（封与渡的终极融合）→ 守灯人出征 → 渊底终战（秦烛隔世灯影）→ 归墟井长守、九州新秩序 → 群像归位</div>
+        <div class="vrow"><b>全书终章</b>雪落青云，新一代少年登山，<b>「守好眼前人，便是修行。」</b>（首尾闭环第 1 章山门雪；千年之约「老夫看见了」兑现）</div>
+      </div>
+    </div>
+
+    <h4 style="margin:18px 0 10px;letter-spacing:2px;color:var(--ink)">◆ 主角升级路线（无数值境界 · 剑意 / 心法 / 身份锚点）</h4>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>部</th><th>剑道锚点</th><th>青云剑意后三重（持 · 藏 · 明）</th><th>身份锚点</th></tr></thead>
+      <tbody>
+        <tr><td>一部 1–200</td><td>莲开一 / 二 / 三段 · 剑令合一（186 章）</td><td>「持」落地（54 章起）</td><td>守令人（33 章）→ 代盟主（173–174 章）</td></tr>
+        <tr><td>二部 201–460</td><td>剑典合流实战化 → 剑心不昧（卷十三碑前）</td><td>「藏」初悟（卷八）→ 大成（卷九）</td><td>盟主转正（卷七）→ 接掌碑林名籍（卷十四）</td></tr>
+        <tr><td>三部 461–820</td><td>莲开四重 · 照影〔占位名待细纲〕→ 万剑朝宗（卷二十）</td><td>「明」初悟（卷十七）→ 大成（卷二十四渊底）</td><td>诛邪盟二次会盟盟主（卷十九）</td></tr>
+        <tr><td>四部 821–1200</td><td>剑意化境：「剑是势」→「剑是人心」·「守」字诀（卷三十一）</td><td>三重归一（卷三十一）</td><td>守令人制度开创者 → 传承落定（卷三十五）</td></tr>
+      </tbody>
+    </table></div>
+
+    <h4 style="margin:18px 0 10px;letter-spacing:2px;color:var(--ink)">◆ 新势力 / 新人物引入计划</h4>
+    <div class="grid3">
+      <div class="card"><h4>泣血堂（第二部）</h4><p class="small">幽冥残部重组，以「教主蛰伏」流言为旗；堂主真身＝当年被错杀的守令外围遗孤，<b>人祸线主反派</b>，「执念成魔」机制的人间回声。</p></div>
+      <div class="card"><h4>守碑族（第二部引入）</h4><p class="small">归墟碑林世代守碑人（与阿蛮「守碑林」职守并存：一土著一族、一中原派驻），「碑上无名」之谜的持有者。</p></div>
+      <div class="card"><h4>海外剑洲（第三部）</h4><p class="small">东海列岛剑修势力，少主为镜像型少年天才（深化东海归墟体系 · 已获授权方向）。</p></div>
+      <div class="card"><h4>十杰遗脉世家（第三部）</h4><p class="small">十杰封魔千年后的守秘家族网络（苍梧真人牵线现世；「十杰封而不灭」真相的载体）。</p></div>
+      <div class="card"><h4>守渊盟（第四部）</h4><p class="small">诛邪盟终形态，五域共守体制，联盟「成年礼」与九州新秩序的载体。</p></div>
+      <div class="card"><h4>新人物速览</h4><p class="small">裴照（盟执行堂执事）· 云澈（旧党老臣）· 泣血堂主 · 守碑族信使 / 族老 · 海外剑洲少主 · 新魔（被放逐剑修）· 新一代弟子群像（落霞镇苗子）。<b>除脉络功能外均为占位名，随细纲定稿登记。</b></p></div>
+    </div>
+
+    <h4 style="margin:18px 0 10px;letter-spacing:2px;color:var(--ink)">◆ 远期伏笔映射（F-035 ~ F-043 · 规划预登记，明细见台账第八节）</h4>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>编号</th><th>伏笔</th><th>埋设 / 依据</th><th>规划回收</th></tr></thead>
+      <tbody>
+        <tr><td>F-035</td><td>秦烛千年之约（193 章既定台词）</td><td>追认登记</td><td>卷二十八制度兑现＋1200 章「老夫看见了」</td></tr>
+        <tr><td>F-036</td><td>守令碑「碑上无名」之谜</td><td>07-items 既有设定追认</td><td>第一层卷十三 / 第二层卷二十三</td></tr>
+        <tr><td>F-037</td><td>十杰「封而不灭」的真正原因</td><td>卷五既定史实延伸</td><td>第一层卷十六 / 总收卷三十一「守」字诀</td></tr>
+        <tr><td>F-038</td><td>观星楼星图地脉线</td><td>05-locations 既有设定追认</td><td>卷二十一 / 卷三十三</td></tr>
+        <tr><td>F-039</td><td>渊鸣三前兆（碑裂 / 古井鸣 / 剑冢齐鸣）</td><td>卷十二~十四（新埋）</td><td>卷十四揭盖 → 卷十九渊潮</td></tr>
+        <tr><td>F-040</td><td>归墟倒影（倒悬九州山影）</td><td>卷十四部末钩（新埋）</td><td>卷十五</td></tr>
+        <tr><td>F-041</td><td>殷无涯执念归宿（守「非肉身复活」红线）</td><td>卷二十四（新埋）</td><td>卷三十四渊底点灯</td></tr>
+        <tr><td>F-042</td><td>守令人名册空位（碑问「谁来续写」）</td><td>卷二十三 / 二十五（新埋）</td><td>卷三十六新一代登山</td></tr>
+        <tr><td>F-043</td><td>剑冢齐鸣与「守」字古剑出土</td><td>卷十四 / 卷二十（新埋）</td><td>卷三十一「守」字诀</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="fold">
+      <div class="fold-head"><span class="fh-t">伏笔预算 · 纪律与预案（点击展开）</span><span class="chev">▸</span></div>
+      <div class="fold-body">
+        <ul class="rules">
+          <li><b>新埋预算</b>：第二部 ≤10 条 / 第三部 ≤12 条 / 第四部 ≤10 条；随写随按「先登记编号再落笔」转正式登记并回写 09-consistency.md。</li>
+          <li><b>长线控制</b>：跨部长线同时在案 ≤3 条；每部收官时本部伏笔回收率 ≥80%。</li>
+          <li><b>熔断线持续生效</b>：未回收伏笔 &gt;15 条且无回收路线即停新埋（GOAL.md 硬约束）。</li>
+          <li><b>降级预案</b>：若用户否决「渊」体系混合线，F-039~F-043 整体改写为人祸线等价物（幽冥残部盗掘碑林＋天机阁操纵谣言），卷级结构不变；F-035~F-038 为既有设定追认，不受影响。</li>
+          <li><b>北域备选扩展位</b>：九州第 6 域为地图空白区，<b>未经用户授权禁写</b>；仅预留「渊气源头指向北方绝境」开放钩（卷二十一），授权后再展开登记设定。</li>
+          <li><b>红线延续</b>：已死亡人物不正面出场（回忆 / 闪回除外）；渊中存在严格处理为「执念残响」非肉身复活；玄天令三重纹体系不新增；九幽之眼既闭不再重开（渊与九幽之眼＝同源不同体，表述已留痕）。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p class="ft-brand">《九州烟云》设定集 <span>V2</span></p>
+    <p>唯一设定事实源：九州烟云-ai-context/（AGENTS.md 写作规则 · 设定数据源 00–11 号文件 · 正文卷 01 / 02）</p>
+    <p>本文件为团队整合审查稿（快照基准：正文至第 56 章 · 第二年 · 夏末）· V1 2026-09-07 生成 · V2 2026-09-08 追加「拾 · 扩展大纲（201–1200 章）」板块 · 世界观与设定集架构师 出品</p>
+    <p class="ft-tip">冲突时以用户上传数据源为准；设定变更须先在 09-consistency.md 留痕。</p>
+  </div>
+</footer>
+
+<button id="topBtn" title="返回顶部">▲</button>
+
+<style>
+/* ===== V1 补丁样式（对齐各区块类名） ===== */
+/* 通用 */
+.chev{width:auto !important;height:auto !important;border:none !important;font-size:13px;color:var(--ink3);flex:none;line-height:1}
+.bdg.info{color:var(--blue);border-color:rgba(143,168,216,.5);background:rgba(143,168,216,.08)}
+#topBtn{display:none;opacity:.92;pointer-events:auto}
+
+/* 关系图节点配色 */
+.n-protag{--nc:#e8c572}.n-qy{--nc:#7dd4c0}.n-yw{--nc:#9ac48a}.n-ling{--nc:#d8c9a0}
+.n-roy{--nc:#8fa8d8}.n-mj{--nc:#c96a6a}.n-dead{--nc:#5a6578}
+/* 关系图边线配色与交互态 */
+.t-shi{--ec:#d4a559}.t-qing{--ec:#d88aa0}.t-zhu{--ec:#8fbf7f}
+.t-di{--ec:#c05b5b}.t-an{--ec:#9a7fd8}.t-meng{--ec:#6ec5b8}
+.edge.dash{stroke-dasharray:7 5}
+.edge.hl{stroke-width:3.2 !important;stroke-opacity:1}
+.edge.dm{stroke-opacity:.07}
+.node.dm{opacity:.22}
+.elabel.show{opacity:1;fill:var(--ink)}
+
+/* 势力卡片 */
+.fcard{background:var(--card);border:1px solid var(--line-soft);border-top:3px solid var(--fcl,var(--jade));
+  border-radius:12px;padding:16px 18px;transition:all .2s}
+.fcard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.f-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.f-name{font-family:var(--serif);font-size:17.5px;letter-spacing:2px;color:var(--ink)}
+.f-type{font-size:11px;color:var(--fcl,var(--jade));letter-spacing:1px}
+.f-row{font-size:12.5px;color:var(--ink2);margin:5px 0}
+.f-row b{color:var(--ink3);font-weight:600;margin-right:8px;font-size:11.5px;letter-spacing:1px}
+.fc-qy{--fcl:#7dd4c0}.fc-mj{--fcl:#c96a6a}.fc-roy{--fcl:#8fa8d8}
+.fc-zx{--fcl:#d4a559}.fc-yw{--fcl:#9ac48a}.fc-zl{--fcl:#8a94a6}
+/* 幽冥教结构 */
+.mjtop{display:flex;justify-content:center;padding:6px 0}
+.mjbox{border:1px solid var(--line);border-radius:10px;padding:10px 18px;text-align:center;background:var(--card2);min-width:172px}
+.mjbox span{display:block;font-size:11px;color:var(--ink3);margin-top:3px}
+.mj-boss{border-color:rgba(192,91,91,.55);box-shadow:0 0 18px rgba(192,91,91,.1);
+  font-family:var(--serif);font-size:15.5px;letter-spacing:2px;color:var(--red-soft)}
+.mjarrow{color:var(--ink3);text-align:center;font-size:16px;line-height:1;margin:6px 0}
+.mjrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.mjnote{margin-top:14px;font-size:12px;color:var(--ink3);text-align:center;
+  border-top:1px dashed var(--line-soft);padding-top:10px}
+/* 棋面 SVG */
+.qbox{fill:#141d2b;stroke:var(--qc,#3a4658);stroke-width:1.6}
+.b-mj{--qc:rgba(201,106,106,.75)}.b-qy{--qc:rgba(125,212,192,.65)}
+.b-yw{--qc:rgba(154,196,138,.65)}.b-roy{--qc:rgba(143,168,216,.65)}.b-zl{--qc:rgba(90,101,120,.75)}
+.qname{fill:var(--ink);font-size:14px;text-anchor:middle;font-family:var(--serif);letter-spacing:2px}
+.qsub{fill:#8a94a6;font-size:10.5px;text-anchor:middle}
+.qlbl{fill:#8a94a6;font-size:10.5px;paint-order:stroke;stroke:#0b0f16;stroke-width:3px}
+
+/* 大纲 · 进度锚点与卷树 */
+.anchor{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:center;
+  background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line-gold);
+  border-radius:12px;padding:18px 22px}
+.an-num{font-family:var(--serif);text-align:center}
+.an-num b{font-size:46px;color:var(--gold-soft);line-height:1}
+.an-num span{display:block;font-size:12px;color:var(--ink3);margin-top:4px}
+.an-rows{display:flex;flex-direction:column;gap:9px}
+@media (max-width:700px){.anchor{grid-template-columns:1fr}.an-num{margin-bottom:6px}}
+.v-seal{font-family:var(--serif);width:44px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--gold-dim);border-radius:8px;color:var(--gold-soft);font-size:14px;letter-spacing:1px;
+  background:rgba(212,165,89,.06);writing-mode:vertical-rl}
+.vol.open .v-seal{border-color:var(--gold)}
+.v-title{font-family:var(--serif);font-size:18px;letter-spacing:3px;color:var(--ink)}
+.v-meta{font-size:12px;color:var(--ink3)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 10px}
+.fq{padding:4px 11px;border-radius:6px;border:1px solid var(--line);font-size:12px;color:var(--ink2);background:#151f2e}
+.fq b{color:var(--jade-soft);font-family:var(--serif);margin-right:4px;font-weight:600}
+.fq.done{border-color:rgba(212,165,89,.4);color:var(--gold-soft)}
+.fa{color:var(--ink3);font-size:10px}
+.beats{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:8px}
+.bt{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#141d2b;text-align:center}
+.bt b{display:block;font-family:var(--serif);color:var(--gold-soft);font-size:13.5px;font-weight:600}
+.bt span{display:block;font-size:10.5px;color:var(--ink3);margin-top:2px;line-height:1.55}
+.bt span.hook{color:var(--red-soft)}
+.vrow{margin:10px 0 0;display:grid;grid-template-columns:100px 1fr;gap:10px;align-items:start}
+.vrow > b{font-size:12px;color:var(--gold-dim);letter-spacing:2px;white-space:nowrap;padding-top:5px;font-family:var(--serif);font-weight:600}
+.vrow .quote{font-size:13.5px}
+.tchips{display:flex;flex-wrap:wrap;gap:6px}
+.tchips span{font-size:11.5px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);
+  color:var(--ink2);background:var(--card2)}
+
+/* 伏笔统计 */
+.fstatg{display:grid;grid-template-columns:auto 1.1fr 1.1fr;gap:16px;align-items:stretch}
+@media (max-width:900px){.fstatg{grid-template-columns:1fr}}
+.fstat{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.fstat.nums{align-items:stretch;justify-content:flex-start}
+.fn-row{font-size:12.5px;color:var(--ink2);padding:8px 2px;border-bottom:1px dashed var(--line-soft)}
+.fn-row:last-child{border-bottom:none}
+.fb{display:inline-block;min-width:104px;text-align:center;padding:2px 10px;border-radius:6px;
+  font-size:12px;margin-right:10px;letter-spacing:1px;border:1px solid}
+.fb.done2{color:var(--gold-soft);border-color:rgba(212,165,89,.5);background:rgba(212,165,89,.08)}
+.fb.live2{color:var(--jade-soft);border-color:rgba(110,197,184,.5);background:rgba(110,197,184,.08)}
+.fb.wait2{color:var(--ink3);border-color:var(--line)}
+.d-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2}
+.d-center b{font-family:var(--serif);font-size:34px;color:var(--ink);line-height:1.1}
+.d-center span{font-size:11px;color:var(--ink3);letter-spacing:2px}
+.warnbox{border:1px solid rgba(212,165,89,.4);background:rgba(212,165,89,.06);border-radius:12px;
+  padding:14px 18px;font-size:12.5px;color:var(--ink2);display:flex;flex-direction:column;justify-content:center}
+.wb-t{font-family:var(--serif);color:var(--gold-soft);letter-spacing:3px;font-size:15px;margin-bottom:6px}
+/* 三大主线伏笔 */
+.big3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.big3{grid-template-columns:1fr}}
+.b3c{background:linear-gradient(160deg,rgba(212,165,89,.07),rgba(212,165,89,.02));
+  border:1px solid var(--line-gold);border-radius:12px;padding:16px 18px}
+.b3-t{font-family:var(--serif);font-size:16.5px;color:var(--gold-soft);letter-spacing:2px;
+  display:flex;align-items:center;gap:10px}
+.b3-n{font-size:13px;color:var(--gold);border:1px solid rgba(212,165,89,.5);border-radius:6px;padding:1px 8px;flex:none}
+.b3-steps{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.bs{font-size:12.5px;color:var(--ink2);border:1px dashed var(--line);border-radius:8px;
+  padding:7px 11px;background:rgba(255,255,255,.015)}
+.bs b{color:var(--gold-soft);font-weight:600;margin-right:6px}
+.bs.done{border-style:solid;border-color:rgba(212,165,89,.4)}
+/* 回收热力 */
+.heat-row{display:grid;grid-template-columns:96px 1fr 104px;gap:12px;align-items:center;
+  padding:7px 0;border-bottom:1px dashed var(--line-soft)}
+.heat-row:last-of-type{border-bottom:none}
+.hlab{font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.htrack{height:14px;border-radius:7px;background:#19222f;overflow:hidden}
+.htrack i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#7a5a2f,var(--gold-soft))}
+.hval{font-size:11.5px;color:var(--gold-soft);text-align:right;white-space:nowrap}
+.hsub{grid-column:1 / -1;font-size:11px;color:var(--ink3);margin-top:-4px}
+/* 台账状态 */
+.st-done{color:var(--gold-soft)} .st-live{color:var(--jade-soft)} .st-wait{color:var(--ink3)}
+
+/* 页脚 */
+.foot-in{max-width:1180px;margin:0 auto}
+.ft-brand{font-family:var(--serif);font-size:17px;color:var(--gold-soft);letter-spacing:3px}
+.ft-brand span{font-size:11px;color:var(--ink3);letter-spacing:1px;margin-left:8px;
+  border:1px solid var(--line);padding:1px 8px;border-radius:4px}
+.ft-tip{color:var(--gold-dim)}
+/* 关系图信息面板与命中区 */
+.edge{pointer-events:none}
+.elabel{paint-order:stroke;stroke:#0b0f16;stroke-width:4px}
+.nsub{font-size:9.5px}
+.hit{stroke:transparent;stroke-width:16;pointer-events:stroke}
+.relinfo{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:10px 16px;
+  font-size:12.5px;color:var(--ink2);min-height:46px;background:rgba(255,255,255,.015)}
+.ri-hint{color:var(--ink3)}
+.ri-t{color:var(--gold-soft);font-family:var(--serif);letter-spacing:1px;display:inline-block;margin-right:12px}
+.ri-rows{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;margin-top:5px}
+@media (max-width:760px){.ri-rows{grid-template-columns:1fr}}
+.ri-row em{color:var(--ink3);font-style:normal}
+</style>
+<script>
+(function(){
+  'use strict';
+  /* ---------- 通用折叠 ---------- */
+  document.addEventListener('click', function(e){
+    var h = e.target.closest('.fold-head, .vol-head');
+    if(h && !e.target.closest('a')){
+      var box = h.parentElement;
+      box.classList.toggle('open');
+      var c = h.querySelector('.chev');
+      if(c){ c.textContent = box.classList.contains('open') ? '▾' : '▸'; }
+    }
+  });
+
+  /* ---------- 人物阵营筛选 ---------- */
+  var tabs = document.querySelectorAll('#charTabs button');
+  tabs.forEach(function(b){
+    b.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.getAttribute('data-f');
+      document.querySelectorAll('#charGrid .ccard').forEach(function(card){
+        var fac = card.getAttribute('data-fac');
+        var show = (f === 'all') || (fac === f) || (f === 'other' && (fac === 'yaowang' || fac === 'ling'));
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- 雷达图 ---------- */
+  var RD = {
+    linxiao:{name:'林霄', v:[78,62,70,88,92], c:'#e8c572'},
+    suyingxue:{name:'苏映雪', v:[45,85,92,70,66], c:'#d88aa0'},
+    tieniu:{name:'铁牛', v:[88,40,62,80,58], c:'#7dd4c0'},
+    xuanqingzi:{name:'玄清子', v:[95,90,60,92,40], c:'#8fa8d8'}
+  };
+  var AX = ['力量','智谋','魅力','意志','机缘'];
+  var cur = 'linxiao', cmp = false;
+  var cv = document.getElementById('radarCanvas');
+  function pt(cx, cy, r, i){
+    var a = -Math.PI/2 + i*2*Math.PI/5;
+    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+  }
+  function poly(ctx, cx, cy, r, vals, k){
+    ctx.beginPath();
+    for(var i=0;i<5;i++){
+      var p = pt(cx, cy, r*k*(vals[i]/100), i);
+      if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);
+    }
+    ctx.closePath();
+  }
+  function draw(){
+    if(!cv) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = 360, H = 330, cx = W/2, cy = H/2 + 4, R = 108;
+    cv.width = W*dpr; cv.height = H*dpr;
+    cv.style.width = W+'px'; cv.style.height = H+'px';
+    var ctx = cv.getContext('2d');
+    ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,W,H);
+    /* 网格 */
+    ctx.strokeStyle = 'rgba(120,140,170,.22)';
+    ctx.lineWidth = 1;
+    [0.25,0.5,0.75,1].forEach(function(k){
+      ctx.beginPath();
+      for(var i=0;i<5;i++){
+        var p = pt(cx,cy,R*k,i);
+        if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);
+      }
+      ctx.closePath(); ctx.stroke();
+    });
+    for(var i=0;i<5;i++){
+      var p = pt(cx,cy,R,i);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(p[0],p[1]); ctx.stroke();
+    }
+    /* 轴标签 */
+    ctx.fillStyle = '#aeb7c5';
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    for(var i=0;i<5;i++){
+      var p = pt(cx,cy,R+24,i);
+      ctx.textAlign = p[0] > cx+8 ? 'right' : (p[0] < cx-8 ? 'left' : 'center');
+      ctx.textBaseline = 'middle';
+      ctx.fillText(AX[i], p[0], p[1]);
+    }
+    /* 数值多边形 */
+    var keys = Object.keys(RD);
+    keys.forEach(function(k){
+      var main = (k === cur);
+      if(cmp || main){
+        poly(ctx, cx, cy, R, RD[k].v, 1);
+        ctx.fillStyle = main ? hexA(RD[k].c, .30) : hexA(RD[k].c, .10);
+        ctx.fill();
+        ctx.strokeStyle = main ? RD[k].c : hexA(RD[k].c, .38);
+        ctx.lineWidth = main ? 2 : 1;
+        ctx.stroke();
+        if(main){
+          ctx.fillStyle = RD[k].c;
+          for(var i=0;i<5;i++){
+            var p = pt(cx,cy,R*(RD[k].v[i]/100),i);
+            ctx.beginPath(); ctx.arc(p[0],p[1],3,0,Math.PI*2); ctx.fill();
+          }
+        }
+      }
+    });
+    /* 选中者名 + 数值 */
+    ctx.fillStyle = '#e9e3d6';
+    ctx.font = 'bold 14px "Noto Serif SC","SimSun",serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(RD[cur].name + '  ' + RD[cur].v.join(' / '), 12, 16);
+  }
+  function hexA(hex, a){
+    var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  var rbs = document.querySelectorAll('#radBtns button');
+  rbs.forEach(function(b){
+    b.addEventListener('click', function(){
+      rbs.forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      cur = b.getAttribute('data-k');
+      draw();
+    });
+  });
+  var rc = document.getElementById('radCmp');
+  if(rc){ rc.addEventListener('change', function(){ cmp = rc.checked; draw(); }); }
+  draw();
+  window.addEventListener('resize', draw);
+
+  /* ---------- 关系图交互 ---------- */
+  var svg = document.getElementById('relsvg');
+  if(svg){
+    var SVGNS = 'http://www.w3.org/2000/svg';
+    var edges = svg.querySelectorAll('.edge');
+    var nodes = svg.querySelectorAll('.node');
+    var info = document.getElementById('relInfo');
+    var HINT = '<span class="ri-hint">悬停人物节点：高亮其全部关系并列出清单；悬停连线：查看单条关系说明。</span>';
+    var nameOf = {};
+    nodes.forEach(function(n){
+      var t = n.querySelector('.nname');
+      nameOf[n.getAttribute('data-id')] = t ? t.textContent : n.getAttribute('data-id');
+    });
+    function setInfo(html){ if(info) info.innerHTML = html; }
+    /* 生成边标签与宽命中区 */
+    edges.forEach(function(ed){
+      ed.style.strokeWidth = (parseFloat(ed.getAttribute('data-w')) * 0.6 + 0.8).toFixed(1);
+      var x1 = parseFloat(ed.getAttribute('x1')), y1 = parseFloat(ed.getAttribute('y1'));
+      var x2 = parseFloat(ed.getAttribute('x2')), y2 = parseFloat(ed.getAttribute('y2'));
+      var t = document.createElementNS(SVGNS,'text');
+      t.setAttribute('class','elabel');
+      t.setAttribute('x',(x1+x2)/2);
+      t.setAttribute('y',(y1+y2)/2 - 6);
+      t.textContent = ed.getAttribute('data-label');
+      svg.appendChild(t);
+      ed._label = t;
+      var hit = document.createElementNS(SVGNS,'line');
+      ['x1','y1','x2','y2'].forEach(function(a){ hit.setAttribute(a, ed.getAttribute(a)); });
+      hit.setAttribute('class','hit');
+      ed.parentNode.insertBefore(hit, ed);
+      hit.addEventListener('mouseenter', function(){
+        ed.classList.add('hl');
+        t.classList.add('show');
+        setInfo('<span class="ri-t">' + t.textContent + '</span>');
+      });
+      hit.addEventListener('mouseleave', function(){
+        ed.classList.remove('hl');
+        t.classList.remove('show');
+        setInfo(HINT);
+      });
+    });
+    function hl(id){
+      edges.forEach(function(ed){
+        var on = id && (ed.getAttribute('data-a')===id || ed.getAttribute('data-b')===id);
+        ed.classList.toggle('hl', !!on);
+        ed.classList.toggle('dm', !!id && !on);
+      });
+      nodes.forEach(function(n){
+        n.classList.toggle('dm', !!id && n.getAttribute('data-id')!==id);
+      });
+    }
+    function relList(id){
+      var rows = [];
+      edges.forEach(function(ed){
+        var a = ed.getAttribute('data-a'), b = ed.getAttribute('data-b');
+        if(a===id || b===id){
+          var other = (a===id) ? b : a;
+          rows.push('<div class="ri-row">' + ed.getAttribute('data-label') + '<em> —— ' + (nameOf[other]||other) + '</em></div>');
+        }
+      });
+      setInfo('<span class="ri-t">' + (nameOf[id]||id) + ' · ' + rows.length + ' 条关系</span><div class="ri-rows">' + rows.join('') + '</div>');
+    }
+    nodes.forEach(function(n){
+      n.addEventListener('mouseenter', function(){
+        var id = n.getAttribute('data-id');
+        hl(id); relList(id);
+      });
+      n.addEventListener('mouseleave', function(){ hl(null); setInfo(HINT); });
+    });
+    setInfo(HINT);
+  }
+
+  /* ---------- 侧栏导航高亮 ---------- */
+  var links = document.querySelectorAll('.nav-links a');
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  if('IntersectionObserver' in window){
+    var ob = new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if(en.isIntersecting){
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[en.target.id];
+          if(a) a.classList.add('active');
+        }
+      });
+    }, {rootMargin:'-30% 0px -60% 0px'});
+    document.querySelectorAll('section.sec').forEach(function(s){ ob.observe(s); });
+  }
+
+  /* ---------- 返回顶部 ---------- */
+  var tb = document.getElementById('topBtn');
+  window.addEventListener('scroll', function(){
+    tb.style.display = window.scrollY > 700 ? 'block' : 'none';
+  });
+  tb.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
+</script>
+</body>
+</html>
