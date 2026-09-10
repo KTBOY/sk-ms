@@ -1,0 +1,23 @@
+{
+  "schema": "@qoder/writing/comments@v1",
+  "documentPath": "导出合并稿/卷01-风雪入青云.md",
+  "comments": [
+    {
+      "id": "comment-faf1e968-60e5-4c05-b57d-dc290616f711",
+      "documentPath": "导出合并稿/卷01-风雪入青云.md",
+      "versionId": null,
+      "body": "",
+      "selectedText": "有一个少",
+      "anchor": {
+        "from": 69,
+        "to": 73,
+        "selectedText": "有一个少",
+        "prefix": "卷一 · 风雪入青云\n第一章 山门雪\n青云山的雪，一下就是三天。\n第三天傍晚，雪没有停的意思，山道上的脚印却一个接一个被填平了。只",
+        "suffix": "年还在往上走，深一脚浅一脚，身后的脚印拖出一道歪歪扭扭的长线，像谁在白纸上划了一笔又懒得收尾。\n少年叫林霄，十六岁，从落霞镇走来，走了整整三个月。\n三个月里"
+      },
+      "status": "open",
+      "createdAt": "2026-09-10T08:46:57.735Z",
+      "updatedAt": "2026-09-10T08:46:57.735Z"
+    }
+  ]
+}
