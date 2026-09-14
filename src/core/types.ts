@@ -73,6 +73,13 @@ export interface Item extends BaseEntity {
 export interface LocationNode extends BaseEntity {
   region: string;
   parentId: string | null;
+  factionId?: string | null; // 归属/控制势力（可选，势力地图着色与详情用）
+}
+
+/** 势力地图中地点的手动布局坐标（画布逻辑坐标，随 d3-zoom 缩放平移）。 */
+export interface MapPos {
+  x: number;
+  y: number;
 }
 
 export type FactionType = '宗门' | '王朝' | '组织' | '家族' | '其他';
@@ -84,6 +91,18 @@ export interface Faction extends BaseEntity {
 }
 
 export type ChapterStatus = '草稿' | '写作中' | '已完成';
+
+/**
+ * 分卷：按章节 order 的闭区间划定卷范围，是「AI 上下文包导出」落正文分卷
+ * （正文/卷NN-卷名/卷首.md + 第NNN章-章题.md）与设定集分卷视图的依据。
+ * name 只存纯卷名（如「风雪入青云」）；卷序号取数组序，「卷一」等称呼按序推导。
+ */
+export interface Volume {
+  id: string;
+  name: string;
+  startOrder: number; // 起始章 order（含）
+  endOrder: number;   // 结束章 order（含）
+}
 
 /** 章节快照：自动/手动留存的历史版本（每章上限 20 条，超出淘汰最旧）。 */
 export interface ChapterVersion {
@@ -112,6 +131,19 @@ export interface AISettings {
   model: string;
 }
 
+/**
+ * 智能体角色卡：跨作品共用的创作团队（与写作工作区 agents/ 目录同一套人马）。
+ * prompt 即 SOUL.md 全文；导出 AI 上下文包时按序落盘为 agents/NN-名字/SOUL.md，
+ * 写作台「发送给 AI」可将选中角色卡作为 system 提示词注入。
+ */
+export interface AgentCard {
+  id: string;
+  name: string;     // 角色名，如「文风润色编辑」
+  role: string;     // 职责一句话，如「风格纪律与语言精修」
+  prompt: string;   // SOUL.md 全文
+  enabled: boolean; // 关闭后不参与发送与导出
+}
+
 export interface ProjectSettings {
   ai: AISettings;
 }
@@ -130,6 +162,9 @@ export interface Project {
   locations: LocationNode[];
   factions: Faction[];
   chapters: Chapter[];
+  volumes?: Volume[];
+  /** 势力地图手动布局：locationId → 坐标；缺位的地点按区域自动布点。 */
+  mapLayout?: Record<string, MapPos>;
   ignoreWords: string[];
   settings: ProjectSettings;
 }

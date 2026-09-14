@@ -54,6 +54,9 @@ export function WritingPage() {
   const [quickCharName, setQuickCharName] = useState<string | null>(null);
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
+  const [agentId, setAgentId] = useState('');
+  const agents = useProjectStore((s) => s.appSettings.agents ?? []);
+  const enabledAgents = useMemo(() => agents.filter((a) => a.enabled), [agents]);
 
   // 查找替换
   const editorRef = useRef<HTMLTextAreaElement>(null);
@@ -291,11 +294,12 @@ export function WritingPage() {
   const sendToAI = async () => {
     if (!chapter) return;
     const pack = buildContextPack(project, chapter);
+    const agent = enabledAgents.find((a) => a.id === agentId);
     setAiBusy(true);
     try {
-      const result = await chatComplete(project.settings.ai, pack);
+      const result = await chatComplete(project.settings.ai, pack, agent?.prompt);
       setAiResult(result);
-      pushToast('AI 已返回内容', 'success');
+      pushToast(agent ? `「${agent.name}」已返回内容` : 'AI 已返回内容', 'success');
     } catch (err) {
       pushToast(err instanceof Error ? err.message : 'AI 调用失败', 'error');
     } finally {
@@ -463,6 +467,12 @@ export function WritingPage() {
           <div className="writing-panel__body">
             <div className="ctx-ops">
               <Button size="sm" icon={<IconCopy size={13} />} onClick={copyPack}>复制上下文包</Button>
+              {enabledAgents.length > 0 && (
+                <Select value={agentId} onChange={(e) => setAgentId(e.target.value)}>
+                  <option value="">不使用角色卡</option>
+                  {enabledAgents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </Select>
+              )}
               <Button size="sm" variant="primary" icon={<IconSend size={13} />} disabled={aiBusy} onClick={sendToAI}>
                 {aiBusy ? '请求中…' : '发送给 AI'}
               </Button>

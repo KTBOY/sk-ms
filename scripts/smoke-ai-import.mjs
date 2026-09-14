@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { mkdtempSync, writeFileSync, readFileSync } from 'fs';
+import { mkdtempSync, writeFileSync, readFileSync, readdirSync, existsSync } from 'fs';
 import { pathToFileURL } from 'url';
 import { tmpdir } from 'os';
 import { join, sep } from 'path';
@@ -11,7 +11,19 @@ writeFileSync(entry, 'export * from ' + JSON.stringify(cwd + '/src/core/import/a
 await build({ entryPoints: [entry], bundle: true, format: 'esm', outfile: join(dir, 'out.mjs'), platform: 'node' });
 const mod = await import(pathToFileURL(join(dir, 'out.mjs')).href);
 
-const bundle = JSON.parse(readFileSync('yrdy/九州烟云-ai-context/九州烟云-ai-context/novel-context.json', 'utf-8'));
+// 正文按章落位（正文/卷XX-卷名/第NNN章-标题.md）→ 整卷文本（与 tools/split_merge_chapters.py merge 同构）
+function readVolumeFromFolder(folder) {
+  const parts = [];
+  const head = join(folder, '卷首.md');
+  if (existsSync(head)) parts.push(readFileSync(head, 'utf-8'));
+  const chapters = readdirSync(folder)
+    .filter((f) => /^第\d+章-.*\.md$/.test(f))
+    .sort((a, b) => parseInt(a.match(/^第(\d+)章/)[1], 10) - parseInt(b.match(/^第(\d+)章/)[1], 10));
+  for (const f of chapters) parts.push(readFileSync(join(folder, f), 'utf-8'));
+  return parts.join('');
+}
+
+const bundle = JSON.parse(readFileSync('yrdy/九州烟云-ai-context/novel-context.json', 'utf-8'));
 const project = mod.parseContextBundle(JSON.stringify(bundle));
 console.log('解析作品:', project.name, '| 人物', project.characters.length, '| 关系', project.relations.length,
   '| 事件', project.events.length, '| 地点', project.locations.length, '| 势力', project.factions.length,
@@ -20,12 +32,13 @@ console.log('解析作品:', project.name, '| 人物', project.characters.length
 const again = mod.parseContextBundle(JSON.stringify({ app: 'novel-atlas', version: 1, project }));
 console.log('备份格式兼容+幂等:', again.characters.length === project.characters.length && again.chapters.length === project.chapters.length);
 
-const volText = readFileSync('yrdy/正文/卷01-风雪入青云.md', 'utf-8');
-const vol = mod.parseVolumeMarkdown('卷01-风雪入青云.md', volText);
+const volText = readVolumeFromFolder('yrdy/正文/卷01-风雪入青云');
+const vol = mod.parseVolumeMarkdown('卷01-风雪入青云', volText);
 console.log('分卷解析:', vol.volumeTitle, '→', vol.chapters.length, '章 | 首章:', vol.chapters[0].title, '| 末章:', vol.chapters[vol.chapters.length - 1].title);
 
 const same = mod.applyVolumes(project, [vol]);
-console.log('对位合并(同内容): updated', same.updated, '/ added', same.added, '/ untouched', same.untouched);
+console.log('对位合并(同内容): updated', same.updated, '/ added', same.added, '/ untouched', same.untouched,
+  '| 自动建卷:', JSON.stringify(same.project.volumes ?? []));
 
 const empty = mod.parseContextBundle(JSON.stringify({ project: { ...bundle.project, chapters: [] } }));
 const fresh = mod.applyVolumes(empty, [vol]);

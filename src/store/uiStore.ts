@@ -5,7 +5,7 @@ import type { EntityKind } from '../core/types';
 
 export type Page =
   | 'dashboard' | 'writing' | 'characters' | 'graph' | 'events' | 'timeline'
-  | 'locations' | 'factions' | 'items' | 'export' | 'settings';
+  | 'locations' | 'factions' | 'items' | 'atlas' | 'export' | 'settings';
 
 export const PAGE_TITLES: Record<Page, string> = {
   dashboard: '总览',
@@ -17,6 +17,7 @@ export const PAGE_TITLES: Record<Page, string> = {
   locations: '地点',
   factions: '势力',
   items: '物品',
+  atlas: '设定集',
   export: '导出',
   settings: '设置',
 };

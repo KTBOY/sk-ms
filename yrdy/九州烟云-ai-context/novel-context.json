@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-09-06T02:44:41.000Z",
+  "exportedAt": "2026-09-13T16:36:00.000Z",
   "generator": "NovelAtlas v1.0 (AI 续写同步: 卷一33章/20人物/7势力)",
   "project": {
     "id": "29pfnIC-5t",
@@ -7,7 +7,7 @@
     "genre": "东方玄幻",
     "description": "少年林霄拜入青云剑宗，携玄天令之秘，卷入正邪两道千年棋局。",
     "createdAt": 1788628142637,
-    "updatedAt": 1788662681598,
+    "updatedAt": 1789317360082,
     "ignoreWords": [],
     "settings": {
       "ai": {
@@ -28,8 +28,8 @@
         "type": "宗门",
         "stance": "正道",
         "leaderId": "c-xuanqingzi",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-youming",
@@ -42,8 +42,8 @@
         "type": "组织",
         "stance": "邪道",
         "leaderId": "c-yinwuya",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-dali",
@@ -56,8 +56,8 @@
         "type": "王朝",
         "stance": "中立（内有鹰派）",
         "leaderId": "c-yundincang",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-zhuxie",
@@ -68,8 +68,8 @@
         "type": "组织",
         "stance": "正道",
         "leaderId": "c-xuanqingzi",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-yaowang",
@@ -80,8 +80,8 @@
         "type": "宗门",
         "stance": "正道（中立偏善）",
         "leaderId": "c-suqianyu",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-tianji",
@@ -92,8 +92,8 @@
         "type": "组织",
         "stance": "中立（唯利是图）",
         "leaderId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "3c2d73b603",
@@ -104,8 +104,8 @@
         "type": "组织",
         "stance": "中立",
         "leaderId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f-xuanjia",
@@ -118,8 +118,8 @@
         "type": "组织",
         "stance": "皇朝直属",
         "leaderId": "c-yunzheng",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "0a01ed381c",
@@ -130,8 +130,8 @@
         "type": "组织",
         "stance": "邪道（教主直属）",
         "leaderId": "c-yinwuya",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       }
     ],
     "locations": [
@@ -145,8 +145,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "76d1df3b95",
@@ -158,8 +158,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": "l-qingyunshan",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "686592e558",
@@ -169,8 +169,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": "l-qingyunshan",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "5fa8ef52ae",
@@ -180,8 +180,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": "l-qingyunshan",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "f577bebf98",
@@ -191,8 +191,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": "l-qingyunshan",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "l-luoxia",
@@ -202,8 +202,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "l-jianzhong",
@@ -215,8 +215,8 @@
         "tags": [],
         "region": "东洲",
         "parentId": "l-qingyunshan",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "581f06815a",
@@ -226,8 +226,8 @@
         "tags": [],
         "region": "东洲—南疆要道",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "l-youminggu",
@@ -237,8 +237,8 @@
         "tags": [],
         "region": "南疆",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "5a73817afa",
@@ -248,8 +248,8 @@
         "tags": [],
         "region": "南疆",
         "parentId": "l-youminggu",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "228d99b1a2",
@@ -259,8 +259,8 @@
         "tags": [],
         "region": "南疆边缘",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "l-huangcheng",
@@ -272,8 +272,8 @@
         "tags": [],
         "region": "中州",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "d43ea4f4a9",
@@ -283,8 +283,8 @@
         "tags": [],
         "region": "中州",
         "parentId": "l-huangcheng",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "8cca583b21",
@@ -296,8 +296,8 @@
         "tags": [],
         "region": "西泽",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "6a6e2b40a0",
@@ -307,8 +307,8 @@
         "tags": [],
         "region": "中州",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "b8bd87a428",
@@ -320,8 +320,8 @@
         "tags": [],
         "region": "东海",
         "parentId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "cc14c95b18",
@@ -331,8 +331,41 @@
         "tags": [],
         "region": "南疆",
         "parentId": "l-youminggu",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "367999bb51",
+        "name": "听雨茶楼",
+        "aliases": [],
+        "description": "青云山下城镇的茶楼，第 40 章林霄与云梦瑶手谈之地；她在此半摊牌\"互相当饵\"，提出情报三成换一成，并留下\"令要开时知会我一声\"之约。",
+        "tags": [],
+        "region": "东洲",
+        "parentId": null,
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "a501e2b983",
+        "name": "寒潭",
+        "aliases": [],
+        "description": "青云山中深潭，林霄练腕与磨剑心之地：三百提按\"晃而不洒才是稳\"、寒潭无声分线开青莲一重、决战前夜磨剑心皆在此。",
+        "tags": [],
+        "region": "东洲",
+        "parentId": "l-qingyunshan",
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "6c0aad0143",
+        "name": "破山神庙",
+        "aliases": [],
+        "description": "青云山山南十里外废庙，山神像塌了半边。第 55/56 章月晦夜慕长风与屠九密会定约之地；地气阴冷，幽冥渗透线的关键场景。",
+        "tags": [],
+        "region": "东洲",
+        "parentId": null,
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       }
     ],
     "characters": [
@@ -363,8 +396,8 @@
           "will": 88,
           "fortune": 92
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-suyingxue",
@@ -391,8 +424,8 @@
           "will": 70,
           "fortune": 66
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-tieniu",
@@ -419,8 +452,8 @@
           "will": 80,
           "fortune": 58
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-xuanqingzi",
@@ -447,8 +480,8 @@
           "will": 92,
           "fortune": 40
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-qinlao",
@@ -475,8 +508,8 @@
           "will": 99,
           "fortune": 10
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yunmengyao",
@@ -503,8 +536,8 @@
           "will": 68,
           "fortune": 75
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-muchangfeng",
@@ -531,8 +564,8 @@
           "will": 55,
           "fortune": 48
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-tujiu",
@@ -560,8 +593,8 @@
           "will": 72,
           "fortune": 35
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yinwuya",
@@ -589,8 +622,8 @@
           "will": 98,
           "fortune": 20
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yundincang",
@@ -617,8 +650,8 @@
           "will": 85,
           "fortune": 60
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yunzheng",
@@ -645,8 +678,8 @@
           "will": 60,
           "fortune": 40
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-cangwu",
@@ -673,8 +706,8 @@
           "will": 90,
           "fortune": 55
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yejinghan",
@@ -701,8 +734,8 @@
           "will": 85,
           "fortune": 62
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-aman",
@@ -729,8 +762,8 @@
           "will": 82,
           "fortune": 78
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-simei",
@@ -757,8 +790,8 @@
           "will": 55,
           "fortune": 30
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-luojinghong",
@@ -785,8 +818,8 @@
           "will": 88,
           "fortune": 50
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-huoshanhe",
@@ -813,8 +846,8 @@
           "will": 90,
           "fortune": 48
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-suqianyu",
@@ -841,8 +874,8 @@
           "will": 82,
           "fortune": 60
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-yexiao",
@@ -867,8 +900,8 @@
           "will": 55,
           "fortune": 30
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c-zhaotuo",
@@ -883,7 +916,7 @@
         "status": "死亡",
         "appearance": "锦袍束冠，眼高于顶。",
         "personality": "仗势、记仇、色厉内荏。",
-        "background": "杂役院至大比一路与林霄作对，其父与幽冥教旧情败露后，随案伏诛。",
+        "background": "杂役院至大比一路与林霄作对，其父与幽冥教旧情败露后，随案伏诛。第 45 章试剑台败于林霄回风三叠后认输一揖，洛惊鸿录其名于剑首历练册（79–80 章军法线保留，悲剧感更强）；第 46 章问心崖幻境照见父躬，直身而返。",
         "goals": "",
         "avatar": null,
         "attributes": {
@@ -893,13 +926,171 @@
           "will": 40,
           "fortune": 35
         },
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-shenqingya",
+        "name": "沈青崖",
+        "aliases": [],
+        "description": "剑首一脉内门第五，叠浪剑传人，败而守己的大比配角。",
+        "tags": [],
+        "role": "配角",
+        "gender": "男",
+        "age": "二十余岁（开篇）",
+        "factionId": "f-qingyun",
+        "status": "在世",
+        "appearance": "—（正文未细写，再出场时补）",
+        "personality": "沉稳守拙，败而不乱。",
+        "background": "剑首一脉内门第五，叠浪剑。第 43 章大比抽签首轮对林霄；第 44 章试剑台补叠浪之滞，五十招落败（\"赢自己的节奏\"）；第 46 章问心崖幻境照见己败，守而不乱，评级甲上。",
+        "goals": "补全叠浪剑的破绽，重入剑首一脉眼底。",
+        "avatar": null,
+        "attributes": {
+          "power": 72,
+          "wisdom": 65,
+          "charm": 58,
+          "will": 78,
+          "fortune": 55
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-hangang",
+        "name": "韩刚",
+        "aliases": [],
+        "description": "丹霞一脉横练胖师兄，憨直重义，输得起也记得住。",
+        "tags": [],
+        "role": "配角",
+        "gender": "男",
+        "age": "二十余岁（开篇）",
+        "factionId": "f-qingyun",
+        "status": "在世",
+        "appearance": "体胖壮实，横练气血外放。",
+        "personality": "憨直，重义，认死理。",
+        "background": "丹霞一脉横练金身路数。第 44 章试剑台攥剑断腕仍战；第 46 章问心崖幻境拜师叔，照见心结；第 49 章半决赛金身被林霄六招破，伤退四强；第 55 章饭堂为慕长风失利憋话，扒饭眼圈发红。",
+        "goals": "把横练练到金身大成。",
+        "avatar": null,
+        "attributes": {
+          "power": 76,
+          "wisdom": 45,
+          "charm": 60,
+          "will": 80,
+          "fortune": 52
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-zhoumingli",
+        "name": "周明礼",
+        "aliases": [],
+        "description": "丹霞剑修，使剑丸，话不多的可靠人。",
+        "tags": [],
+        "role": "配角",
+        "gender": "男",
+        "age": "三十余岁（开篇）",
+        "factionId": "f-qingyun",
+        "status": "在世",
+        "appearance": "—（正文未细写，再出场时补）",
+        "personality": "沉稳少言。",
+        "background": "丹霞一脉剑修，剑丸路数。第 54 章受映雪所托接管铁牛膝药；第 56 章铁牛转述其言\"今年秋巡领队兴许是内门新贵\"。",
+        "goals": "守好丹霞一脉的本分。",
+        "avatar": null,
+        "attributes": {
+          "power": 68,
+          "wisdom": 66,
+          "charm": 55,
+          "will": 70,
+          "fortune": 58
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-xiaochan",
+        "name": "小蝉",
+        "aliases": [],
+        "description": "药王谷小师妹，谷中迎客与杂务的活络人。",
+        "tags": [],
+        "role": "配角",
+        "gender": "女",
+        "age": "十六七岁（开篇）",
+        "factionId": "f-yaowang",
+        "status": "在世",
+        "appearance": "—（正文未细写，再出场时补）",
+        "personality": "机灵活络。",
+        "background": "药王谷苏浅语门下小师妹，第 35 章迎接林霄、映雪一行入谷。",
+        "goals": "学好医术。",
+        "avatar": null,
+        "attributes": {
+          "power": 30,
+          "wisdom": 60,
+          "charm": 68,
+          "will": 60,
+          "fortune": 65
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-luo-zhanglao",
+        "name": "罗长老",
+        "aliases": [],
+        "description": "执法堂长老，黑风隘带队者，十九年前丧徒。",
+        "tags": [],
+        "role": "配角",
+        "gender": "男",
+        "age": "百余岁",
+        "factionId": "f-qingyun",
+        "status": "在世",
+        "appearance": "—（正文未细写，再出场时补）",
+        "personality": "执法严正，旧痛不形于色。",
+        "background": "卷一黑风隘段带队执法；十九年前丧徒旧事为执法堂线留白，待后续章节展开。",
+        "goals": "山门法纪，不容外魔。",
+        "avatar": null,
+        "attributes": {
+          "power": 78,
+          "wisdom": 70,
+          "charm": 50,
+          "will": 85,
+          "fortune": 45
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "c-huipao-mingsu",
+        "name": "灰袍散修名宿",
+        "aliases": [
+          "灰袍名宿"
+        ],
+        "description": "观礼席上识破玄天令的无名老者，九州暗流的引子。",
+        "tags": [],
+        "role": "配角",
+        "gender": "男",
+        "age": "年逾古稀",
+        "factionId": null,
+        "status": "在世",
+        "appearance": "灰袍兜帽，深目如井。",
+        "personality": "阅尽世情，谨慎多疑。",
+        "background": "第 52 章峰顶观礼，一眼认出玄天令\"千年旧物，果然在青云山\"，与同席低语后连夜下山；身份与去向留白，可作后文引子（九州震动线的旁观见证者）。",
+        "goals": "—（待展开）",
+        "avatar": null,
+        "attributes": {
+          "power": 65,
+          "wisdom": 82,
+          "charm": 45,
+          "will": 80,
+          "fortune": 60
+        },
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       }
     ],
     "relations": [
       {
-        "id": "cac18c2e57",
+        "id": "08e0d875cd",
         "fromId": "c-linxiao",
         "toId": "c-tujiu",
         "type": "敌对",
@@ -907,7 +1098,7 @@
         "note": "灭镇之仇，第四年·春阵斩于幽冥谷"
       },
       {
-        "id": "e781bac798",
+        "id": "4664b7e7f6",
         "fromId": "c-linxiao",
         "toId": "c-tieniu",
         "type": "挚友",
@@ -915,7 +1106,7 @@
         "note": "同期入门的猎户兄弟，一生之托"
       },
       {
-        "id": "3802cc8199",
+        "id": "a80bfd9414",
         "fromId": "c-linxiao",
         "toId": "c-xuanqingzi",
         "type": "师徒",
@@ -923,7 +1114,7 @@
         "note": "问剑峰亲传第一人"
       },
       {
-        "id": "5718836c52",
+        "id": "9cc3b37de1",
         "fromId": "c-linxiao",
         "toId": "c-suyingxue",
         "type": "恋人",
@@ -931,7 +1122,7 @@
         "note": "血案相识，生死同行，终定情"
       },
       {
-        "id": "bd172bd482",
+        "id": "15f4b737e2",
         "fromId": "c-tujiu",
         "toId": "c-xuanqingzi",
         "type": "敌对",
@@ -939,7 +1130,7 @@
         "note": "百年恩怨，幽冥谷终战"
       },
       {
-        "id": "776aeae319",
+        "id": "cfc6e98db8",
         "fromId": "c-qinlao",
         "toId": "c-linxiao",
         "type": "其他",
@@ -947,7 +1138,7 @@
         "note": "千年守令传承，残魂所寄（原关系：守护）"
       },
       {
-        "id": "9bda268e4c",
+        "id": "d672aebf7c",
         "fromId": "c-qinlao",
         "toId": "c-yinwuya",
         "type": "敌对",
@@ -955,7 +1146,7 @@
         "note": "千年故人，一封一逃（原关系：宿敌）"
       },
       {
-        "id": "32e52fd46a",
+        "id": "bba77adc44",
         "fromId": "c-yinwuya",
         "toId": "c-muchangfeng",
         "type": "敌对",
@@ -963,7 +1154,7 @@
         "note": "借其躯壳重生半魔之体（原关系：夺舍）"
       },
       {
-        "id": "6b215cd270",
+        "id": "77a50e3cea",
         "fromId": "c-yinwuya",
         "toId": "c-tujiu",
         "type": "上下级",
@@ -971,15 +1162,15 @@
         "note": "忠犬与主人（原关系：君臣）"
       },
       {
-        "id": "17747793f1",
+        "id": "1c96f2e973",
         "fromId": "c-muchangfeng",
         "toId": "c-tujiu",
         "type": "其他",
         "strength": 3,
-        "note": "暗中勾结，叛门投教"
+        "note": "暗中勾结，叛门投教；56 章（e24）破山神庙定密约：剑典残卷（蓝幌子触发）换幽冥真传三段＋秋深内应之位，附加条件\"谷里的手，不进山门\"，屠九答\"暂时\""
       },
       {
-        "id": "777bd6c7c1",
+        "id": "449ed5575e",
         "fromId": "c-muchangfeng",
         "toId": "c-xuanqingzi",
         "type": "师徒",
@@ -987,7 +1178,7 @@
         "note": "大师兄，叛门后师门除名"
       },
       {
-        "id": "d4d29570d6",
+        "id": "a3e251d2ff",
         "fromId": "c-muchangfeng",
         "toId": "c-luojinghong",
         "type": "师徒",
@@ -995,7 +1186,7 @@
         "note": "洛惊鸿毕生之憾"
       },
       {
-        "id": "06aabf46cd",
+        "id": "606b61cd57",
         "fromId": "c-muchangfeng",
         "toId": "c-linxiao",
         "type": "同门",
@@ -1003,7 +1194,7 @@
         "note": "大比结怨、官道伏杀、终章残识悔悟（原关系：同门宿敌）"
       },
       {
-        "id": "5b302699d4",
+        "id": "13b5c28b57",
         "fromId": "c-yunmengyao",
         "toId": "c-linxiao",
         "type": "其他",
@@ -1011,7 +1202,7 @@
         "note": "亦敌亦友的博弈者，终为盟友"
       },
       {
-        "id": "8ff7252057",
+        "id": "c638b7548b",
         "fromId": "c-yunmengyao",
         "toId": "c-yundincang",
         "type": "亲人",
@@ -1019,7 +1210,7 @@
         "note": "路线决裂，各自成全（原关系：父女）"
       },
       {
-        "id": "bb9cdee016",
+        "id": "9c6d7207f2",
         "fromId": "c-yunmengyao",
         "toId": "c-yunzheng",
         "type": "亲人",
@@ -1027,7 +1218,7 @@
         "note": "政见相悖，坐视其败亡（原关系：兄妹对立）"
       },
       {
-        "id": "ae0e166aac",
+        "id": "7a5ac5f30b",
         "fromId": "c-yunzheng",
         "toId": "c-yinwuya",
         "type": "其他",
@@ -1035,7 +1226,7 @@
         "note": "以幽冥制衡宗门，反受其害（原关系：勾结）"
       },
       {
-        "id": "1bf07242a2",
+        "id": "481c3ac7bd",
         "fromId": "c-yundincang",
         "toId": "c-linxiao",
         "type": "其他",
@@ -1043,7 +1234,7 @@
         "note": "天子之诺，撕于无形（原关系：博弈）"
       },
       {
-        "id": "06e000696a",
+        "id": "d2efb5eaf9",
         "fromId": "c-cangwu",
         "toId": "c-linxiao",
         "type": "其他",
@@ -1051,7 +1242,7 @@
         "note": "十杰后人赎罪，指引封渡之路（原关系：暗助）"
       },
       {
-        "id": "ed353e4b71",
+        "id": "e034edddb2",
         "fromId": "c-linxiao",
         "toId": "c-yejinghan",
         "type": "挚友",
@@ -1059,7 +1250,7 @@
         "note": "一招之差起，生死之交终（原关系：对手挚友）"
       },
       {
-        "id": "a1c0658a26",
+        "id": "d2b50202f8",
         "fromId": "c-linxiao",
         "toId": "c-aman",
         "type": "其他",
@@ -1067,7 +1258,7 @@
         "note": "血祭场中救下的圣女（原关系：救命之恩）"
       },
       {
-        "id": "58bb5ca2d7",
+        "id": "6553e09899",
         "fromId": "c-aman",
         "toId": "c-yinwuya",
         "type": "敌对",
@@ -1075,7 +1266,7 @@
         "note": "弃子反教，终倡\"渡魔\"（原关系：反叛）"
       },
       {
-        "id": "801db78d42",
+        "id": "53ca3cc70b",
         "fromId": "c-suyingxue",
         "toId": "c-suqianyu",
         "type": "师徒",
@@ -1083,7 +1274,7 @@
         "note": "药王谷传承所托"
       },
       {
-        "id": "ae8cc79603",
+        "id": "34ee9a0ee6",
         "fromId": "c-tieniu",
         "toId": "c-suyingxue",
         "type": "挚友",
@@ -1091,7 +1282,7 @@
         "note": "苏映雪救过铁牛的命"
       },
       {
-        "id": "780e1c5018",
+        "id": "524a9f7c5b",
         "fromId": "c-linxiao",
         "toId": "c-huoshanhe",
         "type": "上下级",
@@ -1119,8 +1310,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e4",
@@ -1144,8 +1335,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e5",
@@ -1169,8 +1360,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e2",
@@ -1194,8 +1385,8 @@
         ],
         "importance": 3,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e1",
@@ -1219,8 +1410,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e11",
@@ -1244,8 +1435,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e6",
@@ -1268,8 +1459,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e12",
@@ -1293,8 +1484,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e13",
@@ -1317,14 +1508,14 @@
         ],
         "importance": 3,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e7",
         "name": "宗门大比夺魁",
         "aliases": [],
-        "description": "林霄以黑马之姿击败慕长风夺魁，玄天令当众微鸣，秘密在宗门内初现端倪。",
+        "description": "林霄以黑马之姿击败慕长风夺魁（峰顶之战 51–52 章），玄天令当众发光，九州各方记档；慕长风当众行拜师大礼，眼底暗火未灭。",
         "tags": [],
         "timeLabel": "第二年·夏",
         "sortIndex": 10,
@@ -1339,12 +1530,61 @@
           "e6"
         ],
         "effectIds": [
-          "e14"
+          "e23"
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "e23",
+        "name": "藏经阁夜话",
+        "aliases": [],
+        "description": "大比落幕第十日（五月二十六）三更，玄清子夜启藏经阁三层密档：百年前一缕魔魂侵东洲、七镇采魂、林家高祖贴令迎魔身死留半句\"守得住人\"、青云山守林家百年\"只当不认识\"；教主三百年首睁眼；秦老纠偏——魔魂是笑着走的，那一剑斩掉的只是影子。",
+        "tags": [],
+        "timeLabel": "第二年·夏",
+        "sortIndex": 11,
+        "locationId": null,
+        "participantIds": [
+          "c-linxiao",
+          "c-xuanqingzi",
+          "c-qinlao"
+        ],
+        "causeIds": [
+          "e7"
+        ],
+        "effectIds": [
+          "e24"
+        ],
+        "importance": 4,
+        "chapterId": null,
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "e24",
+        "name": "密使之约",
+        "aliases": [],
+        "description": "五月二十九月晦夜，屠九亲至山南十里破山神庙与慕长风定密约：《青云剑典》残卷（\"蓝幌子\"信号触发窃出）换幽冥剑道真传三段与秋深东洲大局的内应之位；慕长风唯一条件\"谷里的手，不进山门\"，屠九答\"暂时\"；另立夜枭私账（\"他的剑归你打，他的人老夫自己取\"）。",
+        "tags": [],
+        "timeLabel": "第二年·夏",
+        "sortIndex": 12,
+        "locationId": "6c0aad0143",
+        "participantIds": [
+          "c-muchangfeng",
+          "c-tujiu"
+        ],
+        "causeIds": [
+          "e7"
+        ],
+        "effectIds": [
+          "e9"
+        ],
+        "importance": 4,
+        "chapterId": null,
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e14",
@@ -1353,22 +1593,22 @@
         "description": "秋巡撞破幽冥教血祭，救下被教中追杀的圣女阿蛮；其吐露教主重伤未愈、正寻\"千年前的钥匙\"，血魂大阵浮出水面。",
         "tags": [],
         "timeLabel": "第二年·秋",
-        "sortIndex": 11,
+        "sortIndex": 13,
         "locationId": null,
         "participantIds": [
           "c-linxiao",
           "c-aman"
         ],
         "causeIds": [
-          "e7"
+          "e23"
         ],
         "effectIds": [
           "e8"
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e8",
@@ -1377,7 +1617,7 @@
         "description": "林霄、苏映雪、铁牛由阿蛮带路潜入幽冥谷外围，确认血魂大阵与九幽台，拼死携情报出谷。",
         "tags": [],
         "timeLabel": "第二年·秋",
-        "sortIndex": 12,
+        "sortIndex": 14,
         "locationId": "l-youminggu",
         "participantIds": [
           "c-linxiao",
@@ -1394,8 +1634,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e9",
@@ -1404,7 +1644,7 @@
         "description": "大比失利后慕长风心态失衡，盗走《青云剑典》残卷叛投幽冥教，玄清子追截旧伤复发。",
         "tags": [],
         "timeLabel": "第二年·秋",
-        "sortIndex": 13,
+        "sortIndex": 15,
         "locationId": "l-qingyunshan",
         "participantIds": [
           "c-muchangfeng",
@@ -1419,8 +1659,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e15",
@@ -1429,7 +1669,7 @@
         "description": "药王谷内鬼现形——二十年前盗《青囊残卷》者即幽冥教布局；上半卷寻回，下半卷下落指向皇城。",
         "tags": [],
         "timeLabel": "第二年·冬",
-        "sortIndex": 14,
+        "sortIndex": 16,
         "locationId": "8cca583b21",
         "participantIds": [
           "c-suyingxue",
@@ -1444,8 +1684,8 @@
         ],
         "importance": 3,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e16",
@@ -1454,7 +1694,7 @@
         "description": "九宗世家共组诛邪盟，玄清子为盟主，大离皇朝\"协防\"貌合神离；林霄持檄文入皇城促成会盟。",
         "tags": [],
         "timeLabel": "第三年·初",
-        "sortIndex": 15,
+        "sortIndex": 17,
         "locationId": "l-huangcheng",
         "participantIds": [
           "c-xuanqingzi",
@@ -1470,8 +1710,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e17",
@@ -1480,7 +1720,7 @@
         "description": "追击溃敌误入千年前古战场，幻境揭示：魔主未死只被封形，玄天令为封印之钥，血魂大阵意在开启九幽之眼；破魔阵图出世，守令血脉得众长老确认。",
         "tags": [],
         "timeLabel": "第三年·秋",
-        "sortIndex": 16,
+        "sortIndex": 18,
         "locationId": "228d99b1a2",
         "participantIds": [
           "c-linxiao",
@@ -1495,8 +1735,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e18",
@@ -1505,7 +1745,7 @@
         "description": "诛邪盟誓师，定三路破谷之策；林霄立军令状，率奇兵直插九幽台。",
         "tags": [],
         "timeLabel": "第三年·冬",
-        "sortIndex": 17,
+        "sortIndex": 19,
         "locationId": null,
         "participantIds": [
           "c-xuanqingzi",
@@ -1521,8 +1761,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e19",
@@ -1531,7 +1771,7 @@
         "description": "玄清子对屠九了结百年恩怨后伤重，林霄接剑，以\"莲开三段\"阵斩屠九，落霞镇血仇得报。",
         "tags": [],
         "timeLabel": "第四年·春",
-        "sortIndex": 18,
+        "sortIndex": 20,
         "locationId": "l-youminggu",
         "participantIds": [
           "c-linxiao",
@@ -1546,8 +1786,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e10",
@@ -1556,7 +1796,7 @@
         "description": "血魂大阵全开，教主殷无涯借阵半步临世；秦烛残魂出手对峙，千年真相大白；教主重创却夺舍慕长风肉身遁走，九幽之眼\"眼睑\"掀开一角，正邪两道惨胜。",
         "tags": [],
         "timeLabel": "第四年·春",
-        "sortIndex": 19,
+        "sortIndex": 21,
         "locationId": null,
         "participantIds": [
           "c-linxiao",
@@ -1576,8 +1816,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e20",
@@ -1586,7 +1826,7 @@
         "description": "大皇子云铮勾结幽冥残部夜袭青云山，兵败身亡；云鼎苍清算亲子，皇朝与诛邪盟立新约互不染指。",
         "tags": [],
         "timeLabel": "第四年·秋",
-        "sortIndex": 20,
+        "sortIndex": 22,
         "locationId": "l-qingyunshan",
         "participantIds": [
           "c-yunzheng",
@@ -1603,8 +1843,8 @@
         ],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e21",
@@ -1613,7 +1853,7 @@
         "description": "教主以半魔之体围攻青云山夺令；玄清子独挡半刻为林霄争得归山之时，剑令合一重创教主；慕长风残识悔悟相救，续魂之法渡其千年执念，九幽之眼自行闭合。",
         "tags": [],
         "timeLabel": "第五年·春",
-        "sortIndex": 21,
+        "sortIndex": 23,
         "locationId": "l-qingyunshan",
         "participantIds": [
           "c-linxiao",
@@ -1633,8 +1873,8 @@
         ],
         "importance": 5,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "e22",
@@ -1643,7 +1883,7 @@
         "description": "补封功成，秦烛残魂于玄天令中含笑消散；诛邪盟改制，幽冥谷封为镇魔谷，落霞镇重建，林霄与映雪定情。",
         "tags": [],
         "timeLabel": "第五年·春",
-        "sortIndex": 22,
+        "sortIndex": 24,
         "locationId": "l-qingyunshan",
         "participantIds": [
           "c-qinlao",
@@ -1656,8 +1896,8 @@
         "effectIds": [],
         "importance": 4,
         "chapterId": null,
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       }
     ],
     "items": [
@@ -1677,8 +1917,8 @@
         "locationId": null,
         "origin": "林家祖屋地窖（守令一脉代代相传）",
         "status": "三重纹渐次亮起，终战后为补封之钥",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "i-qinglian",
@@ -1694,8 +1934,8 @@
         "locationId": null,
         "origin": "青云剑冢历代剑修遗泽",
         "status": "认主",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "i-huichun",
@@ -1709,8 +1949,8 @@
         "locationId": null,
         "origin": "药谷秘方",
         "status": "存量三枚（原设）",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "359dc640ae",
@@ -1724,8 +1964,8 @@
         "locationId": null,
         "origin": "药王谷秘法",
         "status": "两度开炉，映雪皆以经脉受损为代价护炉",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "i-guimian",
@@ -1741,8 +1981,8 @@
         "locationId": "l-youminggu",
         "origin": "幽冥教祖师所铸",
         "status": "屠九死后封存",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "4df9a1a839",
@@ -1758,8 +1998,8 @@
         "locationId": "8cca583b21",
         "origin": "药王谷至宝，二十年前上半卷被盗（幽冥教布局），下半卷曾现于万宝楼，被苍梧真人购得",
         "status": "两卷合一",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "a0ed74d0e9",
@@ -1773,8 +2013,8 @@
         "locationId": "f577bebf98",
         "origin": "青云镇派传承",
         "status": "残卷已追回",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "9546b09cdd",
@@ -1788,8 +2028,8 @@
         "locationId": "5a73817afa",
         "origin": "幽冥镇教之宝",
         "status": "决战后封存",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "a391c82eb7",
@@ -1803,8 +2043,8 @@
         "locationId": null,
         "origin": "断魂原十杰遗泽",
         "status": "完好在盟",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "bba3ae0f02",
@@ -1820,8 +2060,8 @@
         "locationId": "b8bd87a428",
         "origin": "历代守令人所留",
         "status": "完好",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       },
       {
         "id": "c23ffeaf5d",
@@ -1837,8 +2077,60 @@
         "locationId": null,
         "origin": "天机阁与皇朝合作信物",
         "status": "在林霄处",
-        "createdAt": 1788662681598,
-        "updatedAt": 1788662681598
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "f42be43dde",
+        "name": "听潮",
+        "aliases": [
+          "听雨（重铸前）"
+        ],
+        "description": "剑风快、密、一浪咬着一浪，与慕长风的心境互为表里；剑冢不开、青莲不认的十九年里，这是他唯一信得过的东西。",
+        "tags": [],
+        "type": "灵剑",
+        "rarity": "史诗",
+        "ownerId": "c-muchangfeng",
+        "locationId": "l-qingyunshan",
+        "origin": "慕长风旧剑\"听雨\"重铸而成，第 42 章前后成形、弃听雨而练新剑",
+        "status": "慕长风佩剑；收势屡指东南，成其心迹外化",
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "710bed9d56",
+        "name": "镇脉秋水剑",
+        "aliases": [
+          "秋水"
+        ],
+        "description": "无鞘出鞘如一声叹息；授剑即是师徒之间最后的体面与最后的提醒。",
+        "tags": [],
+        "type": "灵剑",
+        "rarity": "史诗",
+        "ownerId": null,
+        "locationId": null,
+        "origin": "剑首一脉传承信物，三十年未让人碰过",
+        "status": "第 51 章洛惊鸿亲授慕长风用于峰顶决赛；第 52 章脱手钉入青石后由慕长风拾起归还",
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
+      },
+      {
+        "id": "71a6bdfcf8",
+        "name": "幽冥剑谱",
+        "aliases": [
+          "那册谱",
+          "定钱"
+        ],
+        "description": "入手比井水还凉的旧谱，连《幽冥九转》的目录都算不上；幽冥教渗透慕长风的第一笔买卖，也是洛惊鸿夜审点破\"剑底幽冥功夫\"的源头。",
+        "tags": [],
+        "type": "秘籍",
+        "rarity": "稀有",
+        "ownerId": "c-muchangfeng",
+        "locationId": null,
+        "origin": "三年前大比失利之夜，山下野店由青布行商（幽冥谷密使）无声递予",
+        "status": "慕长风练成野路子剑法（峰顶九十一招）；第 56 章屠九称其为\"定钱\"，正价之约另立",
+        "createdAt": 1789317360082,
+        "updatedAt": 1789317360082
       }
     ],
     "chapters": [

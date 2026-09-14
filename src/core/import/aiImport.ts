@@ -1,6 +1,6 @@
 import type {
   Chapter, ChapterStatus, ChapterVersion, Character, CharacterRole, CharacterStatus,
-  Faction, FactionType, Item, LocationNode, Project, Relation, RelationType, StoryEvent,
+  Faction, FactionType, Item, LocationNode, MapPos, Project, Relation, RelationType, StoryEvent, Volume,
 } from '../types';
 import { newId } from '../id';
 
@@ -158,11 +158,21 @@ export function normalizeProject(input: Record<string, unknown>): Project {
     };
   });
 
-  const locations: LocationNode[] = (Array.isArray(base.locations) ? base.locations : []).map((raw) => {
+  const mapLayout: Record<string, MapPos> = {};
+  if (base.mapLayout && typeof base.mapLayout === 'object') {
+    for (const [locId, pos] of Object.entries(base.mapLayout as Record<string, unknown>)) {
+      const p = asRec(pos);
+      if (typeof p?.x === 'number' && Number.isFinite(p.x) && typeof p?.y === 'number' && Number.isFinite(p.y)) {
+        mapLayout[locId] = { x: p.x, y: p.y };
+      }
+    }
+  }
+
+  const locations: LocationNode[] = (Array.isArray(base.locations) ? base.locations : []).map((raw, i) => {
     const l = asRec(raw);
     return {
       id: typeof l.id === 'string' && l.id ? l.id : newId(),
-      name: typeof l.name === 'string' && l.name ? l.name : '未命名地点',
+      name: typeof l.name === 'string' && l.name ? l.name : `未命名地点${i + 1}`,
       aliases: strArr(l.aliases),
       description: typeof l.description === 'string' ? l.description : '',
       tags: strArr(l.tags),
@@ -170,6 +180,7 @@ export function normalizeProject(input: Record<string, unknown>): Project {
       updatedAt: typeof l.updatedAt === 'number' ? l.updatedAt : now,
       region: typeof l.region === 'string' ? l.region : '',
       parentId: strOrNull(l.parentId),
+      factionId: strOrNull(l.factionId),
     };
   });
 
@@ -194,6 +205,18 @@ export function normalizeProject(input: Record<string, unknown>): Project {
     .sort((a, b) => a.order - b.order)
     .map((c, i) => ({ ...c, order: i + 1 }));
 
+  const volumes: Volume[] = (Array.isArray(base.volumes) ? base.volumes : []).map((raw) => {
+    const v = asRec(raw);
+    const start = Math.max(1, typeof v.startOrder === 'number' && Number.isFinite(v.startOrder) ? Math.round(v.startOrder) : 1);
+    const end = Math.max(start, typeof v.endOrder === 'number' && Number.isFinite(v.endOrder) ? Math.round(v.endOrder) : start);
+    return {
+      id: typeof v.id === 'string' && v.id ? v.id : newId(),
+      name: typeof v.name === 'string' && v.name.trim() ? v.name.trim() : '未命名卷',
+      startOrder: start,
+      endOrder: end,
+    };
+  }).sort((a, b) => a.startOrder - b.startOrder);
+
   const settings = (base.settings ?? {}) as { ai?: { baseUrl?: unknown; apiKey?: unknown; model?: unknown } };
   const ai = settings.ai ?? {};
 
@@ -211,6 +234,8 @@ export function normalizeProject(input: Record<string, unknown>): Project {
     locations,
     factions,
     chapters,
+    volumes,
+    mapLayout,
     ignoreWords: strArr(base.ignoreWords),
     // 导出包不含密钥（导出时已剔除），这里同样不接受外部注入的密钥
     settings: { ai: { baseUrl: typeof ai.baseUrl === 'string' ? ai.baseUrl : '', apiKey: '', model: typeof ai.model === 'string' ? ai.model : '' } },
@@ -296,7 +321,8 @@ const AUTO_SYNOPSIS_LEN = 60;
 /** 统一换行为 LF 后再比较/落库，避免 CRLF 差异把「同内容」误判成「更新」。 */
 const normText = (s: string) => s.replace(/\r\n/g, '\n');
 
-/** 把分卷章节按 order 对位合并进作品：同序号覆盖正文（旧正文留 replace 快照），缺位追加。 */
+/** 把分卷章节按 order 对位合并进作品：同序号覆盖正文（旧正文留 replace 快照），缺位追加。
+ *  作品尚无分卷数据时，按本次导入的卷文件范围自动建立 volumes（回导即得分卷结构）。 */
 export function applyVolumes(project: Project, volumes: ParsedVolume[]): VolumeMergeResult {
   const draft: Project = structuredClone(project);
   draft.chapters.sort((a, b) => a.order - b.order);
@@ -305,8 +331,10 @@ export function applyVolumes(project: Project, volumes: ParsedVolume[]): VolumeM
   let added = 0;
   let updated = 0;
   let untouched = 0;
+  const spans: Array<{ name: string; startOrder: number; endOrder: number }> = [];
 
   for (const vol of volumes) {
+    const volStart = order + 1;
     for (const ch of vol.chapters) {
       order += 1;
       const incomingTitle = `${ch.label} ${ch.title}`.trim();
@@ -349,11 +377,21 @@ export function applyVolumes(project: Project, volumes: ParsedVolume[]): VolumeM
         added += 1;
       }
     }
+    if (order >= volStart) spans.push({ name: bareVolumeName(vol.volumeTitle), startOrder: volStart, endOrder: order });
   }
 
   draft.chapters.sort((a, b) => a.order - b.order).forEach((c, i) => { c.order = i + 1; });
+  if (spans.length > 0 && !(draft.volumes && draft.volumes.length > 0)) {
+    draft.volumes = spans.map((s) => ({ id: newId(), name: s.name, startOrder: s.startOrder, endOrder: s.endOrder }));
+  }
   draft.updatedAt = Date.now();
   return { project: draft, added, updated, untouched };
+}
+
+/** 「卷一 · 风雪入青云」→「风雪入青云」；无前缀则原样返回。 */
+export function bareVolumeName(title: string): string {
+  const stripped = title.replace(/^卷[一二三四五六七八九十百千零〇两\d]+\s*[·•・\-—_:：]?\s*/, '').trim();
+  return stripped || title.trim() || '未命名卷';
 }
 
 function autoSynopsis(content: string): string {

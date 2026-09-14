@@ -11,7 +11,7 @@ import { CharacterAvatar } from '../components/ui/Avatar';
 import { getDesktopBridge } from '../core/desktop';
 import { WindowControls } from '../components/layout/WindowControls';
 import {
-  IconDashboard, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
+  IconBook, IconChevronDown, IconDashboard, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
   IconSearch, IconSettings, IconTimeline, IconUsers, IconWriting, IconX,
 } from '../components/icons';
 
@@ -25,6 +25,7 @@ const NAV: Array<{ page: Page; icon: (p: { size?: number }) => ReactNode; title:
   { page: 'locations', icon: IconLocation, title: '地点' },
   { page: 'factions', icon: IconFaction, title: '势力' },
   { page: 'items', icon: IconItem, title: '物品' },
+  { page: 'atlas', icon: IconBook, title: '设定集' },
   { page: 'export', icon: IconExport, title: '导出' },
   { page: 'settings', icon: IconSettings, title: '设置' },
 ];
@@ -32,13 +33,18 @@ const NAV: Array<{ page: Page; icon: (p: { size?: number }) => ReactNode; title:
 /** 全局框架：Resonance HUD 深色金调面板（菱形双语 Logo ｜ 方格图标导航 ｜ 搜索 + 头像）。 */
 export function AppLayout({ children }: { children: ReactNode }) {
   const project = useProjectStore((s) => s.project);
+  const projects = useProjectStore((s) => s.projects);
   const saveState = useProjectStore((s) => s.saveState);
+  const refreshProjects = useProjectStore((s) => s.refreshProjects);
+  const switchProject = useProjectStore((s) => s.switchProject);
   const page = useUIStore((s) => s.page);
   const navigate = useUIStore((s) => s.navigate);
   const openDetail = useUIStore((s) => s.openDetail);
   const [query, setQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const [projOpen, setProjOpen] = useState(false);
+  const projRef = useRef<HTMLDivElement>(null);
 
   const issueCount = useMemo(() => (project ? auditProject(project).length : 0), [project]);
 
@@ -54,6 +60,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
       if (!searchRef.current?.contains(e.target as Node)) setSearchOpen(false);
+      if (!projRef.current?.contains(e.target as Node)) setProjOpen(false);
     };
     window.addEventListener('mousedown', onDown);
     return () => window.removeEventListener('mousedown', onDown);
@@ -76,6 +83,40 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <i>NOVEL ATLAS</i>
             </span>
           </button>
+
+          {/* 全局作品切换器：写作台 / 导出中心等任何页面都可一键换书 */}
+          <div className="proj-switch" ref={projRef}>
+            <button type="button" className="proj-switch__btn" title="切换作品"
+              onClick={() => {
+                if (!projOpen) void refreshProjects();
+                setProjOpen(!projOpen);
+              }}>
+              <IconBook size={13} />
+              <span className="proj-switch__name">《{project?.name ?? '…'}》</span>
+              <IconChevronDown size={12} />
+            </button>
+            {projOpen && (
+              <div className="proj-switch__pop">
+                <div className="proj-switch__label">作品库 · {projects.length}</div>
+                {projects.map((p) => (
+                  <button key={p.id} type="button"
+                    className={`proj-switch__item ${p.id === project?.id ? 'is-current' : ''}`}
+                    onClick={() => {
+                      setProjOpen(false);
+                      if (p.id !== project?.id) void switchProject(p.id);
+                    }}>
+                    <b>{p.id === project?.id ? '● ' : ''}{p.name}</b>
+                    <span className="dim">{p.genre || '未设类型'} · 更新于 {new Date(p.updatedAt).toLocaleDateString('zh-CN')}</span>
+                  </button>
+                ))}
+                <button type="button" className="proj-switch__item"
+                  onClick={() => { setProjOpen(false); navigate('settings'); }}>
+                  <b>＋ 新建 / 管理作品…</b>
+                  <span className="dim">前往「设置 → 作品管理」</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           <nav className="app-nav" aria-label="主导航">
             {NAV.map((n) => {

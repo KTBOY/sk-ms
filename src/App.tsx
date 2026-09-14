@@ -15,6 +15,7 @@ const TimelinePage = lazy(() => import('./features/timeline/TimelinePage').then(
 const ItemsPage = lazy(() => import('./features/designers').then((m) => ({ default: m.ItemsPage })));
 const LocationsPage = lazy(() => import('./features/designers').then((m) => ({ default: m.LocationsPage })));
 const FactionsPage = lazy(() => import('./features/designers').then((m) => ({ default: m.FactionsPage })));
+const AtlasPage = lazy(() => import('./features/atlas/AtlasPage').then((m) => ({ default: m.AtlasPage })));
 const ExportPage = lazy(() => import('./features/export/ExportPage').then((m) => ({ default: m.ExportPage })));
 const SettingsPage = lazy(() => import('./features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })));
 
@@ -28,6 +29,7 @@ function usePrefetchPages() {
       void import('./features/events/EventsPage');
       void import('./features/timeline/TimelinePage');
       void import('./features/designers');
+      void import('./features/atlas/AtlasPage');
       void import('./features/export/ExportPage');
       void import('./features/settings/SettingsPage');
     };
@@ -86,7 +88,8 @@ export default function App() {
 
   return (
     <>
-      <AppLayout>
+      {/* key=作品 id：切换作品时整壳重挂载，页面本地状态（详情弹窗/编辑器草稿引用等）不串书 */}
+      <AppLayout key={project.id}>
         <Suspense fallback={<PageFallback />}>
           {page === 'dashboard' && <DashboardPage />}
           {page === 'writing' && <WritingPage />}
@@ -97,6 +100,7 @@ export default function App() {
           {page === 'locations' && <LocationsPage />}
           {page === 'factions' && <FactionsPage />}
           {page === 'items' && <ItemsPage />}
+          {page === 'atlas' && <AtlasPage />}
           {page === 'export' && <ExportPage />}
           {page === 'settings' && <SettingsPage />}
         </Suspense>

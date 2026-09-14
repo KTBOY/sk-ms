@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type {
-  Chapter, ChapterVersion, Character, Faction, Item, LocationNode, Project, ProjectMeta,
+  AgentCard, Chapter, ChapterVersion, Character, Faction, Item, LocationNode, Project, ProjectMeta,
   Relation, StoryEvent,
 } from '../core/types';
 import { createAdapter, loadAppSettings, saveAppSettings, indexedDbAdapter, desktopAdapter, type AppSettings } from '../core/storage';
@@ -31,6 +31,11 @@ interface ProjectStore {
   clearProject: () => void;
   setAdapter: (adapterId: AppSettings['adapterId'], rest?: AppSettings['rest']) => Promise<void>;
   refreshProjects: () => Promise<void>;
+
+  /** 智能体角色卡（跨作品共用，存 appSettings.agents）。 */
+  upsertAgent: (a: AgentCard) => void;
+  removeAgent: (id: string) => void;
+  moveAgent: (id: string, dir: -1 | 1) => void;
 
   update: (mutator: (p: Project) => void) => void;
 
@@ -94,7 +99,23 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
     persist();
   };
 
+  /** 立即落盘防抖中的待存修改（切书/删除作品前调用，避免最后一瞬编辑丢进下一本书的保存窗口）。 */
+  const flushPendingSave = async () => {
+    if (!saveTimer) return;
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    const { project, appSettings } = get();
+    if (!project) return;
+    try {
+      await createAdapter(appSettings).saveProject(project);
+      set({ saveState: 'saved' });
+    } catch {
+      set({ saveState: 'error' });
+    }
+  };
+
   const loadInto = async (id: string, settings: AppSettings) => {
+    await flushPendingSave();
     const adapter = createAdapter(settings);
     let project = await adapter.loadProject(id);
     if (!project) {
@@ -225,6 +246,31 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
       saveAppSettings(settings);
       set({ appSettings: settings });
       await get().refreshProjects();
+    },
+
+    // ------------------------------------------------ 智能体角色卡（app 级，立即持久化，无防抖必要）
+    upsertAgent: (a) => {
+      const list = [...(get().appSettings.agents ?? [])];
+      const idx = list.findIndex((x) => x.id === a.id);
+      if (idx >= 0) list[idx] = a; else list.push(a);
+      const settings = { ...get().appSettings, agents: list };
+      saveAppSettings(settings);
+      set({ appSettings: settings });
+    },
+    removeAgent: (id) => {
+      const settings = { ...get().appSettings, agents: (get().appSettings.agents ?? []).filter((x) => x.id !== id) };
+      saveAppSettings(settings);
+      set({ appSettings: settings });
+    },
+    moveAgent: (id, dir) => {
+      const list = [...(get().appSettings.agents ?? [])];
+      const i = list.findIndex((x) => x.id === id);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= list.length) return;
+      [list[i], list[j]] = [list[j], list[i]];
+      const settings = { ...get().appSettings, agents: list };
+      saveAppSettings(settings);
+      set({ appSettings: settings });
     },
 
     refreshProjects: async () => {

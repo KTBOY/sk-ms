@@ -4,19 +4,19 @@ import { exportDocx } from '../../core/export/docxExport';
 import { exportEpub } from '../../core/export/epubExport';
 import { exportBackup, importBackup } from '../../core/export/backup';
 import {
-  exportAiContextZip, getSavedTarget, pickTargetDirectory,
-  supportsDirectoryExport, writeAiContextToDirectory, type DirHandle,
+  exportAiContextZip, getSavedTarget, looksLikeAiContextDir, pickTargetDirectory,
+  supportsDirectoryExport, volumeList, writeWorkspaceToDirectory, type DirHandle,
 } from '../../core/export/aiExport';
 import {
   parseContextBundle, parseVolumeMarkdown, applyVolumes, countWords,
   type ParsedVolume, type VolumeMergeResult,
 } from '../../core/import/aiImport';
-import type { Project } from '../../core/types';
+import type { Project, Volume } from '../../core/types';
 import { newId } from '../../core/id';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
-import { Button } from '../../components/ui/primitives';
-import { IconBook, IconExport, IconGraph, IconItem, IconSparkles, IconUpload, IconUser } from '../../components/icons';
+import { Button, Input } from '../../components/ui/primitives';
+import { IconBook, IconExport, IconGraph, IconItem, IconPlus, IconSparkles, IconTrash, IconUpload, IconUser } from '../../components/icons';
 
 /** 导出中心：AI 上下文包 / TXT / Markdown / DOCX / EPUB / JSON 备份 + 恢复。 */
 
@@ -31,8 +31,10 @@ const FORMATS = [
 export function ExportPage() {
   const project = useProjectStore((s) => s.project);
   const importProject = useProjectStore((s) => s.importProject);
+  const update = useProjectStore((s) => s.update);
   const pushToast = useUIStore((s) => s.pushToast);
   const confirm = useUIStore((s) => s.confirm);
+  const agents = useProjectStore((s) => s.appSettings.agents ?? []);
   const [includeWorldbook, setIncludeWorldbook] = useState(true);
   const [target, setTarget] = useState<DirHandle | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -49,22 +51,83 @@ export function ExportPage() {
   if (!project) return null;
 
   const canDirect = supportsDirectoryExport();
+  const projectVolumes = volumeList(project);
+
+  /* ---------------- 分卷管理 ---------------- */
+
+  const patchVolume = (id: string, patch: Partial<Volume>) => {
+    update((p) => {
+      p.volumes = p.volumes ?? [];
+      const v = p.volumes.find((x) => x.id === id);
+      if (!v) return;
+      Object.assign(v, patch);
+      if (v.endOrder < v.startOrder) v.endOrder = v.startOrder;
+      p.volumes.sort((a, b) => a.startOrder - b.startOrder);
+    });
+  };
+
+  const addVolume = () => {
+    const total = project.chapters.length;
+    update((p) => {
+      p.volumes = p.volumes ?? [];
+      const last = p.volumes.length
+        ? p.volumes.reduce((a, b) => (b.startOrder > a.startOrder ? b : a))
+        : null;
+      const start = last ? last.endOrder + 1 : 1;
+      p.volumes.push({ id: newId(), name: '', startOrder: start, endOrder: Math.max(start, total) });
+      p.volumes.sort((a, b) => a.startOrder - b.startOrder);
+    });
+  };
+
+  const removeVolume = (id: string) => {
+    update((p) => { p.volumes = (p.volumes ?? []).filter((v) => v.id !== id); });
+  };
+
+  // 区间重叠提示（只提示，不强制 —— 导出时先到的卷先占章）
+  const overlapIds = new Set<string>();
+  for (let i = 1; i < projectVolumes.length; i++) {
+    if (projectVolumes[i].startOrder <= projectVolumes[i - 1].endOrder) {
+      overlapIds.add(projectVolumes[i - 1].id);
+      overlapIds.add(projectVolumes[i].id);
+    }
+  }
 
   const runDirect = async () => {
     try {
       const handle = target ?? (await pickTargetDirectory());
+      if (await looksLikeAiContextDir(handle)) {
+        const ok = await confirm(
+          '目标看起来是 AI 上下文目录',
+          `「${handle.name}/」顶层已有 00-overview.md / novel-context.json。新导出会在所选目录内再建「<书名>-ai-context/」与「正文/」，通常应选择其上级工作区根目录（如 yrdy/）。仍要写入该目录吗？`,
+          false,
+        );
+        if (!ok) return;
+      }
       setTarget(handle);
-      const count = await writeAiContextToDirectory(project, handle);
-      pushToast(`已写入 ${count} 个文件到「${handle.name}/」，AI 工具可直接读取`, 'success');
+      const stats = await writeWorkspaceToDirectory(project, handle, agents);
+      pushToast(
+        `已写入 ${stats.files} 个文件到「${handle.name}/」（新增 ${stats.created} · 更新 ${stats.updated} · 内容不变 ${stats.unchanged}），AI 工具可直接读取`,
+        'success',
+      );
     } catch (err) {
       if ((err as DOMException)?.name === 'AbortError') return; // 用户取消选择
       pushToast(err instanceof Error ? err.message : '导出失败', 'error');
     }
   };
 
+  const runRepick = async () => {
+    try {
+      setTarget(await pickTargetDirectory());
+    } catch (err) {
+      if ((err as DOMException)?.name !== 'AbortError') {
+        pushToast(err instanceof Error ? err.message : '选择文件夹失败', 'error');
+      }
+    }
+  };
+
   const runZip = async () => {
     try {
-      const filename = await exportAiContextZip(project);
+      const filename = await exportAiContextZip(project, agents);
       pushToast(`${filename} 已开始下载，解压到项目目录即可`, 'success');
     } catch (err) {
       pushToast(err instanceof Error ? err.message : '导出失败', 'error');
@@ -177,29 +240,81 @@ export function ExportPage() {
         </label>
       </header>
 
-      {/* AI 上下文包：供 ZCode / Codex / Qoder 等外部 AI 编程助手直接阅读 */}
+      {/* 分卷管理：正文分卷导出与设定集分卷视图共用 */}
       <section className="glass-panel ai-export">
+        <header className="glass-panel__head">
+          <h3>分卷管理<span className="head-en">VOLUMES</span></h3>
+        </header>
+        <div className="ai-export__body">
+          <p className="ai-export__desc">
+            分卷按<b>全书章号区间</b>（含首尾）划定，是「AI 上下文包导出」落正文分卷
+            （<code>正文/卷NN-卷名/卷首.md</code> + <code>第NNN章-章题.md</code>）与设定集分卷视图的依据。
+            回导整卷合稿（<code>导出合并稿/卷XX-卷名.md</code>）时若无分卷数据会自动建立。
+          </p>
+          {projectVolumes.length === 0 && (
+            <p className="dim" style={{ margin: '4px 0 8px' }}>
+              尚未定义分卷：正文将统一导出到「正文/未分卷/」。建议先按卷定义区间（如 卷01：第 1–33 章）。
+            </p>
+          )}
+          <div style={{ display: 'grid', gap: 6 }}>
+            {projectVolumes.map((v, i) => {
+              const count = project.chapters.filter((c) => c.order >= v.startOrder && c.order <= v.endOrder).length;
+              return (
+                <div key={v.id} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span className="dim" style={{ width: 44 }}>卷{String(i + 1).padStart(2, '0')}</span>
+                  <Input value={v.name} placeholder="卷名（如 风雪入青云）" style={{ width: 200 }}
+                    onChange={(e) => patchVolume(v.id, { name: e.target.value })} />
+                  <label className="dim">第
+                    <Input type="number" min={1} value={v.startOrder} style={{ width: 76, margin: '0 4px' }}
+                      onChange={(e) => patchVolume(v.id, { startOrder: Math.max(1, Number(e.target.value) || 1) })} />
+                    至
+                    <Input type="number" min={1} value={v.endOrder} style={{ width: 76, margin: '0 4px' }}
+                      onChange={(e) => patchVolume(v.id, { endOrder: Math.max(1, Number(e.target.value) || 1) })} />
+                    章
+                  </label>
+                  <span className="dim">· {count} 章</span>
+                  {overlapIds.has(v.id) && <span style={{ color: 'var(--danger, #e07070)' }}>区间重叠</span>}
+                  <Button variant="glass" icon={<IconTrash size={13} />} onClick={() => void removeVolume(v.id)}>删除</Button>
+                </div>
+              );
+            })}
+          </div>
+          <div className="ai-export__ops" style={{ marginTop: 10 }}>
+            <Button icon={<IconPlus size={14} />} onClick={addVolume}>添加分卷</Button>
+          </div>
+        </div>
+      </section>
+
+      {/* AI 上下文包：供 ZCode / Codex / Qoder 等外部 AI 编程助手直接阅读 */}
+      <section className="glass-panel ai-export" style={{ marginTop: 20 }}>
         <header className="glass-panel__head">
           <h3>AI 上下文包<span className="head-en">AI CONTEXT PACK</span></h3>
         </header>
         <div className="ai-export__body">
           <p className="ai-export__desc">
-            把人物档案、关系图谱、事件因果、时间线、势力 / 地点 / 物品与一致性提示，
-            导出为 <b>11 个主题文件</b>（Markdown + JSON，文件名稳定、全量覆盖）。
-            目标文件夹建议放在作品仓库内（如 <code>ai-context/</code>），
-            ZCode / Codex / Qoder 即可直接阅读引用；每次导出覆盖同名文件，外部引用不失效。
+            目标选择<b>工作区根目录</b>（如 <code>yrdy/</code>），导出生成与写作工作区同构的三部分：
+            <b>「{project.name}-ai-context/」</b>（00-09 号主题文件 + novel-context.json，文件名稳定、全量覆盖）、
+            <b>「正文/卷NN-卷名/」</b>（卷首.md + 第NNN章-章题.md，NNN 为全书全局章号，三位补零）
+            与<b>「agents/NN-名字/SOUL.md」</b>（设置中启用的{agents.length > 0 ? ` ${agents.length} 张智能体角色卡` : '智能体角色卡'}）。
+            只增改、不删除：工作区里多出的文件（AI 新写的章节、<code>10-outline.md</code> /
+            <code>11-writing-log.md</code> 等）一律不动。
           </p>
           <div className="ai-export__ops">
             {canDirect && (
               <Button variant="primary" icon={<IconExport size={14} />} onClick={() => void runDirect()}>
-                {target ? `重新导出到「${target.name}/」` : '选择文件夹并导出'}
+                {target ? `导出到「${target.name}/」` : '选择工作区根目录并导出'}
+              </Button>
+            )}
+            {canDirect && target && (
+              <Button variant="glass" icon={<IconUpload size={14} />} onClick={() => void runRepick()}>
+                重选目录
               </Button>
             )}
             <Button variant={canDirect ? 'glass' : 'primary'} icon={<IconGraph size={14} />} onClick={() => void runZip()}>
               下载 ZIP{canDirect ? '（其他浏览器回退）' : '（当前浏览器不支持直写）'}
             </Button>
           </div>
-          {target && <p className="dim ai-export__target">目标文件夹：{target.name}/ · 再次导出一键覆盖，无需重新选择</p>}
+          {target && <p className="dim ai-export__target">目标根目录：{target.name}/ · 再次导出一键覆盖（内容不变的文件自动跳过），无需重新选择</p>}
         </div>
       </section>
 
@@ -211,7 +326,8 @@ export function ExportPage() {
         <div className="ai-export__body">
           <p className="ai-export__desc">
             把 AI 工作区（ZCode 等）维护的上下文包导回应用：选择 <code>novel-context.json</code>
-            （结构化全量，兼容 JSON 备份），可选配 <code>卷01-xxx.md</code> 等正文分卷文件合并最新章节。
+            （结构化全量，兼容 JSON 备份），可选配 <code>导出合并稿/卷XX-卷名.md</code> 等正文分卷文件合并最新章节
+            ——作品尚无分卷数据时，会按所选卷文件的范围<b>自动建立分卷</b>。
             <code>00-09</code> 号 Markdown 是导出视图，无需导入；<code>10-outline.md</code> /
             <code>11-writing-log.md</code> 属于 AI 工作区文件，不参与导入。
           </p>

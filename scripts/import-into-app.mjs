@@ -7,7 +7,7 @@
  * 用法：node scripts/import-into-app.mjs
  */
 import { build } from 'esbuild';
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
+import { mkdtempSync, writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { pathToFileURL } from 'url';
 import { tmpdir } from 'os';
 import { join, sep } from 'path';
@@ -23,8 +23,39 @@ writeFileSync(entry, [
 await build({ entryPoints: [entry], bundle: true, format: 'esm', outfile: join(dir, 'out.mjs'), platform: 'node' });
 const m = await import(pathToFileURL(join(dir, 'out.mjs')).href);
 
-const CTX = 'yrdy/九州烟云-ai-context/九州烟云-ai-context';
+const CTX = 'yrdy/九州烟云-ai-context';
 const OUT_DIR = 'data/projects';
+
+/** 正文按章落位（正文/卷XX-卷名/第NNN章-标题.md）→ 整卷文本（与 tools/split_merge_chapters.py merge 同构）。 */
+function readVolumeFromFolder(folder) {
+  const parts = [];
+  const head = join(folder, '卷首.md');
+  if (existsSync(head)) parts.push(readFileSync(head, 'utf-8'));
+  const chapters = readdirSync(folder)
+    .filter((f) => /^第\d+章-.*\.md$/.test(f))
+    .sort((a, b) => parseInt(a.match(/^第(\d+)章/)[1], 10) - parseInt(b.match(/^第(\d+)章/)[1], 10));
+  for (const f of chapters) parts.push(readFileSync(join(folder, f), 'utf-8'));
+  return parts.join('');
+}
+
+/** 收集可用的分卷文本：优先 导出合并稿/（AGENTS.md 约定的回导依据），缺省回退 正文/卷XX 文件夹重组。 */
+function collectVolumes() {
+  const mergeDir = 'yrdy/导出合并稿';
+  if (existsSync(mergeDir)) {
+    const files = readdirSync(mergeDir).filter((f) => /^卷\d+-.*\.md$/.test(f)).sort();
+    if (files.length > 0) {
+      return files.map((f) => m.parseVolumeMarkdown(f, readFileSync(join(mergeDir, f), 'utf-8')));
+    }
+  }
+  const bodyDir = 'yrdy/正文';
+  if (existsSync(bodyDir)) {
+    const folders = readdirSync(bodyDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && d.name.startsWith('卷'))
+      .map((d) => d.name).sort();
+    return folders.map((name) => m.parseVolumeMarkdown(name, readVolumeFromFolder(join(bodyDir, name))));
+  }
+  return [];
+}
 
 /* ---------- ① 解析 novel-context.json（导出中心的既有路径） ---------- */
 const bundle = JSON.parse(readFileSync(join(CTX, 'novel-context.json'), 'utf-8'));
@@ -40,14 +71,13 @@ console.log('① JSON 包解析:', project.name,
   '| 字数', m.countWords(project));
 
 /* ---------- ② 正文分卷合并（JSON 落后于工作区时的增量路径） ---------- */
-const vols = ['卷01-风雪入青云.md', '卷02-藏锋录.md']
-  .filter((f) => existsSync(join('yrdy/正文', f)))
-  .map((f) => m.parseVolumeMarkdown(f, readFileSync(join('yrdy/正文', f), 'utf-8')));
+const vols = collectVolumes();
 const merged = m.applyVolumes(project, vols);
 project = merged.project;
-console.log('② 分卷合并:', vols.map((v) => v.volumeTitle).join(' + '),
+console.log('② 分卷合并:', vols.map((v) => v.volumeTitle).join(' + ') || '（无可用分卷）',
   '| 新增', merged.added, '章 / 更新', merged.updated, '章 / 一致', merged.untouched, '章',
-  '| 章节', project.chapters.length, '| 字数', m.countWords(project));
+  '| 章节', project.chapters.length, '| 字数', m.countWords(project),
+  '| 分卷', JSON.stringify((project.volumes ?? []).map((v) => `${v.name}:${v.startOrder}-${v.endOrder}`)));
 
 /* ---------- ③ 一致性校验（应用内置 auditProject） ---------- */
 const issues = m.auditProject(project);

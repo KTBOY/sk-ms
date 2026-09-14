@@ -2,12 +2,12 @@
 """把 yrdy 的 AI 上下文 md 数据源同步进 novel-context.json（应用导入的既定数据源）。
 
 用法: python scripts/sync-ai-context.py [yrdy数据源目录] [novel-context.json路径]
-缺省路径指向 yrdy/九州烟云-ai-context/九州烟云-ai-context/。
+缺省路径指向 yrdy/九州烟云-ai-context/。
 md 文件（01/02/03/05/06/07）为结构化事实源；novel-context.json 为全量结构化镜像。
 """
 import json, re, sys, time, uuid, os
 
-base = sys.argv[1] if len(sys.argv) > 1 else r'E:\work\gogogogo\sk-ms-main\yrdy\九州烟云-ai-context\九州烟云-ai-context'
+base = sys.argv[1] if len(sys.argv) > 1 else r'E:\work\gogogogo\sk-ms-main\yrdy\九州烟云-ai-context'
 jp = sys.argv[2] if len(sys.argv) > 2 else os.path.join(base, 'novel-context.json')
 
 d = json.load(open(jp, encoding='utf-8'))

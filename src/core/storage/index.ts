@@ -1,3 +1,4 @@
+import type { AgentCard } from '../types';
 import type { AdapterId, RestConfig, StorageAdapter } from './types';
 import { indexedDbAdapter } from './indexeddbAdapter';
 import { localStorageAdapter } from './localStorageAdapter';
@@ -13,6 +14,8 @@ export interface AppSettings {
   currentProjectId: string | null;
   /** 桌面端是否已完成 IndexedDB → 本机文件 的一次性迁移（true 后用户显式选择不再被改写）。 */
   fileStorageMigrated?: boolean;
+  /** 智能体角色卡（创作团队，跨作品共用，数组顺序即展示/导出顺序）。 */
+  agents?: AgentCard[];
 }
 
 const APP_KEY = 'novel-atlas:app';

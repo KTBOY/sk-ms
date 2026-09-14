@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { createAdapter, type AdapterId } from '../../core/storage';
 import { getDesktopBridge, isDesktop, type DataDirInfo } from '../../core/desktop';
+import { newId } from '../../core/id';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
-import { Button, Field, Input, Segmented, Textarea } from '../../components/ui/primitives';
+import { Button, Checkbox, Field, Input, Segmented, Textarea } from '../../components/ui/primitives';
 import { Modal } from '../../components/ui/Modal';
 import { IconPlus, IconRefresh, IconTrash } from '../../components/icons';
 
@@ -32,6 +33,15 @@ export function SettingsPage() {
   const [newOpen, setNewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [form, setForm] = useState({ name: '', genre: '', description: '' });
+
+  // 智能体角色卡（跨作品共用创作团队，存 appSettings.agents）
+  const upsertAgent = useProjectStore((s) => s.upsertAgent);
+  const removeAgent = useProjectStore((s) => s.removeAgent);
+  const moveAgent = useProjectStore((s) => s.moveAgent);
+  const agents = appSettings.agents ?? [];
+  const [agentOpen, setAgentOpen] = useState(false);
+  const [agentEditId, setAgentEditId] = useState<string | null>(null);
+  const [agentForm, setAgentForm] = useState({ name: '', role: '', prompt: '', enabled: true });
 
   // 桌面端：本机文件存储的数据目录信息（仅当启用本机文件适配器时展示）
   const desktop = isDesktop();
@@ -214,6 +224,49 @@ export function SettingsPage() {
         </ul>
       </section>
 
+      {/* 智能体管理（跨作品共用创作团队；导出 AI 上下文包时落盘 agents/ 目录） */}
+      <section className="glass-panel">
+        <header className="glass-panel__head">
+          <h3>智能体管理</h3>
+          <Button size="sm" icon={<IconPlus size={13} />} onClick={() => {
+            setAgentForm({ name: '', role: '', prompt: '', enabled: true });
+            setAgentEditId(null);
+            setAgentOpen(true);
+          }}>新增智能体</Button>
+        </header>
+        {agents.length === 0 ? (
+          <p className="dim" style={{ padding: '0 16px 14px' }}>
+            还没有智能体角色卡。角色卡跨作品共用：写作台「发送给 AI」可选其一作为 system 提示词；
+            导出 AI 上下文包时按序写入工作区 <code>agents/NN-名字/SOUL.md</code>。
+          </p>
+        ) : (
+          <ul className="proj-list">
+            {agents.map((a, i) => (
+              <li key={a.id} style={{ opacity: a.enabled ? 1 : 0.5 }}>
+                <div>
+                  <b>{String(i + 1).padStart(2, '0')} · {a.name}{!a.enabled && <span className="dim">（已停用）</span>}</b>
+                  <span className="dim">{a.role || '—'}</span>
+                </div>
+                <div className="proj-list__ops">
+                  <Button size="sm" disabled={i === 0} onClick={() => moveAgent(a.id, -1)}>↑</Button>
+                  <Button size="sm" disabled={i === agents.length - 1} onClick={() => moveAgent(a.id, 1)}>↓</Button>
+                  <Button size="sm" onClick={() => {
+                    setAgentForm({ name: a.name, role: a.role, prompt: a.prompt, enabled: a.enabled });
+                    setAgentEditId(a.id);
+                    setAgentOpen(true);
+                  }}>编辑</Button>
+                  <Button size="sm" onClick={() => upsertAgent({ ...a, enabled: !a.enabled })}>{a.enabled ? '停用' : '启用'}</Button>
+                  <Button size="sm" variant="danger" icon={<IconTrash size={12} />} onClick={async () => {
+                    const ok = await confirm('删除智能体', `确定删除角色卡「${a.name}」？工作区里已导出的 SOUL.md 文件不会自动删除。`);
+                    if (ok) { removeAgent(a.id); pushToast('智能体已删除', 'warning'); }
+                  }}>删除</Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {/* 危险区 */}
       <section className="glass-panel danger-zone">
         <header className="glass-panel__head"><h3>危险区</h3></header>
@@ -247,6 +300,33 @@ export function SettingsPage() {
         <Field label="一句话简介" hint="会进入上下文包">
           <Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </Field>
+      </Modal>
+
+      {/* 新增/编辑智能体弹窗 */}
+      <Modal open={agentOpen} width={560}
+        title={agentEditId ? '编辑智能体' : '新增智能体'}
+        onClose={() => setAgentOpen(false)}
+        footer={<>
+          <Button onClick={() => setAgentOpen(false)}>取消</Button>
+          <Button variant="primary" onClick={() => {
+            if (!agentForm.name.trim()) { pushToast('角色名不能为空', 'error'); return; }
+            const card = { ...agentForm, name: agentForm.name.trim(), role: agentForm.role.trim() };
+            if (agentEditId) upsertAgent({ ...card, id: agentEditId });
+            else upsertAgent({ ...card, id: newId() });
+            pushToast(`角色卡「${card.name}」已保存`, 'success');
+            setAgentOpen(false);
+          }}>保存</Button>
+        </>}>
+        <Field label="角色名 *"><Input value={agentForm.name} onChange={(e) => setAgentForm({ ...agentForm, name: e.target.value })} placeholder="如：文风润色编辑" /></Field>
+        <Field label="职责一句话"><Input value={agentForm.role} onChange={(e) => setAgentForm({ ...agentForm, role: e.target.value })} placeholder="如：风格纪律与语言精修" /></Field>
+        <Field label="SOUL 提示词" hint="导出时作为 agents/NN-名字/SOUL.md 全文；写作台发送时作为 system 提示词注入">
+          <Textarea rows={12} value={agentForm.prompt} onChange={(e) => setAgentForm({ ...agentForm, prompt: e.target.value })}
+            placeholder={'你是一名……\n\n【工作流程】\n1. ……\n\n【验收标准】\n- ……'} />
+        </Field>
+        <label className="check-row">
+          <Checkbox checked={agentForm.enabled} onChange={(e) => setAgentForm({ ...agentForm, enabled: e.target.checked })} />
+          启用（停用后不参与写作台发送与导出）
+        </label>
       </Modal>
     </div>
   );

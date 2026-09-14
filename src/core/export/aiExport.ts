@@ -1,4 +1,4 @@
-import type { Project } from '../types';
+import type { AgentCard, Chapter, Project, Volume } from '../types';
 import { auditProject } from '../consistency';
 import { downloadBlob, sanitize } from './index';
 
@@ -6,12 +6,17 @@ import { downloadBlob, sanitize } from './index';
  * AI 上下文包导出 —— 把设定图谱导出为 AI 编程助手（ZCode / Codex / Qoder 等）
  * 可直接阅读的本地 Markdown 文件集 + 机器可读 JSON。
  *
+ * 落盘布局与《九州烟云》写作工作区（yrdy/）一致：
+ * - `<书名>-ai-context/`：00-09 号主题文件 + novel-context.json（不触碰 10/11 号 AI 工作区文件）
+ * - `正文/卷NN-卷名/卷首.md` + `第NNN章-章题.md`：按分卷逐章落位（NNN 为全书全局章号，三位补零）
+ * - `agents/NN-名字/SOUL.md`：智能体角色卡（传入且启用时导出，与工作区 agents/ 同构）
+ *
  * 两条落盘路径：
- * - Chromium：File System Access API，用户选一次目标文件夹（句柄存 IndexedDB 持久化），
+ * - Chromium / Electron：File System Access API，用户选一次「工作区根目录」（句柄存 IndexedDB 持久化），
  *   之后每次导出直接覆写本地文件 —— 真正的「直接导出到本地」。
  * - 其余浏览器：回退下载 ZIP，用户解压到项目目录。
  *
- * 本模块的 buildAiContextFiles 是纯函数（零 DOM 依赖），可独立验证。
+ * 本模块的 buildAiContextFiles / buildWorkspaceFiles 是纯函数（零 DOM 依赖），可独立验证。
  */
 
 export interface AiContextFile {
@@ -37,6 +42,64 @@ function factionName(project: Project, id: string | null | undefined): string {
 const sortedEvents = (project: Project) => [...project.events].sort((a, b) => a.sortIndex - b.sortIndex);
 const sortedChapters = (project: Project) => [...project.chapters].sort((a, b) => a.order - b.order);
 
+/* ---------------- 分卷工具（导出正文分卷 / 设定集共用口径） ---------------- */
+
+const CN_DIGITS = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+
+/** 1-99 的中文数字（卷一 / 卷二十三）；超出范围回退阿拉伯数字。 */
+export function cnNum(n: number): string {
+  if (n <= 0 || n >= 100) return String(n);
+  if (n < 10) return CN_DIGITS[n];
+  const tens = Math.floor(n / 10);
+  const ones = n % 10;
+  return (tens > 1 ? CN_DIGITS[tens] : '') + '十' + (ones ? CN_DIGITS[ones] : '');
+}
+
+/** 归一化分卷列表：按 startOrder 排序；忽略非法区间。 */
+export function volumeList(project: Project): Volume[] {
+  return (project.volumes ?? [])
+    .filter((v) => Number.isFinite(v.startOrder) && Number.isFinite(v.endOrder) && v.endOrder >= v.startOrder)
+    .sort((a, b) => a.startOrder - b.startOrder);
+}
+
+/** 章节所属分卷（order 落在 [startOrder, endOrder] 内）；不在任何卷返回 null。 */
+export function volumeOf(project: Project, order: number): Volume | null {
+  for (const v of volumeList(project)) {
+    if (order >= v.startOrder && order <= v.endOrder) return v;
+  }
+  return null;
+}
+
+/** 卷显示名：第 idx（0 基）卷 → 「卷一 · 风雪入青云」。 */
+export function volumeHeading(v: Volume, idx: number): string {
+  return `卷${cnNum(idx + 1)} · ${v.name || '未命名卷'}`;
+}
+
+/** 卷文件夹名：第 idx（0 基）卷 → 「卷01-风雪入青云」。 */
+export function volumeFolderName(v: Volume, idx: number): string {
+  return `卷${String(idx + 1).padStart(2, '0')}-${sanitize(v.name || '未命名卷')}`;
+}
+
+const CH_HEAD_RE = /^第[一二三四五六七八九十百千零〇两\d]{1,7}章[\s\u3000]*/;
+
+/** 章文件首行标题：标题已带「第X章」就用原题，否则按全局章号补「第X章 」前缀。 */
+export function chapterHeading(c: Chapter): string {
+  const title = c.title.trim();
+  return CH_HEAD_RE.test(title) ? title : `第${cnNum(c.order)}章 ${title}`;
+}
+
+/** 章文件名：第001章-山门雪.md（NNN＝全书全局章号，三位补零；标题剥掉「第X章」前缀）。 */
+export function chapterFileName(c: Chapter, taken?: Set<string>): string {
+  const bare = c.title.trim().replace(CH_HEAD_RE, '').trim() || c.title.trim() || '未命名';
+  let name = `第${String(Math.max(0, c.order)).padStart(3, '0')}章-${sanitize(bare).replace(/_+/g, '_')}.md`;
+  if (taken) {
+    let n = 2;
+    while (taken.has(name)) name = name.replace(/\.md$/, `-${n++}.md`);
+    taken.add(name);
+  }
+  return name;
+}
+
 /* ---------------- 各文件构建 ---------------- */
 
 function buildOverview(project: Project): string {
@@ -53,7 +116,7 @@ function buildOverview(project: Project): string {
     ['09-consistency.md', '当前一致性校验结果（悬空引用、别名冲突、因果时序等）'],
     ['novel-context.json', '全量结构化数据（已剔除 API 密钥，供脚本 / 工具管道使用）'],
   ];
-  return [
+  const lines: string[] = [
     `# 《${project.name}》 · 小说设定上下文`,
     '',
     `> 本目录由 墨枢 NovelAtlas 自动导出，供 AI 写作 / 编程助手阅读。导出时间：${fmtDate(Date.now())}`,
@@ -65,6 +128,12 @@ function buildOverview(project: Project): string {
     `- 简介：${dim(project.description)}`,
     `- 规模：${project.characters.length} 人物 · ${project.relations.length} 关系 · ${project.events.length} 事件 · ${project.chapters.length} 章节 · 约 ${words.toLocaleString()} 字`,
     '- 数据更新于：' + fmtDate(project.updatedAt),
+  ];
+  const vols = volumeList(project);
+  if (vols.length > 0) {
+    lines.push(`- 分卷：共 ${vols.length} 卷（${vols.map((v, i) => volumeHeading(v, i)).join('、')}）；正文随本包导出至「正文/卷NN-卷名/」，每章一个文件（第NNN章-章题.md，NNN 为全书全局章号）`);
+  }
+  lines.push(
     '',
     '## 文件索引',
     '',
@@ -82,7 +151,10 @@ function buildOverview(project: Project): string {
     '',
     `共 ${files.length} 个文件，均为全量覆盖式导出 —— 文件名稳定，外部引用不会失效。`,
     '',
-  ].join('\n');
+    '> 注：`10-outline.md` / `11-writing-log.md` 属于 AI 工作区文件，由 AI 协作流程维护，本导出不写入也不覆盖。',
+    '',
+  );
+  return lines.join('\n');
 }
 
 function buildCharacters(project: Project): string {
@@ -181,11 +253,13 @@ function buildTimeline(project: Project): string {
 function buildLocations(project: Project): string {
   const parts: string[] = ['# 地点设定', '', `> 共 ${project.locations.length} 处。`, ''];
   for (const l of project.locations) {
+    const faction = l.factionId ? project.factions.find((f) => f.id === l.factionId)?.name : '';
     parts.push(
       `## ${l.name}${l.region ? `（区域：${l.region}）` : ''}`,
       '',
       `- 别名：${l.aliases.length ? l.aliases.join('、') : '—'}`,
       `- 上级地点：${l.parentId ? locationName(project, l.parentId) : '—'}`,
+      `- 归属势力：${faction ?? '—'}`,
       `- 描述：${dim(l.description)}`,
       `- 关联事件：${project.events.filter((e) => e.locationId === l.id).length} 场`,
       '',
@@ -230,19 +304,27 @@ function buildItems(project: Project): string {
 }
 
 function buildChaptersIndex(project: Project): string {
+  const hasVolumes = volumeList(project).length > 0;
   const parts: string[] = [
     '# 章节索引',
     '',
-    '> 仅含元信息，不含正文。正文请使用导出中心的 TXT / Markdown 全文导出。',
+    hasVolumes
+      ? '> 仅含元信息，不含正文。正文按卷落位：`正文/卷NN-卷名/第NNN章-章题.md`。'
+      : '> 仅含元信息，不含正文。正文请使用导出中心的 TXT / Markdown 全文导出。',
     '',
-    '| 序 | 标题 | 状态 | 字数 | 简介 |',
-    '|---|---|---|---|---|',
+    hasVolumes ? '| 序 | 卷 | 标题 | 状态 | 字数 | 简介 |' : '| 序 | 标题 | 状态 | 字数 | 简介 |',
+    '|---|---|---|---|---|' + (hasVolumes ? '---|' : ''),
   ];
+  const volIdx = new Map(volumeList(project).map((v, i) => [v.id, `卷${cnNum(i + 1)}`]));
   for (const c of sortedChapters(project)) {
     const words = c.content.replace(/\s/g, '').length;
-    parts.push(`| ${c.order} | ${cell(c.title)} | ${c.status} | ${words} | ${cell(c.synopsis) || '—'} |`);
+    const vol = volumeOf(project, c.order);
+    const volCell = vol ? (volIdx.get(vol.id) ?? '—') : '—';
+    const row = [String(c.order), cell(c.title), c.status, String(words), cell(c.synopsis) || '—'];
+    if (hasVolumes) row.splice(1, 0, volCell);
+    parts.push(`| ${row.join(' | ')} |`);
   }
-  if (project.chapters.length === 0) parts.push('| — | （暂无章节） | — | — | — |');
+  if (project.chapters.length === 0) parts.push(`| — | ${hasVolumes ? '— | ' : ''}（暂无章节） | — | — | — |`);
   parts.push('');
   return parts.join('\n');
 }
@@ -291,7 +373,74 @@ export function buildAiContextFiles(project: Project): AiContextFile[] {
   ];
 }
 
-/* ---------------- 落盘：File System Access API（Chromium） ---------------- */
+/* ---------------- 工作区文件树（与 yrdy 写作工作区同构） ---------------- */
+
+export interface WorkspaceFile {
+  /** 相对工作区根目录的路径，一律用「/」分隔，如「正文/卷01-风雪入青云/第001章-山门雪.md」。 */
+  path: string;
+  content: string;
+}
+
+/**
+ * 构建完整工作区文件树（纯函数）：
+ * - `<书名>-ai-context/` 下 00-09 号主题文件 + novel-context.json；
+ * - `正文/卷NN-卷名/` 下 卷首.md + 第NNN章-章题.md；未划入任何卷的章节落 `正文/未分卷/`；
+ * - `agents/NN-名字/SOUL.md` + README 索引（传入智能体角色卡且启用时）。
+ * 已存在但内容相同的文件由写入方跳过；本函数不包含删除语义（工作区里多出的文件不动）。
+ */
+export function buildWorkspaceFiles(project: Project, agents: AgentCard[] = []): WorkspaceFile[] {
+  const ctxDir = `${sanitize(project.name) || 'ai-context'}-ai-context`;
+  const files: WorkspaceFile[] = buildAiContextFiles(project)
+    .map((f) => ({ path: `${ctxDir}/${f.name}`, content: f.content }));
+
+  const active = agents.filter((a) => a.enabled && a.name.trim());
+  if (active.length > 0) {
+    active.forEach((a, i) => {
+      const body = a.prompt.trim() || [a.role, a.name].filter(Boolean).join('：');
+      const head = /^#\s/m.test(body) ? '' : `# ${a.name}\n\n`;
+      files.push({
+        path: `agents/${String(i + 1).padStart(2, '0')}-${sanitize(a.name)}/SOUL.md`,
+        content: `${head}${body}\n`,
+      });
+    });
+    files.push({
+      path: 'agents/README.md',
+      content: [
+        '# 智能体团队索引',
+        '',
+        `> 由 墨枢 NovelAtlas 随 AI 上下文包导出（${fmtDate(Date.now())}）；角色卡详情见各文件夹 SOUL.md。`,
+        '',
+        '| 序 | 角色 | 职责 |',
+        '|---|---|---|',
+        ...active.map((a, i) => `| ${i + 1} | ${a.name} | ${a.role || '—'} |`),
+        '',
+      ].join('\n'),
+    });
+  }
+
+  const vols = volumeList(project);
+  vols.forEach((v, i) => {
+    files.push({
+      path: `正文/${volumeFolderName(v, i)}/卷首.md`,
+      content: `# ${volumeHeading(v, i)}\n`,
+    });
+  });
+
+  const taken = new Set<string>();
+  for (const c of sortedChapters(project)) {
+    if (!c.content.trim()) continue;
+    const vol = volumeOf(project, c.order);
+    const volIdx = vol ? vols.indexOf(vol) : -1;
+    const dir = volIdx >= 0 ? `正文/${volumeFolderName(vols[volIdx], volIdx)}` : '正文/未分卷';
+    files.push({
+      path: `${dir}/${chapterFileName(c, taken)}`,
+      content: `## ${chapterHeading(c)}\n\n${c.content.replace(/\s+$/, '')}\n`,
+    });
+  }
+  return files;
+}
+
+/* ---------------- 落盘：File System Access API（Chromium / Electron） ---------------- */
 
 type PermDescriptor = { mode: 'read' | 'readwrite' };
 export type DirHandle = FileSystemDirectoryHandle & {
@@ -361,6 +510,19 @@ export async function getSavedTarget(): Promise<DirHandle | null> {
   return kvGet<DirHandle>(DIR_KEY);
 }
 
+/** 判断所选文件夹是否本身就是 AI 上下文目录（顶层已有 00-overview.md / novel-context.json）。 */
+export async function looksLikeAiContextDir(handle: DirHandle): Promise<boolean> {
+  for (const name of ['00-overview.md', 'novel-context.json']) {
+    try {
+      await handle.getFileHandle(name);
+      return true;
+    } catch {
+      /* 不存在，继续检查 */
+    }
+  }
+  return false;
+}
+
 async function ensureReadWrite(handle: DirHandle): Promise<boolean> {
   const q = await handle.queryPermission?.({ mode: 'readwrite' });
   if (q === 'granted') return true;
@@ -368,30 +530,61 @@ async function ensureReadWrite(handle: DirHandle): Promise<boolean> {
   return r === 'granted';
 }
 
-/** 把上下文文件集直接写入目标文件夹（全量覆盖同名文件）。返回写入文件数。 */
-export async function writeAiContextToDirectory(project: Project, handle: DirHandle): Promise<number> {
+async function ensureDirPath(root: DirHandle, parts: string[]): Promise<DirHandle> {
+  let cur: DirHandle = root;
+  for (const p of parts) cur = await cur.getDirectoryHandle(p, { create: true });
+  return cur;
+}
+
+export interface WorkspaceWriteStats {
+  files: number;     // 本次应写入的文件总数
+  created: number;   // 新建
+  updated: number;   // 覆盖（内容有变化）
+  unchanged: number; // 已存在且内容一致，跳过写入
+}
+
+/** 把工作区文件树直接写入目标根目录（<书名>-ai-context/ + 正文/卷NN-卷名/ + agents/）。
+ *  只增改不删除：工作区里多出的文件（如 AI 新写的章节、10/11 号文件）一律不动。 */
+export async function writeWorkspaceToDirectory(project: Project, handle: DirHandle, agents: AgentCard[] = []): Promise<WorkspaceWriteStats> {
   if (!(await ensureReadWrite(handle))) throw new Error('未获得文件夹写入权限，请重新选择文件夹');
-  const files = buildAiContextFiles(project);
+  const files = buildWorkspaceFiles(project, agents);
+  const stats: WorkspaceWriteStats = { files: files.length, created: 0, updated: 0, unchanged: 0 };
   for (const f of files) {
-    const fh = await handle.getFileHandle(f.name, { create: true });
-    const writable = await fh.createWritable();
-    await writable.write(new Blob([f.content], { type: 'text/markdown;charset=utf-8' }));
-    await writable.close();
+    const parts = f.path.split('/');
+    const name = parts.pop();
+    if (!name) continue;
+    const dir = await ensureDirPath(handle, parts);
+    let existed = false;
+    let same = false;
+    try {
+      const fh = await dir.getFileHandle(name);
+      existed = true;
+      same = (await (await fh.getFile()).text()) === f.content;
+    } catch {
+      existed = false;
+    }
+    if (!same) {
+      const fh = await dir.getFileHandle(name, { create: true });
+      const writable = await fh.createWritable();
+      await writable.write(new Blob([f.content], { type: 'text/markdown;charset=utf-8' }));
+      await writable.close();
+    }
+    if (same) stats.unchanged += 1;
+    else if (existed) stats.updated += 1;
+    else stats.created += 1;
   }
-  return files.length;
+  return stats;
 }
 
 /* ---------------- 落盘回退：ZIP 下载 ---------------- */
 
-/** 打包为 ZIP 并触发浏览器下载（不支持直写的浏览器回退路径）。返回文件名。 */
-export async function exportAiContextZip(project: Project): Promise<string> {
+/** 打包完整工作区文件树为 ZIP 并触发浏览器下载（不支持直写的浏览器回退路径）。返回文件名。 */
+export async function exportAiContextZip(project: Project, agents: AgentCard[] = []): Promise<string> {
   const { default: JSZip } = await import('jszip');
   const zip = new JSZip();
-  const root = zip.folder(`${sanitize(project.name)}-ai-context`);
-  if (!root) throw new Error('ZIP 打包失败');
-  for (const f of buildAiContextFiles(project)) root.file(f.name, f.content);
+  for (const f of buildWorkspaceFiles(project, agents)) zip.file(f.path, f.content);
   const blob = await zip.generateAsync({ type: 'blob' });
-  const filename = `${sanitize(project.name)}-ai-context.zip`;
+  const filename = `${sanitize(project.name) || 'workspace'}-workspace.zip`;
   downloadBlob(filename, blob);
   return filename;
 }
