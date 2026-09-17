@@ -4,6 +4,7 @@ import type {
   Relation, StoryEvent,
 } from '../core/types';
 import { createAdapter, loadAppSettings, saveAppSettings, indexedDbAdapter, desktopAdapter, type AppSettings } from '../core/storage';
+import { mergeAgentSeeds, type AgentSeed } from '../core/import/agentImport';
 import { createSeedProject } from '../core/seed';
 import { newId } from '../core/id';
 
@@ -36,6 +37,8 @@ interface ProjectStore {
   upsertAgent: (a: AgentCard) => void;
   removeAgent: (id: string) => void;
   moveAgent: (id: string, dir: -1 | 1) => void;
+  /** 从 SOUL.md 解析出的角色卡雏形批量回导（同名去重/更新），一次持久化。 */
+  importAgents: (seeds: AgentSeed[]) => { added: number; updated: number; skipped: number };
 
   update: (mutator: (p: Project) => void) => void;
 
@@ -271,6 +274,15 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
       const settings = { ...get().appSettings, agents: list };
       saveAppSettings(settings);
       set({ appSettings: settings });
+    },
+
+    importAgents: (seeds) => {
+      const { next, added, updated, skipped } = mergeAgentSeeds(get().appSettings.agents ?? [], seeds);
+      const agents = next.map((a) => (a.id ? a : { ...a, id: newId() }));
+      const settings = { ...get().appSettings, agents };
+      saveAppSettings(settings);
+      set({ appSettings: settings });
+      return { added, updated, skipped };
     },
 
     refreshProjects: async () => {

@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createAdapter, type AdapterId } from '../../core/storage';
 import { getDesktopBridge, isDesktop, type DataDirInfo } from '../../core/desktop';
+import { parseAgentSoulFiles, type RawSoulFile } from '../../core/import/agentImport';
 import { newId } from '../../core/id';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
 import { Button, Checkbox, Field, Input, Segmented, Textarea } from '../../components/ui/primitives';
 import { Modal } from '../../components/ui/Modal';
-import { IconPlus, IconRefresh, IconTrash } from '../../components/icons';
+import { IconPlus, IconRefresh, IconTrash, IconUpload } from '../../components/icons';
 
 /** 设置：存储适配器（桌面端本机文件 / 含 REST 契约）/ AI 接口 / 作品管理 / 危险区。 */
 
@@ -38,10 +39,30 @@ export function SettingsPage() {
   const upsertAgent = useProjectStore((s) => s.upsertAgent);
   const removeAgent = useProjectStore((s) => s.removeAgent);
   const moveAgent = useProjectStore((s) => s.moveAgent);
+  const importAgents = useProjectStore((s) => s.importAgents);
   const agents = appSettings.agents ?? [];
   const [agentOpen, setAgentOpen] = useState(false);
   const [agentEditId, setAgentEditId] = useState<string | null>(null);
   const [agentForm, setAgentForm] = useState({ name: '', role: '', prompt: '', enabled: true });
+  const soulDirRef = useRef<HTMLInputElement>(null);
+  const soulFileRef = useRef<HTMLInputElement>(null);
+
+  /** 从选中的 agents/ 目录或若干 SOUL.md 回导智能体角色卡（同名去重/更新）。 */
+  const importSoulFiles = async (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    const raws: RawSoulFile[] = [];
+    for (const file of Array.from(fileList)) {
+      const path = file.webkitRelativePath || file.name;
+      if (!/(^|\/)(SOUL|README)\.md$/i.test(path)) continue;
+      raws.push({ path, text: await file.text() });
+    }
+    const seeds = parseAgentSoulFiles(raws);
+    if (soulDirRef.current) soulDirRef.current.value = '';
+    if (soulFileRef.current) soulFileRef.current.value = '';
+    if (seeds.length === 0) { pushToast('未找到 SOUL.md 文件（请选 agents/ 目录或章节内的 SOUL.md）', 'error'); return; }
+    const { added, updated, skipped } = importAgents(seeds);
+    pushToast(`已导入智能体：新增 ${added} · 更新 ${updated} · 未变 ${skipped}`, 'success');
+  };
 
   // 桌面端：本机文件存储的数据目录信息（仅当启用本机文件适配器时展示）
   const desktop = isDesktop();
@@ -228,16 +249,30 @@ export function SettingsPage() {
       <section className="glass-panel">
         <header className="glass-panel__head">
           <h3>智能体管理</h3>
-          <Button size="sm" icon={<IconPlus size={13} />} onClick={() => {
-            setAgentForm({ name: '', role: '', prompt: '', enabled: true });
-            setAgentEditId(null);
-            setAgentOpen(true);
-          }}>新增智能体</Button>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Button size="sm" variant="glass" icon={<IconUpload size={13} />} onClick={() => soulDirRef.current?.click()}>
+              导入 agents/ 目录
+            </Button>
+            <Button size="sm" variant="glass" icon={<IconUpload size={13} />} onClick={() => soulFileRef.current?.click()}>
+              选择 SOUL.md
+            </Button>
+            <Button size="sm" icon={<IconPlus size={13} />} onClick={() => {
+              setAgentForm({ name: '', role: '', prompt: '', enabled: true });
+              setAgentEditId(null);
+              setAgentOpen(true);
+            }}>新增智能体</Button>
+          </div>
+          <input ref={soulDirRef} type="file" style={{ display: 'none' }}
+            {...({ webkitdirectory: '', directory: '' } as React.InputHTMLAttributes<HTMLInputElement>)}
+            onChange={(e) => void importSoulFiles(e.target.files)} />
+          <input ref={soulFileRef} type="file" accept=".md,.markdown,.txt" multiple style={{ display: 'none' }}
+            onChange={(e) => void importSoulFiles(e.target.files)} />
         </header>
         {agents.length === 0 ? (
           <p className="dim" style={{ padding: '0 16px 14px' }}>
-            还没有智能体角色卡。角色卡跨作品共用：写作台「发送给 AI」可选其一作为 system 提示词；
-            导出 AI 上下文包时按序写入工作区 <code>agents/NN-名字/SOUL.md</code>。
+            还没有智能体角色卡。可点上方「导入 agents/ 目录」把写作工作区（如 <code>yrdy/agents/</code>）的
+            <code>*/SOUL.md</code> 回导为可管理的角色卡；也支持手动新建。角色卡跨作品共用：写作台「发送给 AI」
+            可选其一作为 system 提示词；导出 AI 上下文包时按序写入工作区 <code>agents/NN-名字/SOUL.md</code>。
           </p>
         ) : (
           <ul className="proj-list">
