@@ -11,7 +11,7 @@ import { CharacterAvatar } from '../components/ui/Avatar';
 import { getDesktopBridge } from '../core/desktop';
 import { WindowControls } from '../components/layout/WindowControls';
 import {
-  IconBook, IconChevronDown, IconDashboard, IconDoc, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
+  IconBook, IconChevronDown, IconDashboard, IconDoc, IconDownload, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
   IconSearch, IconSettings, IconTimeline, IconUsers, IconWriting, IconX,
 } from '../components/icons';
 
@@ -30,6 +30,10 @@ const NAV: Array<{ page: Page; icon: (p: { size?: number }) => ReactNode; title:
   { page: 'export', icon: IconExport, title: '导出' },
   { page: 'settings', icon: IconSettings, title: '设置' },
 ];
+
+/** 桌面版安装包直链（GitHub Release 便携版）；仅 Web 端展示下载入口，点击直接触发浏览器下载。 */
+const DESKTOP_DOWNLOAD_URL =
+  'https://github.com/KTBOY/sk-ms/releases/download/v1.0.0/NovelAtlas-Portable-v1.0.0-win64.zip';
 
 /** 全局框架：Resonance HUD 深色金调面板（菱形双语 Logo ｜ 方格图标导航 ｜ 搜索 + 头像）。 */
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -134,6 +138,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="app-topbar__right">
+            {!desktop && (
+              <a className="app-dl" href={DESKTOP_DOWNLOAD_URL} rel="noreferrer"
+                title="下载桌面版（Windows 便携版）">
+                <IconDownload size={14} />
+                <span>下载桌面端</span>
+              </a>
+            )}
             <div className="app-search" ref={searchRef}>
               <IconSearch size={15} />
               <Input value={query} placeholder="搜索人物 / 事件 / 物品…"

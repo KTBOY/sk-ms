@@ -80,6 +80,9 @@ export const IconSparkles = (p: P) => base(p, <>
 export const IconUpload = (p: P) => base(p, <>
   <path d="M12 15V3" /><path d="m6.5 7.5 5.5-5 5.5 5" /><path d="M4 21h16" />
 </>);
+export const IconDownload = (p: P) => base(p, <>
+  <path d="M12 3v12" /><path d="m6.5 10.5 5.5 5 5.5-5" /><path d="M4 21h16" />
+</>);
 export const IconArrowUp = (p: P) => base(p, <><path d="M12 19V5" /><path d="m5.5 11.5 6.5-6.5 6.5 6.5" /></>);
 export const IconArrowDown = (p: P) => base(p, <><path d="M12 5v14" /><path d="m5.5 12.5 6.5 6.5 6.5-6.5" /></>);
 export const IconCheck = (p: P) => base(p, <path d="m4 12.5 5 5L20 6.5" />);

@@ -157,6 +157,21 @@ code.contract {
 
 .app-topbar__right { display: flex; align-items: center; gap: 14px; }
 
+/* 顶栏「下载桌面端」CTA：仅 Web 端渲染（桌面端无需下载），直角金调 */
+.app-dl {
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  padding: 7px 12px; cursor: pointer; text-decoration: none;
+  border: 1px solid var(--gold-dim); background: rgba(201, 172, 103, 0.08);
+  color: var(--gold-bright); font-size: 12.5px; letter-spacing: 1px;
+  transition: all 0.16s var(--hud-ease);
+}
+.app-dl > svg { color: var(--gold); flex: none; }
+.app-dl:hover {
+  background: var(--gold); color: #14161a;
+  box-shadow: 0 0 14px rgba(201, 172, 103, 0.35);
+}
+.app-dl:hover > svg { color: #14161a; }
+
 /* ===== 桌面端（Electron 无边框窗口）：顶栏兼作标题栏 =====
    仅 is-desktop（存在 preload 桥）时生效：顶栏整体可拖拽移动窗口，
    交互元素 no-drag；右上角窗控按钮贴边通高，样式同 flash-edit。 */
