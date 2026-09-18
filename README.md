@@ -3,6 +3,8 @@
 > 把小说设定沉淀为知识图谱，在写作的每一步校验一致性，并把"恰好够用"的设定喂给 AI —— 让任何模型写长篇都不崩人设。
 > **纯前端项目**：数据 100% 存本地，预置可替换的存储/双 AI 接口。
 
+> 🌐 **在线体验**：<https://KTBOY.github.io/sk-ms/>
+
 ![tech](https://img.shields.io/badge/Vite%205%20·%20React%2018%20·%20TS%20strict%20·%20Zustand%20·%20D3%207-墨枢-blueviolet)
 
 ![图谱中心：设定即图谱，D3 力导向关系网络把人物、物品、地点、势力连成一张可校验的图](docs/assets/tour-graph-center.gif)
