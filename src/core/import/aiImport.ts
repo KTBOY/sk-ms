@@ -1,8 +1,9 @@
 import type {
   Chapter, ChapterStatus, ChapterVersion, Character, CharacterRole, CharacterStatus,
-  Faction, FactionType, Item, LocationNode, MapPos, Project, Relation, RelationType, StoryEvent, Volume,
+  DocCategory, Faction, FactionType, Item, LocationNode, MapPos, Project, ProjectDoc, Relation, RelationType, StoryEvent, Volume,
 } from '../types';
 import { newId } from '../id';
+import { categoryOf } from '../docs/classify';
 
 /**
  * AI 上下文包回导 —— 导出（buildAiContextFiles）的逆过程。
@@ -23,6 +24,7 @@ const CHAR_STATUS: readonly CharacterStatus[] = ['在世', '死亡', '未知'];
 const REL_TYPES: readonly RelationType[] = ['亲人', '师徒', '挚友', '恋人', '敌对', '同门', '上下级', '其他'];
 const FAC_TYPES: readonly FactionType[] = ['宗门', '王朝', '组织', '家族', '其他'];
 const CH_STATUS: readonly ChapterStatus[] = ['草稿', '写作中', '已完成'];
+const DOC_CATEGORIES: readonly DocCategory[] = ['setting', 'ledger', 'reports', 'promo', 'guide', 'tool', 'other'];
 
 function pickEnum<T extends string>(list: readonly T[], value: unknown, fallback: T): T {
   return typeof value === 'string' && (list as readonly string[]).includes(value) ? (value as T) : fallback;
@@ -220,6 +222,20 @@ export function normalizeProject(input: Record<string, unknown>): Project {
   const settings = (base.settings ?? {}) as { ai?: { baseUrl?: unknown; apiKey?: unknown; model?: unknown } };
   const ai = settings.ai ?? {};
 
+  const docs: ProjectDoc[] = (Array.isArray(base.docs) ? base.docs : []).map((raw, i) => {
+    const d = asRec(raw);
+    const path = typeof d.path === 'string' && d.path.trim()
+      ? d.path.replace(/\\/g, '/').replace(/^\.\//, '').trim()
+      : `未命名文档${i + 1}.md`;
+    return {
+      id: typeof d.id === 'string' && d.id ? d.id : newId(),
+      path,
+      category: pickEnum(DOC_CATEGORIES, d.category, categoryOf(path)),
+      content: typeof d.content === 'string' ? d.content : '',
+      updatedAt: typeof d.updatedAt === 'number' ? d.updatedAt : now,
+    };
+  });
+
   return {
     id: typeof base.id === 'string' && base.id ? base.id : newId(),
     name: typeof base.name === 'string' && base.name ? base.name : '导入的作品',
@@ -235,6 +251,7 @@ export function normalizeProject(input: Record<string, unknown>): Project {
     factions,
     chapters,
     volumes,
+    docs,
     mapLayout,
     ignoreWords: strArr(base.ignoreWords),
     // 导出包不含密钥（导出时已剔除），这里同样不接受外部注入的密钥
@@ -397,6 +414,77 @@ export function bareVolumeName(title: string): string {
 function autoSynopsis(content: string): string {
   const clean = content.replace(/\s/g, '');
   return clean.length > AUTO_SYNOPSIS_LEN ? clean.slice(0, AUTO_SYNOPSIS_LEN) + '……' : clean;
+}
+
+/* ---------------- 逐章文件（正文/卷NN-卷名/第NNN章-章题.md）归并 ---------------- */
+
+/** 从文件名/正文标题解析全局章号（优先文件名阿拉伯数字 NNN，回退正文中文/阿拉伯章号）。 */
+function globalChapterNumber(fileName: string, text: string): number {
+  const fm = fileName.match(/第\s*(\d{1,4})\s*章/);
+  if (fm) return Number(fm[1]);
+  const hm = text.match(/^##\s*第\s*([\d零〇一二三四五六七八九十百千两]{1,8})\s*章/m);
+  if (hm) return cnOrArabicToNumber(hm[1]);
+  return Number.MAX_SAFE_INTEGER;
+}
+
+const CN_NUM: Record<string, number> = { 零: 0, 〇: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+/** 中文/阿拉伯章号→数字（支持到千位，覆盖 1–1200）。 */
+function cnOrArabicToNumber(s: string): number {
+  if (/^\d+$/.test(s)) return Number(s);
+  const units: Record<string, number> = { 十: 10, 百: 100, 千: 1000 };
+  let total = 0; let num = 0;
+  for (const ch of s) {
+    if (ch in CN_NUM) num = CN_NUM[ch];
+    else if (ch in units) { total += (num || 1) * units[ch]; num = 0; }
+  }
+  return total + num;
+}
+
+/** 卷文件夹名的卷序号（卷01-xxx → 1）；无则 MAX。 */
+function volumeSortKey(folder: string): number {
+  const m = folder.match(/卷\s*(\d{1,3})/);
+  return m ? Number(m[1]) : Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * 把逐章文件按所在卷目录分组、卷内按全局章号升序，拼成 ParsedVolume[]，
+ * 再交给 applyVolumes 合并（修复「选一篇=1章、顺序靠选择次序」的旧行为）。
+ * 卷名取自目录段（卷NN-卷名 → 剥序号后的裸名）。
+ */
+export function groupChapterFilesToVolumes(
+  chapterFiles: ReadonlyArray<{ name: string; text: string }>,
+): ParsedVolume[] {
+  const byFolder = new Map<string, Array<{ num: number; label: string; title: string; content: string }>>();
+  for (const f of chapterFiles) {
+    const parts = f.name.replace(/\\/g, '/').split('/').filter(Boolean);
+    const fileBase = parts[parts.length - 1] ?? f.name;
+    const folder = parts.length >= 2 ? parts[parts.length - 2] : '未分卷';
+    let parsed: VolumeChapter[];
+    try {
+      parsed = parseVolumeMarkdown(fileBase, f.text).chapters;
+    } catch {
+      continue; // 无「## 第X章」结构的卷首等文件跳过
+    }
+    const bucket = byFolder.get(folder) ?? [];
+    const firstNum = globalChapterNumber(fileBase, f.text);
+    parsed.forEach((ch, idx) => bucket.push({ num: firstNum === Number.MAX_SAFE_INTEGER ? idx : firstNum + idx, label: ch.label, title: ch.title, content: ch.content }));
+    byFolder.set(folder, bucket);
+  }
+  return [...byFolder.entries()]
+    .sort((a, b) => volumeSortKey(a[0]) - volumeSortKey(b[0]))
+    .map(([folder, chs]) => ({
+      fileName: folder,
+      volumeTitle: folder,
+      chapters: chs.sort((x, y) => x.num - y.num).map(({ label, title, content }) => ({ label, title, content })),
+    }));
+}
+
+/** 逐章文件并入作品：等价于 groupChapterFilesToVolumes + applyVolumes。 */
+export function applyChapterFiles(
+  project: Project,
+  chapterFiles: ReadonlyArray<{ name: string; text: string }>,
+): VolumeMergeResult {
+  return applyVolumes(project, groupChapterFilesToVolumes(chapterFiles));
 }
 
 /* ---------------- 汇总信息（导入确认弹窗用） ---------------- */

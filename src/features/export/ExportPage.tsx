@@ -1,24 +1,145 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { exportTxt, exportMarkdown } from '../../core/export/textExport';
 import { exportDocx } from '../../core/export/docxExport';
 import { exportEpub } from '../../core/export/epubExport';
 import { exportBackup, importBackup } from '../../core/export/backup';
 import {
-  exportAiContextZip, getSavedTarget, looksLikeAiContextDir, pickTargetDirectory,
-  supportsDirectoryExport, volumeList, writeWorkspaceToDirectory, type DirHandle,
+  exportAiContextZip, getSavedTarget, looksLikeAiContextDir, pickTargetDirectory, pickSourceDirectory,
+  readWorkspaceDir, supportsDirectoryExport, volumeList, writeWorkspaceToDirectory, type DirHandle,
 } from '../../core/export/aiExport';
 import {
-  parseContextBundle, parseVolumeMarkdown, applyVolumes, countWords,
-  type ParsedVolume, type VolumeMergeResult,
+  parseContextBundle, parseVolumeMarkdown, applyVolumes, applyChapterFiles, countWords,
+  type ParsedVolume,
 } from '../../core/import/aiImport';
-import type { Project, Volume } from '../../core/types';
+import { classifyWorkspace, DOC_CATEGORY_LABELS, type RawWorkspaceFile } from '../../core/docs/classify';
+import { parseAgentSoulFiles, type AgentSeed } from '../../core/import/agentImport';
+import type { DocCategory, Project, ProjectDoc, Volume } from '../../core/types';
 import { newId } from '../../core/id';
+import { isDesktop } from '../../core/desktop';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
 import { Button, Input } from '../../components/ui/primitives';
-import { IconBook, IconExport, IconGraph, IconItem, IconPlus, IconSparkles, IconTrash, IconUpload, IconUser } from '../../components/icons';
+import { IconBook, IconExport, IconGraph, IconItem, IconPlus, IconRefresh, IconSparkles, IconTrash, IconUpload, IconUser } from '../../components/icons';
 
 /** 导出中心：AI 上下文包 / TXT / Markdown / DOCX / EPUB / JSON 备份 + 恢复。 */
+
+/** 稳定空数组引用：避免 useSyncExternalStore 的 getSnapshot 每次返回新数组导致无限循环。 */
+const EMPTY_AGENTS: never[] = [];
+
+/** 整个文件夹导入的组装结果（暂存，确认「为新/覆盖」后才落库）。 */
+interface ImportPlan {
+  project: Project;
+  seeds: AgentSeed[];
+  source: string;
+  counts: {
+    hasBundle: boolean;
+    chapters: number;
+    docs: number;
+    docByCategory: Partial<Record<DocCategory, number>>;
+    agents: number;
+    chapterFiles: number;
+    mergedVolumes: number;
+    skipped: number;
+  };
+}
+
+/** 无 novel-context.json 时的空作品基座（仅靠正文/文档构建）。 */
+function blankProject(): Project {
+  const now = Date.now();
+  return {
+    id: newId(), name: '导入的作品', genre: '', description: '', createdAt: now, updatedAt: now,
+    characters: [], relations: [], events: [], items: [], locations: [], factions: [],
+    chapters: [], volumes: [], docs: [], mapLayout: {}, ignoreWords: [],
+    settings: { ai: { baseUrl: '', apiKey: '', model: '' } },
+  };
+}
+
+/** 归类各桶 → 组装成完整作品（图谱 + 正文 + 文档）+ 智能体种子；纯函数，不落库。 */
+function assembleWorkspace(files: RawWorkspaceFile[], source: string): ImportPlan {
+  const buckets = classifyWorkspace(files);
+  if (!buckets.bundle && buckets.chapterFiles.length === 0 && buckets.mergedVolumes.length === 0) {
+    throw new Error('没找到 novel-context.json，也没有正文逐章 / 合并稿文件 —— 请选择一个由墨枢导出过的工作区目录');
+  }
+  let base: Project = buckets.bundle ? parseContextBundle(buckets.bundle.text) : blankProject();
+  // 整卷合并稿优先，再叠加逐章文件（均按全局 order 对位覆盖正文）
+  if (buckets.mergedVolumes.length) {
+    const parsed: ParsedVolume[] = [];
+    for (const f of buckets.mergedVolumes) {
+      try { parsed.push(parseVolumeMarkdown(f.path.split('/').pop() || f.path, f.text)); } catch { /* 跳过不合格式 */ }
+    }
+    if (parsed.length) base = applyVolumes(base, parsed).project;
+  }
+  if (buckets.chapterFiles.length) {
+    base = applyChapterFiles(base, buckets.chapterFiles.map((f) => ({ name: f.path, text: f.text }))).project;
+  }
+  const now = Date.now();
+  const docs: ProjectDoc[] = buckets.docs.map((d) => ({
+    id: newId(), path: d.path, category: d.category, content: d.content, updatedAt: now,
+  }));
+  base = { ...base, docs: [...(base.docs ?? []), ...docs] };
+  const seeds: AgentSeed[] = buckets.soulFiles.length ? parseAgentSoulFiles(buckets.soulFiles) : [];
+  const byCat: Partial<Record<DocCategory, number>> = {};
+  for (const d of docs) byCat[d.category] = (byCat[d.category] ?? 0) + 1;
+  return {
+    project: base, seeds, source,
+    counts: {
+      hasBundle: !!buckets.bundle,
+      chapters: base.chapters.length,
+      docs: docs.length,
+      docByCategory: byCat,
+      agents: seeds.length,
+      chapterFiles: buckets.chapterFiles.length,
+      mergedVolumes: buckets.mergedVolumes.length,
+      skipped: buckets.skipped.length,
+    },
+  };
+}
+
+/* ---------------- 本地文件夹双向同步引擎（仅桌面端，靠 getState 取最新数据） ---------------- */
+
+const AUTOSYNC_KEY = 'novel-atlas:workspace-autosync';
+type Baseline = Record<string, string>; // path → 上次同步时的内容（用于区分外部改动）
+
+/** 读取目录快照：文件列表 + path→内容 基线。 */
+async function snapshotWorkspace(handle: DirHandle): Promise<{ files: RawWorkspaceFile[]; snap: Baseline }> {
+  const files = await readWorkspaceDir(handle);
+  const snap: Baseline = {};
+  for (const f of files) snap[f.path] = f.text;
+  return { files: files.map((f) => ({ path: f.path, text: f.text })), snap };
+}
+
+/** 当前快照 vs 基线的变更文件数（新增 / 修改 / 删除）。 */
+function diffCount(snap: Baseline, base: Baseline): number {
+  let n = 0;
+  for (const p in snap) if (snap[p] !== base[p]) n += 1;
+  for (const p in base) if (!(p in snap)) n += 1;
+  return n;
+}
+
+/** 推送：当前作品 → 本地目录，并以写入后的快照刷新基线。 */
+async function pushWorkspace(handle: DirHandle, baseline: { current: Baseline }): Promise<number> {
+  const { project, appSettings } = useProjectStore.getState();
+  if (!project) return 0;
+  const stats = await writeWorkspaceToDirectory(project, handle, appSettings.agents ?? []);
+  const { snap } = await snapshotWorkspace(handle);
+  baseline.current = snap;
+  return stats.files;
+}
+
+/** 拉取：本地目录中基线之外的外部改动 → 重建作品并覆盖当前（保留作品 id）；无改动则跳过。 */
+async function pullWorkspace(handle: DirHandle, baseline: { current: Baseline }): Promise<number> {
+  const store = useProjectStore.getState();
+  const current = store.project;
+  if (!current) return 0;
+  const { files, snap } = await snapshotWorkspace(handle);
+  const changed = diffCount(snap, baseline.current);
+  if (changed === 0) return 0;
+  const plan = assembleWorkspace(files, '本地同步');
+  await store.importProject({ ...plan.project, id: current.id });
+  if (plan.seeds.length) store.importAgents(plan.seeds);
+  baseline.current = snap;
+  return changed;
+}
 
 const FORMATS = [
   { id: 'txt', name: 'TXT', desc: '纯文本连排，全平台通用', icon: IconBook, ext: '直接导出' },
@@ -31,26 +152,63 @@ const FORMATS = [
 export function ExportPage() {
   const project = useProjectStore((s) => s.project);
   const importProject = useProjectStore((s) => s.importProject);
+  const importAgents = useProjectStore((s) => s.importAgents);
   const update = useProjectStore((s) => s.update);
   const pushToast = useUIStore((s) => s.pushToast);
   const confirm = useUIStore((s) => s.confirm);
-  const agents = useProjectStore((s) => s.appSettings.agents ?? []);
+  const agents = useProjectStore((s) => s.appSettings.agents ?? EMPTY_AGENTS);
   const [includeWorldbook, setIncludeWorldbook] = useState(true);
   const [target, setTarget] = useState<DirHandle | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const bundleRef = useRef<HTMLInputElement>(null);
-  const volumeRef = useRef<HTMLInputElement>(null);
-  const [imported, setImported] = useState<Project | null>(null);
-  const [volumes, setVolumes] = useState<ParsedVolume[]>([]);
-  const [volumeInfo, setVolumeInfo] = useState<{ added: number; updated: number } | null>(null);
+  const dirInputRef = useRef<HTMLInputElement>(null);
+  const [plan, setPlan] = useState<ImportPlan | null>(null);
+
+  // 本地文件夹双向同步（仅桌面客户端）
+  const desktop = isDesktop();
+  const [autoSync, setAutoSync] = useState<boolean>(() => isDesktop() && localStorage.getItem(AUTOSYNC_KEY) === '1');
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [lastSyncAt, setLastSyncAt] = useState(0);
+  const baselineRef = useRef<Baseline>({});
+  const busyRef = useRef(false);
 
   useEffect(() => {
     void getSavedTarget().then(setTarget).catch(() => setTarget(null));
   }, []);
 
+  // 自动推送：作品变化后防抖写回本地（仅在开启且已绑定目录时）。
+  useEffect(() => {
+    if (!autoSync || !target) return;
+    const timer = setTimeout(() => {
+      if (busyRef.current) return;
+      busyRef.current = true; setSyncBusy(true);
+      pushWorkspace(target, baselineRef)
+        .then(() => setLastSyncAt(Date.now()))
+        .catch((err) => useUIStore.getState().pushToast(err instanceof Error ? `推送到本地失败：${err.message}` : '推送到本地失败', 'error'))
+        .finally(() => { busyRef.current = false; setSyncBusy(false); });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [project, autoSync, target]);
+
+  // 自动拉取：定时读目录，只有与基线不同的外部改动才会回灌（避免自写回循环）。
+  useEffect(() => {
+    if (!autoSync || !target) return;
+    const id = setInterval(() => {
+      if (busyRef.current) return;
+      busyRef.current = true; setSyncBusy(true);
+      pullWorkspace(target, baselineRef)
+        .then((changed) => {
+          if (changed > 0) { setLastSyncAt(Date.now()); useUIStore.getState().pushToast(`已从本地文件夹同步 ${changed} 个变更文件`, 'success'); }
+        })
+        .catch(() => { /* 瞬时读取失败下轮重试 */ })
+        .finally(() => { busyRef.current = false; setSyncBusy(false); });
+    }, 6000);
+    return () => clearInterval(id);
+  }, [autoSync, target]);
+
   if (!project) return null;
 
   const canDirect = supportsDirectoryExport();
+  const canSync = desktop && canDirect;
   const projectVolumes = volumeList(project);
 
   /* ---------------- 分卷管理 ---------------- */
@@ -149,68 +307,62 @@ export function ExportPage() {
     }
   };
 
-  /* ---------------- AI 上下文包回导 ---------------- */
+  /* ---------------- 整个工作区文件夹一键导入 ---------------- */
 
-  // 分卷合并预览：选了卷文件就在「导入的 JSON 作品」之上即时演算合并结果
-  const mergedPreview = useMemo<VolumeMergeResult | null>(() => {
-    if (!imported) return null;
-    if (volumes.length === 0) return null;
+  // 归类组装交给模块级 assembleWorkspace（导入预览与实时同步共用）。
+  const buildPlan = assembleWorkspace;
+
+  const setPlanSafe = (files: RawWorkspaceFile[], source: string) => {
     try {
-      return applyVolumes(imported, volumes);
-    } catch {
-      return null;
-    }
-  }, [imported, volumes]);
-
-  const importTarget = mergedPreview?.project ?? imported;
-
-  const handleBundleFile = async () => {
-    const file = bundleRef.current?.files?.[0];
-    if (!file) return;
-    try {
-      const text = await file.text();
-      const parsed = parseContextBundle(text);
-      setImported(parsed);
-      setVolumeInfo(null);
-      pushToast(`已解析「${file.name}」：${parsed.characters.length} 人物 · ${parsed.chapters.length} 章节`, 'success');
+      setPlan(buildPlan(files, source));
     } catch (err) {
-      setImported(null);
+      setPlan(null);
+      pushToast(err instanceof Error ? err.message : '解析失败', 'error');
+    }
+  };
+
+  const runFolderImport = async () => {
+    try {
+      const handle = await pickSourceDirectory();
+      const files = await readWorkspaceDir(handle);
+      if (files.length === 0) { pushToast('所选文件夹里没有可读的文本文件', 'error'); return; }
+      setPlanSafe(files, `「${handle.name}/」目录`);
+    } catch (err) {
+      if ((err as DOMException)?.name === 'AbortError') return; // 用户取消选择
+      pushToast(err instanceof Error ? err.message : '读取文件夹失败', 'error');
+    }
+  };
+
+  const runFilesImport = async () => {
+    const input = dirInputRef.current;
+    const fileList = input?.files;
+    if (!fileList || fileList.length === 0) return;
+    try {
+      const files: RawWorkspaceFile[] = [];
+      for (const f of Array.from(fileList)) {
+        files.push({ path: f.webkitRelativePath || f.name, text: await f.text() });
+      }
+      setPlanSafe(files, `${files.length} 个文件`);
+    } catch (err) {
       pushToast(err instanceof Error ? err.message : '解析失败', 'error');
     } finally {
-      if (bundleRef.current) bundleRef.current.value = '';
+      if (input) input.value = '';
     }
   };
 
-  const handleVolumeFiles = async () => {
-    const files = Array.from(volumeRef.current?.files ?? []);
-    if (files.length === 0) return;
-    try {
-      const parsed: ParsedVolume[] = [];
-      for (const f of files) parsed.push(parseVolumeMarkdown(f.name, await f.text()));
-      setVolumes(parsed);
-      if (imported) {
-        const preview = applyVolumes(imported, parsed);
-        setVolumeInfo({ added: preview.added, updated: preview.updated });
-      }
-      pushToast(`已解析 ${parsed.length} 个分卷文件，共 ${parsed.reduce((a, v) => a + v.chapters.length, 0)} 章`, 'success');
-    } catch (err) {
-      pushToast(err instanceof Error ? err.message : '分卷解析失败', 'error');
-    } finally {
-      if (volumeRef.current) volumeRef.current.value = '';
-    }
-  };
-
-  const runImport = async (mode: 'new' | 'overwrite') => {
-    if (!importTarget) return;
-    const name = importTarget.name;
+  const commitImport = async (mode: 'new' | 'overwrite') => {
+    if (!plan) return;
+    const { project: p, seeds } = plan;
+    const name = p.name;
     if (mode === 'new') {
-      const ok = await confirm('导入为新作品', `将把「${name}」导入为一部新作品并载入（${importTarget.characters.length} 人物 · ${importTarget.chapters.length} 章节），不影响现有作品。继续吗？`, false);
+      const ok = await confirm('导入为新作品', `将把「${name}」导入为一部新作品并载入（${p.characters.length} 人物 · ${p.chapters.length} 章节 · ${p.docs?.length ?? 0} 篇文档），不影响现有作品。继续吗？`, false);
       if (!ok) return;
       try {
         // 换新 ID，避免与库内同 ID 旧作品互相覆盖
-        await importProject({ ...importTarget, id: newId() });
+        await importProject({ ...p, id: newId() });
+        if (seeds.length) importAgents(seeds);
         pushToast(`《${name}》已导入为新作品并载入`, 'success');
-        setImported(null); setVolumes([]); setVolumeInfo(null);
+        setPlan(null);
       } catch (err) {
         pushToast(err instanceof Error ? err.message : '导入失败', 'error');
       }
@@ -219,11 +371,70 @@ export function ExportPage() {
     const ok = await confirm('覆盖当前作品', `确定用「${name}」覆盖当前作品《${project?.name ?? ''}》的全部数据吗？此操作不可撤销（建议先导出一份 JSON 备份）。`);
     if (!ok) return;
     try {
-      await importProject(importTarget);
+      await importProject(p);
+      if (seeds.length) importAgents(seeds);
       pushToast(`当前作品已替换为《${name}》`, 'success');
-      setImported(null); setVolumes([]); setVolumeInfo(null);
+      setPlan(null);
     } catch (err) {
       pushToast(err instanceof Error ? err.message : '导入失败', 'error');
+    }
+  };
+
+  /* ---------------- 本地文件夹双向同步（仅桌面端） ---------------- */
+
+  const withSyncGuard = async (fn: () => Promise<void>) => {
+    if (busyRef.current) return;
+    busyRef.current = true; setSyncBusy(true);
+    try { await fn(); } finally { busyRef.current = false; setSyncBusy(false); }
+  };
+
+  const pickSyncDir = async () => {
+    try {
+      const handle = await pickTargetDirectory(); // 与导出共用同一目标目录（持久化句柄）
+      setTarget(handle);
+      baselineRef.current = {};
+      if (autoSync) await withSyncGuard(async () => { await pushWorkspace(handle, baselineRef); setLastSyncAt(Date.now()); });
+      pushToast(`已绑定同步文件夹「${handle.name}/」`, 'success');
+    } catch (err) {
+      if ((err as DOMException)?.name !== 'AbortError') pushToast(err instanceof Error ? err.message : '选择文件夹失败', 'error');
+    }
+  };
+
+  const manualPush = () => withSyncGuard(async () => {
+    if (!target) return;
+    try {
+      await pushWorkspace(target, baselineRef);
+      setLastSyncAt(Date.now());
+      pushToast('已推送最新数据到本地文件夹', 'success');
+    } catch (err) {
+      pushToast(err instanceof Error ? err.message : '推送失败', 'error');
+    }
+  });
+
+  const manualPull = () => withSyncGuard(async () => {
+    if (!target) return;
+    try {
+      const changed = await pullWorkspace(target, baselineRef);
+      setLastSyncAt(Date.now());
+      pushToast(changed ? `已从本地拉取并合并 ${changed} 个变更文件` : '本地文件夹没有新变更', changed ? 'success' : 'info');
+    } catch (err) {
+      pushToast(err instanceof Error ? err.message : '拉取失败', 'error');
+    }
+  });
+
+  const toggleSync = (v: boolean) => {
+    setAutoSync(v);
+    localStorage.setItem(AUTOSYNC_KEY, v ? '1' : '0');
+    if (v && target) {
+      void withSyncGuard(async () => {
+        try {
+          await pushWorkspace(target, baselineRef);
+          setLastSyncAt(Date.now());
+          pushToast('自动同步已开启，已推送当前数据到本地', 'success');
+        } catch (err) {
+          pushToast(err instanceof Error ? err.message : '同步失败', 'error');
+        }
+      });
     }
   };
 
@@ -318,62 +529,96 @@ export function ExportPage() {
         </div>
       </section>
 
-      {/* AI 上下文包回导：把外部 AI 工作区产出的数据导回应用 */}
+      {/* 整个工作区文件夹一键导入：目录句柄（Chromium）/ webkitdirectory（回退） */}
       <section className="glass-panel ai-export" style={{ marginTop: 20 }}>
         <header className="glass-panel__head">
-          <h3>AI 上下文包回导<span className="head-en">AI CONTEXT IMPORT</span></h3>
+          <h3>导入工作区<span className="head-en">WORKSPACE IMPORT</span></h3>
         </header>
         <div className="ai-export__body">
           <p className="ai-export__desc">
-            把 AI 工作区（ZCode 等）维护的上下文包导回应用：选择 <code>novel-context.json</code>
-            （结构化全量，兼容 JSON 备份），可选配 <code>导出合并稿/卷XX-卷名.md</code> 等正文分卷文件合并最新章节
-            ——作品尚无分卷数据时，会按所选卷文件的范围<b>自动建立分卷</b>。
-            <code>00-09</code> 号 Markdown 是导出视图，无需导入；<code>10-outline.md</code> /
-            <code>11-writing-log.md</code> 属于 AI 工作区文件，不参与导入。
+            选择一个写作工作区根目录（如 <code>yrdy/</code>），自动识别并一次导入：
+            <code>novel-context.json</code>（图谱 + 章节）、<code>正文/第NNN章.md</code> 与
+            <code>导出合并稿/卷XX.md</code>（按全局章号刷新正文）、<code>agents/**/SOUL.md</code>（智能体角色卡），
+            以及其余 <code>setting/</code>·<code>ledger/</code>·<code>reports/</code>·<code>promo/</code>·根级 <code>*.md</code>
+            等全部文档（进「文档」页）。<code>.writing/</code>、<code>node_modules</code>、二进制文件自动忽略。
           </p>
           <div className="ai-export__ops">
-            <Button icon={<IconUpload size={14} />} onClick={() => bundleRef.current?.click()}>
-              ① 选择 novel-context.json
+            {canDirect && (
+              <Button variant="primary" icon={<IconUpload size={14} />} onClick={() => void runFolderImport()}>
+                选择工作区文件夹导入
+              </Button>
+            )}
+            <Button variant={canDirect ? 'glass' : 'primary'} icon={<IconBook size={14} />} onClick={() => dirInputRef.current?.click()}>
+              {canDirect ? '按文件方式选文件夹（回退）' : '选择文件夹导入'}
             </Button>
-            <Button icon={<IconBook size={14} />} onClick={() => volumeRef.current?.click()}>
-              ② 选择正文分卷（可选，可多选）
-            </Button>
-            <input ref={bundleRef} type="file" accept="application/json,.json" style={{ display: 'none' }}
-              onChange={() => void handleBundleFile()} />
-            <input ref={volumeRef} type="file" accept=".md,.markdown,.txt" multiple style={{ display: 'none' }}
-              onChange={() => void handleVolumeFiles()} />
+            <input ref={dirInputRef} type="file" style={{ display: 'none' }}
+              {...({ webkitdirectory: '', directory: '' } as React.InputHTMLAttributes<HTMLInputElement>)}
+              multiple
+              onChange={() => void runFilesImport()} />
           </div>
-          {importTarget && (
-            <div style={{ marginTop: 12, padding: '10px 14px', border: '1px solid var(--border-dim, rgba(255,255,255,.12))', borderRadius: 8 }}>
-              <b>《{importTarget.name}》</b>
-              <span className="dim">
-                {' '}· {importTarget.genre || '未设类型'} · {importTarget.characters.length} 人物 · {importTarget.relations.length} 关系 ·
-                {' '}{importTarget.events.length} 事件 · {importTarget.locations.length} 地点 · {importTarget.factions.length} 势力 ·
-                {' '}{importTarget.items.length} 物品 · {importTarget.chapters.length} 章 · 约 {countWords(importTarget).toLocaleString()} 字
-              </span>
-              {volumes.length > 0 && (
-                <p className="dim" style={{ margin: '6px 0 0' }}>
-                  已选 {volumes.length} 个分卷（{volumes.map((v) => v.volumeTitle).join('、')}）
-                  {volumeInfo ? <>：合并预览 —— 更新 {volumeInfo.updated} 章 · 新增 {volumeInfo.added} 章</> : '（选择 JSON 后自动预览合并）'}
-                </p>
-              )}
-              {mergedPreview && mergedPreview.untouched > 0 && (
-                <p className="dim" style={{ margin: '4px 0 0' }}>另有 {mergedPreview.untouched} 章与导入包一致，无需变动</p>
-              )}
+
+          {plan && (
+            <div className="import-summary">
+              <div className="import-summary__title">
+                <b>《{plan.project.name}》</b>
+                <span className="dim"> · 来源：{plan.source}{plan.counts.hasBundle ? '' : ' · 无 JSON，仅正文/文档'}</span>
+              </div>
+              <ul className="import-summary__list">
+                <li>图谱：{plan.project.characters.length} 人物 · {plan.project.relations.length} 关系 · {plan.project.events.length} 事件 · {plan.project.locations.length} 地点 · {plan.project.factions.length} 势力 · {plan.project.items.length} 物品</li>
+                <li>正文：{plan.counts.chapters} 章 · 约 {countWords(plan.project).toLocaleString()} 字（逐章 {plan.counts.chapterFiles} · 合并稿 {plan.counts.mergedVolumes}）</li>
+                <li>文档：{plan.counts.docs} 篇{Object.keys(plan.counts.docByCategory).length > 0 && (
+                  <span className="dim">（{Object.entries(plan.counts.docByCategory).map(([c, n]) => `${DOC_CATEGORY_LABELS[c as DocCategory]} ${n}`).join('、')}）</span>
+                )}</li>
+                <li>智能体：{plan.counts.agents} 张角色卡</li>
+                {plan.counts.skipped > 0 && <li className="dim">已忽略 {plan.counts.skipped} 个缓存 / 二进制文件</li>}
+              </ul>
             </div>
           )}
           <div className="ai-export__ops" style={{ marginTop: 12 }}>
-            <Button variant="primary" icon={<IconSparkles size={14} />} disabled={!importTarget} onClick={() => void runImport('new')}>
+            <Button variant="primary" icon={<IconSparkles size={14} />} disabled={!plan} onClick={() => void commitImport('new')}>
               导入为新作品
             </Button>
-            <Button variant="glass" icon={<IconUpload size={14} />} disabled={!importTarget} onClick={() => void runImport('overwrite')}>
+            <Button variant="glass" icon={<IconUpload size={14} />} disabled={!plan} onClick={() => void commitImport('overwrite')}>
               覆盖当前作品
             </Button>
+            {plan && <Button variant="glass" onClick={() => setPlan(null)}>清除</Button>}
           </div>
           <p className="dim ai-export__target">
-            提示：「导入为新作品」会分配新作品 ID，不影响库内任何作品；「覆盖当前作品」以导入包数据整库替换。
-            导入后再次执行「AI 上下文包导出」会以应用数据覆盖工作区里的 00-09 号文件与 JSON（10/11 号 AI 工作区文件不受影响）。
+            提示：「导入为新作品」分配新 ID、不影响库内其他作品；「覆盖当前作品」整库替换。
+            导入后可在「文档」页查看/编辑 setting·ledger·reports·promo 等文档，再次导出会原路径回写。
           </p>
+        </div>
+      </section>
+
+      {/* 本地文件夹双向同步：应用 ⇄ 本地目录 自动保持同步（仅桌面客户端） */}
+      <section className="glass-panel ai-export" style={{ marginTop: 20 }}>
+        <header className="glass-panel__head">
+          <h3>本地文件夹同步<span className="head-en">LIVE SYNC · DESKTOP</span></h3>
+        </header>
+        <div className="ai-export__body">
+          <p className="ai-export__desc">
+            绑定工作区文件夹后，应用内的修改会<b>自动写回本地</b>；你在其他编辑器 / AI 工具里改这些文件，
+            应用也会<b>自动读取并更新</b>，两边保持同步。与「AI 上下文包导出」共用同一目标目录。
+            {!canSync && <><b style={{ color: 'var(--danger)' }}> 此功能仅在桌面客户端可用</b>，网页版无法实时读写本地文件系统。</>}
+          </p>
+          <div className="ai-export__ops">
+            <Button variant="primary" icon={<IconUpload size={14} />} disabled={!canSync} onClick={() => void pickSyncDir()}>
+              {target ? `同步文件夹：${target.name}/（更换）` : '选择同步文件夹'}
+            </Button>
+            <label className={`check-row${canSync ? '' : ' is-disabled'}`}>
+              <input type="checkbox" checked={autoSync} disabled={!canSync} onChange={(e) => toggleSync(e.target.checked)} />
+              自动双向同步
+            </label>
+          </div>
+          <div className="ai-export__ops" style={{ marginTop: 10 }}>
+            <Button variant="glass" icon={<IconExport size={14} />} disabled={!canSync || !target || syncBusy} onClick={() => void manualPush()}>立即推送到本地</Button>
+            <Button variant="glass" icon={<IconRefresh size={14} />} disabled={!canSync || !target || syncBusy} onClick={() => void manualPull()}>立即从本地拉取</Button>
+            <span className="dim">
+              {syncBusy ? '同步中…' : lastSyncAt > 0 ? `上次同步：${new Date(lastSyncAt).toLocaleTimeString('zh-CN')}` : '尚未同步'}
+            </span>
+          </div>
+          {canSync && !target && <p className="dim ai-export__target">尚未选择同步文件夹。选择后可开启自动同步；首次会先推送建立基线。</p>}
+          {canSync && autoSync && <p className="dim ai-export__target">自动同步已开启：作品变动后 2 秒写回本地，每 6 秒拉取一次外部改动（基于内容比对，不会把自己刚写的回灌）。</p>}
         </div>
       </section>
 

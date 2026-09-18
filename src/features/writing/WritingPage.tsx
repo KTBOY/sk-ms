@@ -1,18 +1,22 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { Chapter, EntityKind } from '../../core/types';
 import { newId } from '../../core/id';
 import { auditProject, collectMentions, detectUnknownNames } from '../../core/consistency';
 import type { UnknownCandidate } from '../../core/consistency';
 import { buildContextPack } from '../../core/contextPack';
+import { volumeHeading, volumeList, volumeOf } from '../../core/export/aiExport';
 import { chatComplete } from '../../core/ai';
 import { useProjectStore } from '../../store/projectStore';
 import { useUIStore } from '../../store/uiStore';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { Button, Segmented, Select, StatusPill, Tag, Textarea } from '../../components/ui/primitives';
 import { Modal } from '../../components/ui/Modal';
-import { IconAlert, IconArrowDown, IconArrowUp, IconCopy, IconHistory, IconLink, IconPlus, IconSearch, IconSend, IconSparkles, IconTrash, IconX } from '../../components/icons';
+import { IconAlert, IconArrowDown, IconArrowUp, IconChevronDown, IconCopy, IconHistory, IconLink, IconPlus, IconSearch, IconSend, IconSparkles, IconTrash, IconX } from '../../components/icons';
 import { UnknownActions, UnknownBubble } from './UnknownActions';
 import { CharacterFormModal, emptyCharacter } from '../characters/CharacterFormModal';
+
+/** 稳定空数组引用：避免 useSyncExternalStore 的 getSnapshot 每次返回新数组导致无限循环。 */
+const EMPTY_AGENTS: never[] = [];
 
 const KIND_COLORS: Record<EntityKind, string> = {
   character: '#C9A6FF', location: '#6FE3D0', item: '#FFD37A', event: '#FF9E7A', faction: '#7FB0FF',
@@ -55,7 +59,7 @@ export function WritingPage() {
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
   const [agentId, setAgentId] = useState('');
-  const agents = useProjectStore((s) => s.appSettings.agents ?? []);
+  const agents = useProjectStore((s) => s.appSettings.agents ?? EMPTY_AGENTS);
   const enabledAgents = useMemo(() => agents.filter((a) => a.enabled), [agents]);
 
   // 查找替换
@@ -75,9 +79,45 @@ export function WritingPage() {
   const chapters = useMemo(() => [...(project?.chapters ?? [])].sort((a, b) => a.order - b.order), [project]);
   const chapter = chapters.find((c) => c.id === activeId) ?? chapters[0] ?? null;
 
+  // 分卷分组：卷按全书章号区间划定（与导出 / 设定集同口径），把章节归入所属卷。
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
+  const [groupByVol, setGroupByVol] = useState(true);
+  const vols = useMemo(() => (project ? volumeList(project) : []), [project]);
+  const groupIndex = useMemo(() => new Map(chapters.map((c, i) => [c.id, i])), [chapters]);
+  const volGroups = useMemo(() => {
+    if (!project || vols.length === 0) return null;
+    const byVol = new Map<string, Chapter[]>();
+    const ungrouped: Chapter[] = [];
+    for (const c of chapters) {
+      const v = volumeOf(project, c.order);
+      if (v) { const arr = byVol.get(v.id) ?? []; arr.push(c); byVol.set(v.id, arr); }
+      else ungrouped.push(c);
+    }
+    const groups = vols.map((v, i) => ({ key: v.id, title: volumeHeading(v, i), chapters: byVol.get(v.id) ?? [] }));
+    if (ungrouped.length) groups.push({ key: '__none', title: '未分卷', chapters: ungrouped });
+    return groups;
+  }, [project, chapters, vols]);
+  const showGroups = groupByVol && volGroups !== null;
+  const toggleVol = (key: string) => setCollapsed((prev) => {
+    const n = new Set(prev);
+    if (n.has(key)) n.delete(key); else n.add(key);
+    return n;
+  });
+
   useEffect(() => {
     if (!chapter && chapters.length > 0) setActiveId(chapters[0].id);
   }, [chapter, chapters]);
+
+  // 选中章节所在卷自动展开（切换作品 / 跨页跳转时不漏看）。
+  useEffect(() => {
+    if (!project || !chapter) return;
+    const v = volumeOf(project, chapter.order);
+    const key = v ? v.id : '__none';
+    setCollapsed((prev) => {
+      if (!prev.has(key)) return prev;
+      const n = new Set(prev); n.delete(key); return n;
+    });
+  }, [chapter, project]);
 
   const debouncedContent = useDebouncedValue(chapter?.content ?? '', 300);
 
@@ -249,6 +289,29 @@ export function WritingPage() {
     setActiveId(ch.id);
   };
 
+  /** 单章行（上移/下移按全局 order 定位，跨卷移动即改变所属卷）。分卷分组与平铺两种视图共用。 */
+  const chapterRow = (c: Chapter) => {
+    const i = groupIndex.get(c.id) ?? 0;
+    return (
+      <li key={c.id}>
+        <button type="button" className={`ch-item ${c.id === chapter?.id ? 'is-active' : ''}`}
+          onClick={() => setActiveId(c.id)}>
+          <span className={`ch-dot ch-dot--${c.status === '已完成' ? 'done' : c.status === '写作中' ? 'doing' : 'draft'}`} />
+          <span className="ch-item__title">{c.title}</span>
+          <span className="ch-item__count">{c.content.replace(/\s/g, '').length}字</span>
+        </button>
+        <span className="ch-ops">
+          <button type="button" aria-label="上移" disabled={i === 0} onClick={() => moveChapter(c.id, -1)}><IconArrowUp size={12} /></button>
+          <button type="button" aria-label="下移" disabled={i === chapters.length - 1} onClick={() => moveChapter(c.id, 1)}><IconArrowDown size={12} /></button>
+          <button type="button" aria-label="删除" onClick={async () => {
+            const ok = await useUIStore.getState().confirm('删除章节', `确定删除「${c.title}」？`);
+            if (ok) { removeChapter(c.id); if (activeId === c.id) setActiveId(null); }
+          }}><IconTrash size={12} /></button>
+        </span>
+      </li>
+    );
+  };
+
   // -------------------------------------------------- 预览渲染
   const renderPreview = () => {
     if (!chapter) return null;
@@ -321,33 +384,37 @@ export function WritingPage() {
 
   return (
     <div className="page page--writing">
-      {/* 章节列表 */}
+      {/* 章节列表（按分卷分组、可折叠；无分卷时平铺） */}
       <aside className="writing-chapters">
         <div className="writing-chapters__head">
           <span>章节（{chapters.length}）</span>
-          <Button size="sm" icon={<IconPlus size={12} />} onClick={addChapter}>新增</Button>
+          <span className="writing-chapters__acts">
+            {vols.length > 0 && (
+              <Button size="sm" variant="ghost" onClick={() => setGroupByVol((v) => !v)}
+                title={showGroups ? '切换为平铺列表' : '按分卷分组'}>
+                {showGroups ? '平铺' : '分卷'}
+              </Button>
+            )}
+            <Button size="sm" icon={<IconPlus size={12} />} onClick={addChapter}>新增</Button>
+          </span>
         </div>
         <ul>
-          {chapters.map((c, i) => (
-            <li key={c.id}>
-              <button type="button" className={`ch-item ${c.id === chapter?.id ? 'is-active' : ''}`}
-                onClick={() => setActiveId(c.id)}>
-                <span className={`ch-dot ch-dot--${c.status === '已完成' ? 'done' : c.status === '写作中' ? 'doing' : 'draft'}`} />
-                <span className="ch-item__title">{c.title}</span>
-                <span className="ch-item__count">{c.content.replace(/\s/g, '').length}字</span>
-              </button>
-              <span className="ch-ops">
-                <button type="button" aria-label="上移" disabled={i === 0} onClick={() => moveChapter(c.id, -1)}><IconArrowUp size={12} /></button>
-                <button type="button" aria-label="下移" disabled={i === chapters.length - 1} onClick={() => moveChapter(c.id, 1)}><IconArrowDown size={12} /></button>
-                <button type="button" aria-label="删除" onClick={async () => {
-                  const ok = await useUIStore.getState().confirm('删除章节', `确定删除「${c.title}」？`);
-                  if (ok) { removeChapter(c.id); if (activeId === c.id) setActiveId(null); }
-                }}><IconTrash size={12} /></button>
-              </span>
-            </li>
-          ))}
+          {showGroups && volGroups
+            ? volGroups.map((g) => (
+                <Fragment key={g.key}>
+                  <li className="vol-head">
+                    <button type="button" className="vol-head__btn" onClick={() => toggleVol(g.key)}>
+                      <IconChevronDown size={12} className={`vol-head__chev ${collapsed.has(g.key) ? 'is-collapsed' : ''}`} />
+                      <span className="vol-head__title">{g.title}</span>
+                      <span className="vol-head__count">{g.chapters.length}</span>
+                    </button>
+                  </li>
+                  {!collapsed.has(g.key) && g.chapters.map((c) => chapterRow(c))}
+                </Fragment>
+              ))
+            : chapters.map((c) => chapterRow(c))}
         </ul>
-        {chapters.length === 0 && <p className="dim" style={{ padding: 12 }}>暂无章节，点击「新增」开始</p>}
+        {chapters.length === 0 && <p className="dim" style={{ padding: 12 }}>暂无章节，点击「新增」开始。多卷作品可在「导出 → 分卷管理」定义卷区间。</p>}
       </aside>
 
       {/* 编辑区 */}

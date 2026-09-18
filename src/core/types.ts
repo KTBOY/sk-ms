@@ -148,6 +148,27 @@ export interface ProjectSettings {
   ai: AISettings;
 }
 
+/**
+ * 项目文档归类：由文档相对路径的顶层目录推导（见 core/docs/classify.ts categoryOf）。
+ * setting/ledger/reports/promo 对应工作区同名目录；guide 收根级写作规则文档
+ * （AGENTS.md / GOAL.md / README.md / 日更流水线.md 等）；tool 收 tools/ 脚本；其余归 other。
+ */
+export type DocCategory = 'setting' | 'ledger' | 'reports' | 'promo' | 'guide' | 'tool' | 'other';
+
+/**
+ * 项目文档：挂在作品下的任意文本文件（md / txt / py / json …），
+ * 是「整个写作工作区无损往返」的承载层——导入按原相对路径收编、应用内可编辑、
+ * 导出时按 path 原样回写到工作区目录。content 存原文，是唯一事实源；
+ * 语义化视图只是对 content 的只读投影，编辑始终改 content 本身。
+ */
+export interface ProjectDoc {
+  id: string;
+  path: string;        // 相对工作区根目录，一律用「/」分隔，如 'setting/worldview.md'、'AGENTS.md'
+  category: DocCategory;
+  content: string;     // 原文全文
+  updatedAt: number;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -163,6 +184,8 @@ export interface Project {
   factions: Faction[];
   chapters: Chapter[];
   volumes?: Volume[];
+  /** 工作区文档层：setting/ledger/reports/promo/tools 及根级 md 等全部非结构化文件。 */
+  docs?: ProjectDoc[];
   /** 势力地图手动布局：locationId → 坐标；缺位的地点按区域自动布点。 */
   mapLayout?: Record<string, MapPos>;
   ignoreWords: string[];

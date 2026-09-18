@@ -233,15 +233,18 @@ export function StatusPill({ state }: { state: 'saving' | 'saved' | 'idle' | 'er
   );
 }
 
-/** 简易星级（重要度）。 */
+/** 简易星级（重要度）。只读时渲染 span，避免嵌套在按钮内时出现 button-in-button。 */
 export function Stars({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
   return (
     <span className="ui-stars">
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button key={n} type="button" disabled={!onChange}
-          className={`ui-stars__star ${n <= value ? 'is-on' : ''}`}
-          onClick={() => onChange?.(n)}>★</button>
-      ))}
+      {[1, 2, 3, 4, 5].map((n) => {
+        const cls = `ui-stars__star ${n <= value ? 'is-on' : ''}`;
+        return onChange ? (
+          <button key={n} type="button" className={cls} onClick={() => onChange(n)}>★</button>
+        ) : (
+          <span key={n} className={cls}>★</span>
+        );
+      })}
     </span>
   );
 }

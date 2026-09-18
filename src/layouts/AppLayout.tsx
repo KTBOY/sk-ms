@@ -11,7 +11,7 @@ import { CharacterAvatar } from '../components/ui/Avatar';
 import { getDesktopBridge } from '../core/desktop';
 import { WindowControls } from '../components/layout/WindowControls';
 import {
-  IconBook, IconChevronDown, IconDashboard, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
+  IconBook, IconChevronDown, IconDashboard, IconDoc, IconEvent, IconExport, IconFaction, IconGraph, IconItem, IconLocation,
   IconSearch, IconSettings, IconTimeline, IconUsers, IconWriting, IconX,
 } from '../components/icons';
 
@@ -26,6 +26,7 @@ const NAV: Array<{ page: Page; icon: (p: { size?: number }) => ReactNode; title:
   { page: 'factions', icon: IconFaction, title: '势力' },
   { page: 'items', icon: IconItem, title: '物品' },
   { page: 'atlas', icon: IconBook, title: '设定集' },
+  { page: 'docs', icon: IconDoc, title: '文档' },
   { page: 'export', icon: IconExport, title: '导出' },
   { page: 'settings', icon: IconSettings, title: '设置' },
 ];

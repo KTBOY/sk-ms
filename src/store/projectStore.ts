@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type {
-  AgentCard, Chapter, ChapterVersion, Character, Faction, Item, LocationNode, Project, ProjectMeta,
+  AgentCard, Chapter, ChapterVersion, Character, Faction, Item, LocationNode, Project, ProjectDoc, ProjectMeta,
   Relation, StoryEvent,
 } from '../core/types';
 import { createAdapter, loadAppSettings, saveAppSettings, indexedDbAdapter, desktopAdapter, type AppSettings } from '../core/storage';
@@ -63,6 +63,12 @@ interface ProjectStore {
   moveChapter: (id: string, dir: -1 | 1) => void;
   snapshotChapter: (id: string, label: ChapterVersion['label']) => boolean;
   restoreChapterVersion: (chapterId: string, versionId: string) => boolean;
+
+  /** 工作区文档层（setting/ledger/reports/promo/tools/根级 md 等）。 */
+  upsertDoc: (doc: ProjectDoc) => void;
+  removeDoc: (id: string) => void;
+  /** 整批替换文档（文件夹一键导入用）：按 path 去重，保留同 path 旧 id。 */
+  replaceDocs: (docs: ProjectDoc[]) => void;
 
   /** AI 建谱：一批实体/关系/事件经确认后一次性入库（单次持久化）。 */
   importGraph: (batch: {
@@ -441,6 +447,28 @@ export const useProjectStore = create<ProjectStore>()((set, get) => {
       });
       return true;
     },
+
+    // ------------------------------------------------ 工作区文档层
+    upsertDoc: (doc) => apply((p) => {
+      doc.updatedAt = Date.now();
+      p.docs = p.docs ?? [];
+      const idx = p.docs.findIndex((x) => x.id === doc.id);
+      if (idx >= 0) p.docs[idx] = doc; else p.docs.push(doc);
+    }),
+    removeDoc: (id) => apply((p) => { p.docs = (p.docs ?? []).filter((d) => d.id !== id); }),
+    replaceDocs: (incoming) => apply((p) => {
+      const byPath = new Map((p.docs ?? []).map((d) => [d.path, d]));
+      const seen = new Set<string>();
+      const next: ProjectDoc[] = [];
+      for (const d of incoming) {
+        const prev = byPath.get(d.path);
+        next.push(prev ? { ...d, id: prev.id } : d);
+        seen.add(d.path);
+      }
+      // 保留导入批次未涵盖、但已存在于作品的文档（只增改不删，与导出口径一致）
+      for (const [path, d] of byPath) if (!seen.has(path)) next.push(d);
+      p.docs = next;
+    }),
 
     importGraph: (batch) => apply((p) => {
       const push = <T extends { id: string }>(list: T[], arr: T[]) => {

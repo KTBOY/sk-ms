@@ -1,5 +1,6 @@
 import type { AgentCard, Chapter, Project, Volume } from '../types';
 import { auditProject } from '../consistency';
+import { isTextPath } from '../docs/classify';
 import { downloadBlob, sanitize } from './index';
 
 /**
@@ -437,6 +438,14 @@ export function buildWorkspaceFiles(project: Project, agents: AgentCard[] = []):
       content: `## ${chapterHeading(c)}\n\n${c.content.replace(/\s+$/, '')}\n`,
     });
   }
+
+  // 工作区文档层：按原相对路径原样回写（生成侧 path 优先，避免覆盖正文/ai-context/agents）。
+  const generated = new Set(files.map((f) => f.path));
+  for (const d of project.docs ?? []) {
+    if (!d.path || generated.has(d.path)) continue;
+    files.push({ path: d.path, content: d.content });
+    generated.add(d.path);
+  }
   return files;
 }
 
@@ -521,6 +530,37 @@ export async function looksLikeAiContextDir(handle: DirHandle): Promise<boolean>
     }
   }
   return false;
+}
+
+/** 弹只读文件夹选择器（供「整个文件夹一键导入」用；与 pickTargetDirectory 分离，不写 IndexedDB）。 */
+export async function pickSourceDirectory(): Promise<DirHandle> {
+  const picker = (window as unknown as { showDirectoryPicker?: (o?: { mode?: 'read' | 'readwrite' }) => Promise<DirHandle> }).showDirectoryPicker;
+  if (!picker) throw new Error('当前浏览器不支持文件夹选择，请改用文件方式导入（Chrome / Edge 可用）');
+  return picker({ mode: 'read' });
+}
+
+/** 递归读取工作区目录下全部文本文件，返回 {path, name, text}（path 相对根、正斜杠）。
+ *  跳过缓存 / 依赖 / 构建目录与二进制文件（isTextPath 白名单外）。 */
+export async function readWorkspaceDir(root: DirHandle, prefix = ''): Promise<Array<{ path: string; name: string; text: string }>> {
+  const out: Array<{ path: string; name: string; text: string }> = [];
+  const walk = async (dir: FileSystemDirectoryHandle, rel: string): Promise<void> => {
+    for await (const entry of (dir as FileSystemDirectoryHandle & {
+      values: () => AsyncIterable<FileSystemHandle>;
+    }).values()) {
+      const p = rel ? `${rel}/${entry.name}` : entry.name;
+      if (entry.kind === 'directory') {
+        if (/^(\.writing|node_modules|\.git|\.cache|dist|build)$/i.test(entry.name)) continue;
+        await walk(entry as FileSystemDirectoryHandle, p);
+      } else if (isTextPath(p)) {
+        const file = await (entry as FileSystemFileHandle).getFile();
+        let text = '';
+        try { text = await file.text(); } catch { text = ''; }
+        out.push({ path: p, name: file.name, text });
+      }
+    }
+  };
+  await walk(root, prefix);
+  return out;
 }
 
 async function ensureReadWrite(handle: DirHandle): Promise<boolean> {

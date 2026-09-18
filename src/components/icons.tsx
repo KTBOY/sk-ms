@@ -94,6 +94,10 @@ export const IconLink = (p: P) => base(p, <>
 export const IconBook = (p: P) => base(p, <>
   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 </>);
+export const IconDoc = (p: P) => base(p, <>
+  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" />
+  <path d="M9 13h6M9 17h6M9 9h1" />
+</>);
 export const IconSend = (p: P) => base(p, <>
   <path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" />
 </>);
