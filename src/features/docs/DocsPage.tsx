@@ -12,6 +12,7 @@ import { IconDoc, IconEdit, IconEye, IconPlus, IconTrash } from '../../component
 import { DocSemanticView } from './render';
 
 /**
+ * 
  * 「文档」页：承载工作区里除结构化图谱 / 正文 / 智能体之外的任意文本文件
  * （setting / ledger / reports / promo / guide / tool / other）。
  * 左：按分类分组的文档树 + 过滤 + 新建 / 删除；右：默认语义化只读视图，可切「编辑原文」
