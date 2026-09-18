@@ -397,6 +397,30 @@
 .vol-head__title { flex: 1; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vol-head__count { font-family: var(--hud-latin); font-size: 10.5px; color: var(--cream-dim); }
 
+/* 卷头行：折叠 | 可编辑卷名 | 章数 | 卷操作（新增章/删卷） */
+.vol-head__row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 6px 4px 8px; font-size: 11.5px; letter-spacing: 1px;
+  color: var(--gold-bright); text-transform: uppercase;
+  background: rgba(201, 172, 103, 0.06); border-left: 2px solid var(--gold-dim);
+}
+.vol-head__row.is-active { border-left-color: var(--gold); background: rgba(201, 172, 103, 0.14); }
+.vol-head__chev-btn { display: flex; align-items: center; padding: 2px; color: inherit; background: none; border: none; cursor: pointer; }
+.vol-head__name {
+  flex: 1; min-width: 0; background: none; border: none; outline: none; padding: 2px 0;
+  color: var(--gold-bright); font: inherit; text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px dashed transparent;
+}
+.vol-head__name:hover { border-bottom-color: var(--gold-dim); }
+.vol-head__name:focus { border-bottom-color: var(--gold); text-transform: none; }
+.vol-head__name::placeholder { color: var(--cream-dim); text-transform: none; letter-spacing: 0.5px; }
+.vol-ops { display: flex; gap: 2px; margin-left: 2px; }
+.vol-ops button {
+  display: flex; align-items: center; padding: 3px; cursor: pointer;
+  color: var(--cream-dim); background: none; border: 1px solid transparent;
+}
+.vol-ops button:hover { color: var(--gold-bright); background: rgba(201, 172, 103, 0.12); border-color: var(--hair); }
+
 .writing-editor {
   display: flex; flex-direction: column; min-width: 0;
   padding: 14px 18px;

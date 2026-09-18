@@ -43,6 +43,7 @@ export function WritingPage() {
   const project = useProjectStore((s) => s.project);
   const saveState = useProjectStore((s) => s.saveState);
   const upsertChapter = useProjectStore((s) => s.upsertChapter);
+  const update = useProjectStore((s) => s.update);
   const removeChapter = useProjectStore((s) => s.removeChapter);
   const moveChapter = useProjectStore((s) => s.moveChapter);
   const snapshotChapter = useProjectStore((s) => s.snapshotChapter);
@@ -82,6 +83,8 @@ export function WritingPage() {
   // 分卷分组：卷按全书章号区间划定（与导出 / 设定集同口径），把章节归入所属卷。
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [groupByVol, setGroupByVol] = useState(true);
+  // 当前归卷目标卷（点章节 / 聚焦卷名 / 新建卷时更新）；null = 跟随当前章节所属卷或末卷。
+  const [activeVolId, setActiveVolId] = useState<string | null>(null);
   const vols = useMemo(() => (project ? volumeList(project) : []), [project]);
   const groupIndex = useMemo(() => new Map(chapters.map((c, i) => [c.id, i])), [chapters]);
   const volGroups = useMemo(() => {
@@ -93,8 +96,9 @@ export function WritingPage() {
       if (v) { const arr = byVol.get(v.id) ?? []; arr.push(c); byVol.set(v.id, arr); }
       else ungrouped.push(c);
     }
-    const groups = vols.map((v, i) => ({ key: v.id, title: volumeHeading(v, i), chapters: byVol.get(v.id) ?? [] }));
-    if (ungrouped.length) groups.push({ key: '__none', title: '未分卷', chapters: ungrouped });
+    const groups: Array<{ key: string; volId: string | null; name: string; title: string; chapters: Chapter[] }> =
+      vols.map((v, i) => ({ key: v.id, volId: v.id, name: v.name, title: volumeHeading(v, i), chapters: byVol.get(v.id) ?? [] }));
+    if (ungrouped.length) groups.push({ key: '__none', volId: null, name: '', title: '未分卷', chapters: ungrouped });
     return groups;
   }, [project, chapters, vols]);
   const showGroups = groupByVol && volGroups !== null;
@@ -280,13 +284,81 @@ export function WritingPage() {
     else pushToast('回滚失败', 'error');
   };
 
-  const addChapter = () => {
-    const ch: Chapter = {
-      id: newId(), title: `第${chapters.length + 1}章 未命名`, content: '', synopsis: '',
-      status: '草稿', order: chapters.length + 1, updatedAt: Date.now(),
-    };
-    upsertChapter(ch);
-    setActiveId(ch.id);
+  /** 当前归卷目标：显式选中的卷 > 当前章节所属卷 > 最后一卷 > 无（则全书末尾追加）。 */
+  const targetVolumeId = (): string | null => {
+    if (activeVolId && vols.some((v) => v.id === activeVolId)) return activeVolId;
+    if (chapter) { const v = volumeOf(project, chapter.order); if (v) return v.id; }
+    return vols.length ? vols[vols.length - 1].id : null;
+  };
+
+  /** 新增章节：归入目标卷末尾（自动顺延其后各卷区间）；无卷时全书末尾追加。 */
+  const addChapter = (volIdArg?: string) => {
+    const volId = volIdArg ?? targetVolumeId();
+    let createdId = '';
+    update((p) => {
+      const maxOrder = p.chapters.reduce((m, c) => Math.max(m, c.order), 0);
+      let newOrder = maxOrder + 1;
+      const v = volId ? (p.volumes ?? []).find((x) => x.id === volId) : undefined;
+      if (v) {
+        const inVol = p.chapters.filter((c) => c.order >= v.startOrder && c.order <= v.endOrder);
+        if (inVol.length) {
+          newOrder = Math.max(...inVol.map((c) => c.order)) + 1;
+          if (newOrder <= maxOrder) {
+            p.chapters.forEach((c) => { if (c.order >= newOrder) c.order += 1; });
+            (p.volumes ?? []).forEach((x) => {
+              if (x.id === v.id) return;
+              if (x.startOrder >= newOrder) { x.startOrder += 1; x.endOrder += 1; }
+            });
+          }
+          v.endOrder = Math.max(v.endOrder, newOrder);
+        } else {
+          newOrder = maxOrder + 1;
+          v.startOrder = newOrder; v.endOrder = newOrder;
+        }
+      }
+      const ch: Chapter = {
+        id: newId(), title: `第${newOrder}章 未命名`, content: '', synopsis: '',
+        status: '草稿', order: newOrder, updatedAt: Date.now(),
+      };
+      p.chapters.push(ch);
+      createdId = ch.id;
+    });
+    if (volIdArg) setActiveVolId(volIdArg);
+    setActiveId(createdId);
+    setGroupByVol(true);
+    if (volId) setCollapsed((prev) => { if (!prev.has(volId)) return prev; const n = new Set(prev); n.delete(volId); return n; });
+  };
+
+  /** 新建分卷：在全书末尾开一卷并建其第一章（避免空卷破坏章号连续性）；随后可就地改名。 */
+  const addVolume = () => {
+    let newVolId = '';
+    let newChId = '';
+    update((p) => {
+      p.volumes = p.volumes ?? [];
+      const order = p.chapters.reduce((m, c) => Math.max(m, c.order), 0) + 1;
+      const vol = { id: newId(), name: '', startOrder: order, endOrder: order };
+      const ch: Chapter = { id: newId(), title: `第${order}章 未命名`, content: '', synopsis: '', status: '草稿', order, updatedAt: Date.now() };
+      p.volumes.push(vol);
+      p.chapters.push(ch);
+      newVolId = vol.id; newChId = ch.id;
+    });
+    setActiveVolId(newVolId);
+    setActiveId(newChId);
+    setGroupByVol(true);
+    pushToast('已新建分卷并建了本卷第一章 —— 填卷名后点「新增」继续', 'success');
+  };
+
+  const renameVolume = (id: string, name: string) => update((p) => {
+    const v = (p.volumes ?? []).find((x) => x.id === id);
+    if (v) v.name = name;
+  });
+
+  const delVolume = async (id: string) => {
+    const ok = await useUIStore.getState().confirm('删除分卷', '删除该分卷？卷内章节不会被删除，只是不再归属此卷。');
+    if (!ok) return;
+    update((p) => { p.volumes = (p.volumes ?? []).filter((v) => v.id !== id); });
+    if (activeVolId === id) setActiveVolId(null);
+    pushToast('已删除分卷（章节保留）', 'success');
   };
 
   /** 单章行（上移/下移按全局 order 定位，跨卷移动即改变所属卷）。分卷分组与平铺两种视图共用。 */
@@ -295,7 +367,7 @@ export function WritingPage() {
     return (
       <li key={c.id}>
         <button type="button" className={`ch-item ${c.id === chapter?.id ? 'is-active' : ''}`}
-          onClick={() => setActiveId(c.id)}>
+          onClick={() => { setActiveId(c.id); const v = volumeOf(project, c.order); setActiveVolId(v ? v.id : null); }}>
           <span className={`ch-dot ch-dot--${c.status === '已完成' ? 'done' : c.status === '写作中' ? 'doing' : 'draft'}`} />
           <span className="ch-item__title">{c.title}</span>
           <span className="ch-item__count">{c.content.replace(/\s/g, '').length}字</span>
@@ -395,7 +467,8 @@ export function WritingPage() {
                 {showGroups ? '平铺' : '分卷'}
               </Button>
             )}
-            <Button size="sm" icon={<IconPlus size={12} />} onClick={addChapter}>新增</Button>
+            <Button size="sm" variant="ghost" onClick={addVolume} title="新建分卷（末尾开一卷并建第一章）">＋卷</Button>
+            <Button size="sm" icon={<IconPlus size={12} />} onClick={() => addChapter()}>新增</Button>
           </span>
         </div>
         <ul>
@@ -403,18 +476,32 @@ export function WritingPage() {
             ? volGroups.map((g) => (
                 <Fragment key={g.key}>
                   <li className="vol-head">
-                    <button type="button" className="vol-head__btn" onClick={() => toggleVol(g.key)}>
-                      <IconChevronDown size={12} className={`vol-head__chev ${collapsed.has(g.key) ? 'is-collapsed' : ''}`} />
-                      <span className="vol-head__title">{g.title}</span>
+                    <div className={`vol-head__row ${g.volId && activeVolId === g.volId ? 'is-active' : ''}`}>
+                      <button type="button" className="vol-head__chev-btn" aria-label="折叠/展开" onClick={() => toggleVol(g.key)}>
+                        <IconChevronDown size={12} className={`vol-head__chev ${collapsed.has(g.key) ? 'is-collapsed' : ''}`} />
+                      </button>
+                      {g.volId ? (
+                        <input className="vol-head__name" value={g.name} placeholder="卷名（点击编辑）"
+                          onFocus={() => setActiveVolId(g.volId!)}
+                          onChange={(e) => renameVolume(g.volId!, e.target.value)} />
+                      ) : (
+                        <span className="vol-head__title">{g.title}</span>
+                      )}
                       <span className="vol-head__count">{g.chapters.length}</span>
-                    </button>
+                      {g.volId && (
+                        <span className="vol-ops">
+                          <button type="button" title="在本卷末尾新增章节" onClick={() => addChapter(g.volId!)}><IconPlus size={12} /></button>
+                          <button type="button" title="删除分卷（保留章节）" onClick={() => void delVolume(g.volId!)}><IconTrash size={12} /></button>
+                        </span>
+                      )}
+                    </div>
                   </li>
                   {!collapsed.has(g.key) && g.chapters.map((c) => chapterRow(c))}
                 </Fragment>
               ))
             : chapters.map((c) => chapterRow(c))}
         </ul>
-        {chapters.length === 0 && <p className="dim" style={{ padding: 12 }}>暂无章节，点击「新增」开始。多卷作品可在「导出 → 分卷管理」定义卷区间。</p>}
+        {chapters.length === 0 && <p className="dim" style={{ padding: 12 }}>暂无章节：点「新增」直接写章，或点「＋卷」先建一个分卷再把章节归入其中。</p>}
       </aside>
 
       {/* 编辑区 */}
@@ -482,7 +569,7 @@ export function WritingPage() {
         ) : (
           <div className="ui-empty" style={{ margin: 'auto' }}>
             <div className="ui-empty__title">还没有章节</div>
-            <Button variant="primary" icon={<IconPlus size={14} />} onClick={addChapter}>新增章节</Button>
+            <Button variant="primary" icon={<IconPlus size={14} />} onClick={() => addChapter()}>新增章节</Button>
           </div>
         )}
       </section>
